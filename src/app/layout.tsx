@@ -1,32 +1,40 @@
-'use client';
-
-import '@/i18n';
+import { Metadata } from 'next';
 import React from 'react';
-import { CustomProvider } from 'rsuite';
-import { Inter, Outfit, Orbitron } from 'next/font/google';
 import './globals.css';
-import 'rsuite/dist/rsuite.min.css';
+import RootClientLayout from './RootClientLayout';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
-
-const orbitron = Orbitron({
-  subsets: ['latin'],
-  variable: '--font-orbitron',
-  display: 'swap',
-});
-
-import Preloader from '@/components/common/Preloader';
-import CustomCursor from '@/components/common/CustomCursor';
+export const metadata: Metadata = {
+  title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
+  description: 'Lucid Technology là công ty công nghệ chuyên về phát triển phần mềm, chuyển đổi số và dịch vụ tư vấn công nghệ. Chúng tôi tập trung xây dựng các hệ thống an toàn, có khả năng mở rộng và chất lượng cao, giúp các doanh nghiệp tối ưu hóa hoạt động và nâng cao lợi thế cạnh tranh trong kỷ nguyên số.',
+  keywords: ['software development', 'digital transformation', 'IT consulting', 'Lucid Technology', 'phát triển phần mềm', 'chuyển đổi số'],
+  authors: [{ name: 'Lucid Technology Team' }],
+  openGraph: {
+    title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
+    description: 'Xây dựng tương lai & Thúc đẩy đổi mới kỹ thuật số với Lucid Technology.',
+    url: 'https://lucidtech.vn',
+    siteName: 'Lucid Technology',
+    images: [
+      {
+        url: '/images/logo-none.png',
+        width: 1200,
+        height: 630,
+        alt: 'Lucid Technology Logo',
+      },
+    ],
+    locale: 'vi_VN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
+    description: 'Xây dựng tương lai & Thúc đẩy đổi mới kỹ thuật số với Lucid Technology.',
+    images: ['/images/logo-none.png'],
+  },
+  icons: {
+    icon: '/images/logo-05-none-text-removebg-preview.png',
+    apple: '/images/logo-05-none-text-removebg-preview.png',
+  },
+};
 
 export default function RootLayout({
   children,
@@ -34,14 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable} ${orbitron.variable}`} suppressHydrationWarning={true}>
-      <body className="antialiased font-sans">
-        <CustomProvider theme="dark">
-          <CustomCursor />
-          <Preloader />
-          {children}
-        </CustomProvider>
-      </body>
-    </html>
+    <RootClientLayout>
+      {children}
+    </RootClientLayout>
   );
 }
