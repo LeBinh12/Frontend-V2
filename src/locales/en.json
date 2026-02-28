@@ -21,7 +21,40 @@
     "title": "Pioneering the",
     "highlight": "Digital Frontier",
     "description": "At Lucid Technology, we don't just follow trends—we set them. Our team of expert engineers and designers collaborate to build solutions that are as robust as they are beautiful.",
-    "innovationHub": "Innovation Hub"
+    "innovationHub": "Innovation Hub",
+    "vision": {
+      "title": "Vision",
+      "description": "To be a trusted technology partner, collaborating with clients and communities to create smart, sustainable, and impactful digital solutions."
+    },
+    "shortVersion": {
+      "title": "Shaping the Future",
+      "description": "Together, we shape a smarter and sustainable digital future."
+    },
+    "guidelines": {
+      "title": "Strategic Guidelines",
+      "items": [
+        {
+          "label": "Customer Commitment",
+          "description": "Listen, understand, and closely collaborate with clients to build practical, efficient, and scalable digital solutions."
+        },
+        {
+          "label": "Delivering Real Value",
+          "description": "Deliver not only software but impactful systems that optimize operations, improve performance, and drive growth."
+        },
+        {
+          "label": "Expertise & Innovation",
+          "description": "Combine technical expertise with innovation to deliver optimal solutions."
+        },
+        {
+          "label": "Modern Tech Application",
+          "description": "Leverage Cloud, AI, Data, and Automation to solve real-world business challenges."
+        },
+        {
+          "label": "Sustainable Development",
+          "description": "Committed to building long-term value for customers, communities, and the environment through technology."
+        }
+      ]
+    }
   },
   "ourTeam": {
     "title": "About",

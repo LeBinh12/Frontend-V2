@@ -21,7 +21,40 @@
     "title": "Tiên phong trong",
     "highlight": "Biên giới kỹ thuật số",
     "description": "Tại Lucidtech, chúng tôi không chỉ đi theo xu hướng—chúng tôi tạo ra chúng. Đội ngũ kỹ sư và nhà thiết kế chuyên gia của chúng tôi cộng tác để xây dựng các giải pháp vừa mạnh mẽ vừa đẹp mắt.",
-    "innovationHub": "Innovation Hub"
+    "innovationHub": "Innovation Hub",
+    "vision": {
+      "title": "Tầm nhìn",
+      "description": "Trở thành đối tác công nghệ đáng tin cậy, cùng khách hàng và cộng đồng tạo ra các giải pháp số thông minh, bền vững và có giá trị thực tiễn cho xã hội."
+    },
+    "shortVersion": {
+      "title": "Kiến tạo tương lai",
+      "description": "Cùng nhau kiến tạo tương lai số thông minh và bền vững."
+    },
+    "guidelines": {
+      "title": "Định hướng chiến lược",
+      "items": [
+        {
+          "label": "Đồng hành cùng khách hàng",
+          "description": "Lắng nghe, thấu hiểu và hợp tác chặt chẽ với khách hàng để xây dựng giải pháp số phù hợp, hiệu quả và có khả năng mở rộng."
+        },
+        {
+          "label": "Tạo giá trị số thực chất",
+          "description": "Không chỉ phát triển phần mềm, mà tạo ra sản phẩm và hệ thống giúp tối ưu vận hành, nâng cao hiệu suất và thúc đẩy tăng trưởng."
+        },
+        {
+          "label": "Kết hợp kinh nghiệm và sáng tạo",
+          "description": "Phát huy kinh nghiệm chuyên môn cùng tinh thần đổi mới để mang lại giải pháp tối ưu."
+        },
+        {
+          "label": "Ứng dụng công nghệ hiện đại",
+          "description": "Áp dụng Cloud, AI, Data và Automation để giải quyết bài toán thực tế của doanh nghiệp."
+        },
+        {
+          "label": "Phát triển bền vững",
+          "description": "Cam kết xây dựng các giá trị dài hạn cho khách hàng, cộng đồng và môi trường thông qua công nghệ."
+        }
+      ]
+    }
   },
   "ourTeam": {
     "title": "Về",

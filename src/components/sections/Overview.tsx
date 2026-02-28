@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Grid, Row, Col } from 'rsuite';
+import { Grid, Row, Col, Tooltip, Whisper } from 'rsuite';
 import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
@@ -36,40 +36,65 @@ const Overview = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ amount: 0.3, once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative"
+                className="relative h-full"
               >
-                <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-white/5 overflow-hidden group">
-                  <motion.div 
-                    style={{ 
-                      y: yBg, 
-                      willChange: 'transform',
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transformStyle: 'preserve-3d'
-                    }} 
-                    className="h-[120%] w-full"
-                  >
-                     <img 
-                       src={mockData.company.images.office} 
-                       alt="Lucidtech Office" 
-                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                     />
-                  </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-bg-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8">
-                     <span className="text-2xl font-display font-bold text-white">{t('overview.innovationHub')}</span>
+                <div className="h-full flex flex-col gap-6 p-6 sm:p-10 rounded-2xl bg-bg-card border border-white/10 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+                  {/* Decorative background gradient */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/5 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none" />
+                  
+                  {/* Vision Section */}
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-4 flex items-center gap-3">
+                       <span className="w-10 h-[2px] bg-primary rounded-full"></span>
+                       {t('overview.vision.title')}
+                    </h3>
+                    <p className="text-text-muted leading-relaxed text-sm sm:text-base md:text-lg">
+                      {t('overview.vision.description')}
+                    </p>
+                  </div>
+
+                  {/* Guidelines Section */}
+                  <div className="flex-grow py-4">
+                    <h3 className="text-lg font-display font-bold text-white mb-6 opacity-80 uppercase tracking-widest">
+                      {t('overview.guidelines.title')}
+                    </h3>
+                    <ul className="space-y-5">
+                      {(t('overview.guidelines.items', { returnObjects: true }) as any[]).map((item: any, idx: number) => (
+                        <li key={idx}>
+                          <Whisper
+                            placement="topStart"
+                            controlId={`tooltip-${idx}`}
+                            trigger="hover"
+                            speaker={<Tooltip className="max-w-[300px]">{item.description}</Tooltip>}
+                          >
+                            <div className="flex items-start gap-4 cursor-help group/item">
+                              <span className="flex-shrink-0 mt-2 w-2 h-2 rounded-full bg-primary/40 group-hover/item:bg-primary transition-all duration-300 shadow-[0_0_12px_rgba(0,194,255,0.4)]"></span>
+                              <span className="text-sm sm:text-base text-text-muted group-hover/item:text-white transition-colors duration-300 font-medium">
+                                {item.label}
+                              </span>
+                            </div>
+                          </Whisper>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Short Version Section */}
+                  <div className="mt-auto p-5 rounded-xl bg-primary/5 border border-primary/20 relative overflow-hidden group/short">
+                    <div className="absolute -right-2 -bottom-2 opacity-5 scale-150 transition-transform duration-700 group-hover/short:rotate-12">
+                       <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" className="text-primary">
+                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                       </svg>
+                    </div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">
+                      {t('overview.shortVersion.title')}
+                    </h4>
+                    <p className="text-base sm:text-lg text-white font-display font-semibold italic leading-snug">
+                       {t('overview.shortVersion.description')}
+                    </p>
                   </div>
                 </div>
-                {/* Floating Card */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ amount: 0.5, once: true }}
-                  transition={{ delay: 0.1, duration: 0.6 }}
-                  className="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-6 md:right-0 bg-bg-card border border-white/10 p-4 sm:p-6 rounded-xl shadow-2xl backdrop-blur-md max-w-[200px] sm:max-w-[240px] animate-bounce-slow"
-                >
-                  <p className="text-primary font-bold text-lg sm:text-xl md:text-2xl mb-1">{mockData.company.stats[2].value}</p>
-                  <p className="text-text-muted text-xs sm:text-sm uppercase tracking-wider">{t('stats.delivered')}</p>
-                </motion.div>
               </motion.div>
             </Col>
             
