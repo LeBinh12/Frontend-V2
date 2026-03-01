@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 const PortfolioPage = () => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState('all');
   
   const projectKeyMap: Record<number, string> = {
     1: 'nebula',
@@ -23,11 +23,11 @@ const PortfolioPage = () => {
     3: 'titan'
   };
 
-  const categories = ['All', ...Array.from(new Set(mockData.portfolio.map(p => p.category)))];
+  const categories = ['all', ...Array.from(new Set(mockData.portfolio.map(p => (p as any).categoryKey)))];
   
-  const filteredProjects = filter === 'All' 
+  const filteredProjects = filter === 'all' 
     ? mockData.portfolio 
-    : mockData.portfolio.filter(p => p.category === filter);
+    : mockData.portfolio.filter(p => (p as any).categoryKey === filter);
 
 
   const ref = useRef(null);
@@ -79,7 +79,7 @@ const PortfolioPage = () => {
                     : 'bg-white/5 text-text-muted hover:bg-white/10 hover:text-white'
                 }`}
               >
-                {cat === 'All' ? t('portfolio.page.filterAll') : cat}
+                {cat === 'all' ? t('portfolio.page.filterAll') : t(`portfolio.categories.${cat}`)}
               </motion.button>
             ))}
           </div>
@@ -124,7 +124,7 @@ const PortfolioPage = () => {
 
                         <div className="px-2">
                           <div className="flex items-center justify-between mb-3">
-                             <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{project.category}</span>
+                             <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
                           </div>
                           <Link href={`/portfolio/${project.id}`}>
                             <h3 className="text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">

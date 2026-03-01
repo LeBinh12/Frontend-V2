@@ -91,12 +91,21 @@
     "moM": "Growing 15% MoM",
     "distributed": "Globally Distributed",
     "industryLeading": "Industry Leading",
-    "enterpriseGrade": "Enterprise Grade"
+    "enterpriseGrade": "Enterprise Grade",
+    "founded": "Founded",
+    "engineers": "Engineers",
+    "projects": "Projects Delivered",
+    "clients": "Happy Clients"
   },
   "portfolio": {
     "title": "Our",
     "highlight": "Stellar Portfolio",
     "subtitle": "A selection of projects where technical excellence meets business impact. We take pride in every line of code.",
+    "categories": {
+      "saas": "SaaS",
+      "webDev": "Web Development",
+      "internalSystem": "Internal System"
+    },
     "viewAll": "View All Work",
     "viewCase": "View Case Study",
     "contactCTA": "Contact Us Now",
@@ -214,6 +223,7 @@
   "contact": {
     "title": "Let's",
     "highlight": "Connect",
+    "whatsapp": "Chat on WhatsApp",
     "subtitle": "Have a groundbreaking idea or a complex technical challenge? We're ready to help you build the future.",
     "form": {
       "title": "Send us a message",

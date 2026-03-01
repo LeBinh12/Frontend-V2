@@ -70,7 +70,7 @@ const CaseStudyPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{project.category} {t('portfolio.detail.caseStudy')}</span>
+              <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
               <h1 className="text-5xl md:text-8xl mb-5 text-white">{project.title}</h1>
             </motion.div>
           </div>
@@ -155,7 +155,9 @@ const CaseStudyPage = () => {
                     </div>
                     <div>
                       <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.service')}</h4>
-                      <p className="text-white font-bold">{project.category}</p>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                      </div>
                     </div>
                   </div>
 

@@ -58,7 +58,7 @@ const Hero = () => {
                 {mockData.company.stats.slice(0, 3).map((stat, i) => (
                   <div key={i} className="flex flex-col">
                     <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white">{stat.value}</span>
-                    <span className="text-xs sm:text-sm uppercase tracking-widest mt-1">{stat.label}</span>
+                    <span className="text-xs sm:text-sm uppercase tracking-widest mt-1">{t(`stats.${(stat as any).labelKey}`)}</span>
                   </div>
                 ))}
               </div>
@@ -79,7 +79,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="relative z-20 w-[470px] h-[500px] rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 rotate-[-3deg]"
+                className="relative z-20 w-[400px] h-[500px] rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 rotate-[-3deg]"
               >
                 <img 
                   src={mockData.portfolio[0].image} 
@@ -102,7 +102,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="absolute top-10 right-10 z-30 w-[220px] h-[160px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[6deg]"
+                className="absolute top-10 right-10 z-10 w-[220px] h-[160px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[6deg]"
               >
                 <img 
                   src={mockData.portfolio[1].image} 
@@ -121,7 +121,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="absolute bottom-50 left-10 z-30 w-[180px] h-[180px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[-6deg]"
+                className="absolute bottom-20 left-10 z-30 w-[180px] h-[180px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[-6deg]"
               >
                  <img 
                   src={mockData.portfolio[2].image} 
@@ -131,9 +131,42 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-black/20" />
               </motion.div>
 
-               {/* Decorative Circle Elements - Parallaxed slightly */}
-               <motion.div style={{ y: yFloating2 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full -z-10 animate-[spin_60s_linear_infinite]" />
-               <motion.div style={{ y: yFloating1 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] border border-white/5 rounded-full -z-10 animate-[spin_40s_linear_infinite_reverse]" />
+               {/* Decorative Circle Elements - Parallaxed with dots */}
+               <motion.div 
+                 style={{ y: yFloating2 }} 
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full -z-10 animate-[spin_60s_linear_infinite]"
+               >
+                 {[...Array(8)].map((_, i) => (
+                   <div 
+                     key={i} 
+                     className="absolute w-1.5 h-1.5 bg-primary/20 rounded-full"
+                     style={{
+                       top: '50%',
+                       left: '50%',
+                       transform: `rotate(${i * 45}deg) translateY(-300px) translateX(-50%)`,
+                       transformOrigin: '0 0'
+                     }}
+                   />
+                 ))}
+               </motion.div>
+
+               <motion.div 
+                 style={{ y: yFloating1 }} 
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] border border-white/5 rounded-full -z-10 animate-[spin_40s_linear_infinite_reverse]"
+               >
+                 {[...Array(6)].map((_, i) => (
+                   <div 
+                     key={i} 
+                     className="absolute w-1 h-1 bg-accent/30 rounded-full"
+                     style={{
+                       top: '50%',
+                       left: '50%',
+                       transform: `rotate(${i * 60}deg) translateY(-225px) translateX(-50%)`,
+                       transformOrigin: '0 0'
+                     }}
+                   />
+                 ))}
+               </motion.div>
 
             </div>
           </div>

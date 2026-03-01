@@ -91,12 +91,21 @@
     "moM": "Tăng trưởng 15% mỗi tháng",
     "distributed": "Phân phối toàn cầu",
     "industryLeading": "Dẫn đầu ngành",
-    "enterpriseGrade": "Cấp độ doanh nghiệp"
+    "enterpriseGrade": "Cấp độ doanh nghiệp",
+    "founded": "Năm thành lập",
+    "engineers": "Kỹ sư",
+    "projects": "Dự án hoàn thành",
+    "clients": "Khách hàng hài lòng"
   },
   "portfolio": {
     "title": "Các",
     "highlight": "Dự án tiêu biểu",
     "subtitle": "Một lựa chọn các dự án nơi sự xuất sắc về kỹ thuật kết hợp với tác động kinh doanh. Chúng tôi tự hào về từng dòng mã.",
+    "categories": {
+      "saas": "Phần mềm dịch vụ (SaaS)",
+      "webDev": "Phát triển Website",
+      "internalSystem": "Hệ thống nội bộ"
+    },
     "viewAll": "Xem tất cả công việc",
     "viewCase": "Xem chi tiết dự án",
     "contactCTA": "Liên hệ với chúng tôi ngay",
@@ -214,6 +223,7 @@
   "contact": {
     "title": "Hãy cùng",
     "highlight": "Kết nối",
+    "whatsapp": "Nhắn tin qua WhatsApp",
     "subtitle": "Bạn có một ý tưởng đột phá hay một thách thức kỹ thuật phức tạp? Chúng tôi sẵn sàng giúp bạn xây dựng tương lai.",
     "form": {
       "title": "Gửi tin nhắn cho chúng tôi",

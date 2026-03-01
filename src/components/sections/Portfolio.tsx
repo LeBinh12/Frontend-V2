@@ -88,9 +88,9 @@ const Portfolio = () => {
                   </Link>
 
                   <div className="px-2">
-                    <div className="flex items-center justify-between mb-3">
-                       <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{project.category}</span>
-                    </div>
+                     <div className="flex items-center justify-between mb-3">
+                        <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                     </div>
                     <Link href={`/portfolio/${project.id}`}>
                       <h3 className="text-lg sm:text-xl md:text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">
                         {t(`portfolio.${projectKeys[i]}.title`)}

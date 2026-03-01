@@ -123,7 +123,7 @@ const Overview = () => {
                       className="border-l-2 border-primary/30 pl-6"
                     >
                       <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</p>
-                      <p className="text-xs sm:text-sm text-text-muted uppercase tracking-widest">{stat.label}</p>
+                      <p className="text-xs sm:text-sm text-text-muted uppercase tracking-widest">{t(`stats.${(stat as any).labelKey}`)}</p>
                     </motion.div>
                   ))}
                 </div>
