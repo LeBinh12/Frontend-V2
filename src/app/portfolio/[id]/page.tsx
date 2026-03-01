@@ -51,7 +51,7 @@ const CaseStudyPage = () => {
         
         <main className="flex-grow pt-32 pb-24 overflow-hidden">
           {/* Navigation & Header */}
-          <div className="container mx-auto px-6 mb-12">
+          <div className="container mx-auto px-6">
             <button 
               onClick={() => router.back()} 
               className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 group"
@@ -71,12 +71,12 @@ const CaseStudyPage = () => {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{project.category} {t('portfolio.detail.caseStudy')}</span>
-              <h1 className="text-5xl md:text-8xl mb-12 text-white">{project.title}</h1>
+              <h1 className="text-5xl md:text-8xl mb-5 text-white">{project.title}</h1>
             </motion.div>
           </div>
 
           {/* Hero Image */}
-          <div className="w-full h-[80vh] relative mb-16 px-6">
+          <div className="w-full relative px-3 z-0">
             <motion.div
               style={{ 
                 y: yHero, 
@@ -85,7 +85,7 @@ const CaseStudyPage = () => {
                 WebkitBackfaceVisibility: 'hidden',
                 transformStyle: 'preserve-3d'
               }}
-              className="w-full h-full"
+              className="w-full"
             >
               <motion.img 
                 initial={{ opacity: 0, scale: 1.1 }}
@@ -93,14 +93,14 @@ const CaseStudyPage = () => {
                 transition={{ duration: 1.2, ease: "circOut" }}
                 src={project.image} 
                 alt={project.title}
-                className="w-full h-full object-cover rounded-3xl shadow-2xl border border-white/5"
+                className="w-full aspect-video object-contain rounded-3xl"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg-dark rounded-3xl mx-6" />
             </motion.div>
           </div>
 
         {/* Content Section */}
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 relative z-10 bg-bg-dark pt-20 -mt-20 rounded-t-[3rem]">
           <Grid fluid className="p-0!">
             <Row gutter={60}>
               <Col xs={24} lg={16}>
