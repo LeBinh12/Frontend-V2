@@ -13,6 +13,7 @@ import SmoothScroll from '@/components/common/SmoothScroll';
 import { useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
+import FooterCopy from '@/components/common/Footer-copy';
 
 const CaseStudyPage = () => {
   const { t } = useTranslation();
@@ -171,7 +172,7 @@ const CaseStudyPage = () => {
         </div>
         </main>
       
-        <Footer />
+        <FooterCopy />
       </div>
     </SmoothScroll>
   );
