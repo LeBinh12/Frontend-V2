@@ -79,7 +79,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="relative z-20 w-[400px] h-[500px] rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 rotate-[-3deg]"
+                className="relative z-20 w-[470px] h-[500px] rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 rotate-[-3deg]"
               >
                 <img 
                   src={mockData.portfolio[0].image} 
@@ -102,7 +102,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="absolute top-10 right-10 z-10 w-[220px] h-[160px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[6deg]"
+                className="absolute top-10 right-10 z-30 w-[220px] h-[160px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[6deg]"
               >
                 <img 
                   src={mockData.portfolio[1].image} 
@@ -121,7 +121,7 @@ const Hero = () => {
                   WebkitBackfaceVisibility: 'hidden',
                   transformStyle: 'preserve-3d'
                 }}
-                className="absolute bottom-20 left-10 z-30 w-[180px] h-[180px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[-6deg]"
+                className="absolute bottom-50 left-10 z-30 w-[180px] h-[180px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[-6deg]"
               >
                  <img 
                   src={mockData.portfolio[2].image} 
