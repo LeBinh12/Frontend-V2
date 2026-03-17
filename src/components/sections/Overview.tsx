@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Grid, Row, Col, Tooltip, Whisper } from 'rsuite';
+import React, { useState } from 'react';
+import { Grid, Row, Col } from 'rsuite';
 import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const Overview = () => {
   const { t } = useTranslation();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -49,50 +50,56 @@ const Overview = () => {
                        <span className="w-10 h-[2px] bg-primary rounded-full"></span>
                        {t('overview.vision.title')}
                     </h3>
-                    <p className="text-text-muted leading-relaxed text-sm sm:text-base md:text-lg">
+                    <p className="text-text-muted italic leading-relaxed text-sm sm:text-base md:text-lg">
                       {t('overview.vision.description')}
                     </p>
                   </div>
 
+                  
                   {/* Guidelines Section */}
                   <div className="flex-grow py-4">
-                    <h3 className="text-lg font-display font-bold text-white mb-6 opacity-80 uppercase tracking-widest">
+                    <h3 className="text-lg font-display font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-3">
+                      <span className="w-10 h-[2px] bg-primary rounded-full"></span>
                       {t('overview.guidelines.title')}
                     </h3>
                     <ul className="space-y-5">
                       {(t('overview.guidelines.items', { returnObjects: true }) as any[]).map((item: any, idx: number) => (
-                        <li key={idx}>
-                          <Whisper
-                            placement="topStart"
-                            controlId={`tooltip-${idx}`}
-                            trigger="hover"
-                            speaker={<Tooltip className="max-w-[300px]">{item.description}</Tooltip>}
+                        <li 
+                          key={idx}
+                          onMouseEnter={() => setHoveredIdx(idx)}
+                          onMouseLeave={() => setHoveredIdx(null)}
+                          className="pl-4 transition-all duration-300"
+                        >
+                          <div className="flex items-start gap-4 group/item py-1">
+                            <span className={`
+                              flex-shrink-0 mt-2 w-2 h-2 rounded-full transition-all duration-300
+                              ${hoveredIdx === idx ? 'bg-primary shadow-[0_0_12px_rgba(0,194,255,0.4)]' : 'bg-primary/40'}
+                            `}></span>
+                            <span className={`
+                              text-sm sm:text-base transition-colors duration-300 font-medium
+                              ${hoveredIdx === idx ? 'text-white' : 'text-text-muted'}
+                            `}>
+                              {item.label}
+                            </span>
+                          </div>
+                          <motion.div
+                            initial={false}
+                            animate={{ 
+                              height: hoveredIdx === idx ? 'auto' : 0,
+                              opacity: hoveredIdx === idx ? 1 : 0
+                            }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden ml-2 pl-4"
                           >
-                            <div className="flex items-start gap-4 cursor-help group/item">
-                              <span className="flex-shrink-0 mt-2 w-2 h-2 rounded-full bg-primary/40 group-hover/item:bg-primary transition-all duration-300 shadow-[0_0_12px_rgba(0,194,255,0.4)]"></span>
-                              <span className="text-sm sm:text-base text-text-muted group-hover/item:text-white transition-colors duration-300 font-medium">
-                                {item.label}
-                              </span>
+                            <div className="pl-2 py-2 border-l-2 border-primary rounded-l-lg">
+                              <p className="text-sm text-text-muted leading-relaxed max-w-[90%] font-light">
+                                {item.description}
+                              </p>
                             </div>
-                          </Whisper>
+                          </motion.div>
                         </li>
                       ))}
                     </ul>
-                  </div>
-
-                  {/* Short Version Section */}
-                  <div className="mt-auto p-5 rounded-xl bg-primary/5 border border-primary/20 relative overflow-hidden group/short">
-                    <div className="absolute -right-2 -bottom-2 opacity-5 scale-150 transition-transform duration-700 group-hover/short:rotate-12">
-                       <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" className="text-primary">
-                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                       </svg>
-                    </div>
-                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">
-                      {t('overview.shortVersion.title')}
-                    </h4>
-                    <p className="text-base sm:text-lg text-white font-display font-semibold italic leading-snug">
-                       {t('overview.shortVersion.description')}
-                    </p>
                   </div>
                 </div>
               </motion.div>

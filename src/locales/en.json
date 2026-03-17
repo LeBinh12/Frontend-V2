@@ -59,7 +59,9 @@
   "ourTeam": {
     "title": "About",
     "highlight": "Our Team",
-    "description": "Lucid Technology is powered by a strong and experienced team that combines seasoned professionals with enthusiastic young talents. Our senior members bring solid experience in software outsourcing and large-scale system development, while our young engineers contribute fresh ideas, high energy, and a strong passion for their work. Together, we deliver reliable, scalable, and innovative technology solutions for our clients."
+    "description": "Lucid Technology is powered by a strong and experienced team that combines seasoned professionals with enthusiastic young talents. Our senior members bring solid experience in software outsourcing and large-scale system development, while our young engineers contribute fresh ideas, high energy, and a strong passion for their work. Together, we deliver reliable, scalable, and innovative technology solutions for our clients.",
+    "seeMore": "See More",
+    "seeLess": "See Less"
   },
   "services": {
     "title": "Our",

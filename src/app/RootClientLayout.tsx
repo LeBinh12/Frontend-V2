@@ -26,11 +26,25 @@ const orbitron = Orbitron({
   display: 'swap',
 });
 
+import { useTranslation } from 'react-i18next';
+
 export default function RootClientLayout({
   children,
+  detectedLang,
 }: {
   children: React.ReactNode;
+  detectedLang: string;
 }) {
+  const { i18n } = useTranslation();
+
+  // Sync server-detected language with client-side i18n
+  React.useEffect(() => {
+    const savedLang = localStorage.getItem('lang') || localStorage.getItem('i18nextLng');
+    if (!savedLang && detectedLang) {
+      i18n.changeLanguage(detectedLang);
+    }
+  }, [detectedLang, i18n]);
+
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} ${orbitron.variable}`} suppressHydrationWarning={true}>
       <body className="antialiased font-sans">

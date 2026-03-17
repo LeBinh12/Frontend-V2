@@ -102,7 +102,7 @@ const Preloader = () => {
                   }}
                   className="block text-xl font-['Orbitron',sans-serif] font-bold uppercase text-[#8DC63F]"
                 >
-                  MAKE DIGITAL BETTER
+                  MAKE DIGITAL TOGETHER
                 </motion.span>
               </div>
             </div>

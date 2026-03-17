@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'rsuite';
 import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const Hero = () => {
   const { t } = useTranslation();
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { scrollY, scrollYProgress } = useScroll(); // Added scrollYProgress
   
   // Parallax Transforms
@@ -67,69 +68,114 @@ const Hero = () => {
 
           {/* Right Side Image Composition */}
           <div className="hidden lg:flex lg:w-1/2 px-4 items-center justify-center">
-            <div className="relative w-full h-[600px] flex items-center justify-center pointer-events-none select-none">
+            <div 
+              onMouseLeave={() => setHoveredId(null)}
+              className="relative w-full h-[600px] flex items-center justify-center select-none"
+            >
               
-              {/* Main Large Image */}
-              <motion.div
-                style={{ 
-                  y: yImage, 
-                  opacity: opacityHero, 
-                  willChange: 'transform',
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transformStyle: 'preserve-3d'
-                }}
-                className="relative z-20 w-[470px] h-[500px] rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 rotate-[-3deg]"
+              {/* Main Large Image Wrapper - Stable Trigger */}
+              <div 
+                onMouseEnter={() => setHoveredId('main')}
+                className="relative z-20 w-[470px] h-[500px] flex items-center justify-center cursor-pointer"
               >
-                <img 
-                  src={mockData.portfolio[0].image} 
-                  alt="Main Feature" 
-                  className="w-full h-full object-cover"
-                />
-                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-8 left-8">
-                   <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-2">Featured</span>
-                   <h3 className="text-white font-display font-bold text-2xl">{mockData.portfolio[0].title}</h3>
-                </div> */}
-              </motion.div>
+                <motion.div
+                  onMouseEnter={() => setHoveredId('main')}
+                  style={{ 
+                    y: yImage, 
+                    opacity: opacityHero, 
+                    willChange: 'transform',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d'
+                  }}
+                  animate={{
+                    scale: hoveredId === 'main' ? 1.05 : hoveredId ? 0.9 : 1,
+                    rotate: hoveredId === 'main' ? 0 : -3,
+                    opacity: hoveredId && hoveredId !== 'main' ? 0.4 : 1,
+                    zIndex: hoveredId === 'main' ? 40 : 20,
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="w-full h-full rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 pointer-events-auto"
+                >
+                  <img 
+                    src={mockData.portfolio[0].image} 
+                    alt="Main Feature" 
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+              </div>
 
-              {/* Floating Top Right */}
-              <motion.div
-                style={{ 
-                  y: yFloating1, 
-                  willChange: 'transform',
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transformStyle: 'preserve-3d'
-                }}
-                className="absolute top-10 right-10 z-30 w-[220px] h-[160px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[6deg]"
+              <div 
+                onMouseEnter={() => setHoveredId('floating1')}
+                className="absolute top-10 right-10 z-30 w-[220px] h-[160px] cursor-pointer"
               >
-                <img 
-                  src={mockData.portfolio[1].image} 
-                  alt="Floating 1" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-              </motion.div>
+                <motion.div
+                  onMouseEnter={() => setHoveredId('floating1')}
+                  style={{ 
+                    y: yFloating1, 
+                    willChange: 'transform',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0
+                  }}
+                  animate={{
+                    scale: hoveredId === 'floating1' ? 1 : hoveredId ? 0.4 : 0.5,
+                    rotate: hoveredId === 'floating1' ? 0 : 6,
+                    x: hoveredId === 'floating1' ? -120 : 0,
+                    y: hoveredId === 'floating1' ? 40 : 0,
+                    opacity: hoveredId && hoveredId !== 'floating1' ? 0.2 : 1,
+                    zIndex: hoveredId === 'floating1' ? 50 : 30,
+                  }}
+                  transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                  className="w-[440px] h-[320px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-top-right pointer-events-auto"
+                >
+                  <img 
+                    src={mockData.portfolio[1].image} 
+                    alt="Floating 1" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                </motion.div>
+              </div>
 
-              {/* Floating Bottom Left */}
-              <motion.div
-                style={{ 
-                  y: yFloating2, 
-                  willChange: 'transform',
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transformStyle: 'preserve-3d'
-                }}
-                className="absolute bottom-50 left-10 z-30 w-[180px] h-[180px] rounded-2xl overflow-hidden border-4 border-white/10 shadow-xl rotate-[-6deg]"
+              <div 
+                onMouseEnter={() => setHoveredId('floating2')}
+                className="absolute bottom-50 left-10 z-30 w-[180px] h-[180px] cursor-pointer"
               >
-                 <img 
-                  src={mockData.portfolio[2].image} 
-                  alt="Floating 2" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-              </motion.div>
+                <motion.div
+                  onMouseEnter={() => setHoveredId('floating2')}
+                  style={{ 
+                    y: yFloating2, 
+                    willChange: 'transform',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0
+                  }}
+                  animate={{
+                    scale: hoveredId === 'floating2' ? 1 : hoveredId ? 0.35 : 0.45,
+                    rotate: hoveredId === 'floating2' ? 0 : -6,
+                    x: hoveredId === 'floating2' ? 120 : 0,
+                    y: hoveredId === 'floating2' ? -40 : 0,
+                    opacity: hoveredId && hoveredId !== 'floating2' ? 0.2 : 1,
+                    zIndex: hoveredId === 'floating2' ? 50 : 30,
+                  }}
+                  transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                  className="w-[400px] h-[400px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-bottom-left pointer-events-auto"
+                >
+                   <img 
+                    src={mockData.portfolio[2].image} 
+                    alt="Floating 2" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                </motion.div>
+              </div>
 
                {/* Decorative Circle Elements - Parallaxed with dots */}
                <motion.div 

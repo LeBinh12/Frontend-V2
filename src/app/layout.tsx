@@ -36,13 +36,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { headers } from 'next/headers';
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const country = headersList.get('x-vercel-ip-country');
+  const detectedLang = country === 'VN' ? 'vn' : 'en';
+
   return (
-    <RootClientLayout>
+    <RootClientLayout detectedLang={detectedLang}>
       {children}
     </RootClientLayout>
   );

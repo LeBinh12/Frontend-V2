@@ -13,6 +13,7 @@ import SmoothScroll from '@/components/common/SmoothScroll';
 import FooterCopy from '@/components/common/Footer-copy';
 import OurTeam from '@/components/sections/OurTeam';
 
+
 export default function Home() {
   return (
     <SmoothScroll>

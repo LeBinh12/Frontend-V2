@@ -12,7 +12,7 @@ import SmoothScroll from '@/components/common/SmoothScroll';
 import { useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
-import FooterCopy from '@/components/common/Footer-copy';
+import FooterCopy from '../../components/common/Footer-copy';
 
 const PortfolioPage = () => {
   const { t } = useTranslation();

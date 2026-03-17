@@ -31,7 +31,7 @@
       "description": "Cùng nhau kiến tạo tương lai số thông minh và bền vững."
     },
     "guidelines": {
-      "title": "Định hướng chiến lược",
+      "title": "Sứ mệnh chiến lược",
       "items": [
         {
           "label": "Đồng hành cùng khách hàng",
@@ -59,7 +59,9 @@
   "ourTeam": {
     "title": "Về",
     "highlight": "Đội Ngũ",
-    "description": "Lucid Technology được vận hành bởi một đội ngũ mạnh mẽ và dày dặn kinh nghiệm, kết hợp giữa các chuyên gia lâu năm và những tài năng trẻ nhiệt huyết. Các thành viên cấp cao mang đến kinh nghiệm vững chắc trong gia công phần mềm và phát triển hệ thống quy mô lớn, trong khi các kỹ sư trẻ đóng góp những ý tưởng mới mẻ, năng lượng dồi dào và niềm đam mê mãnh liệt với công việc. Cùng nhau, chúng tôi cung cấp các giải pháp công nghệ tin cậy, có khả năng mở rộng và đổi mới cho khách hàng."
+    "description": "Lucid Technology được vận hành bởi một đội ngũ mạnh mẽ và dày dặn kinh nghiệm, kết hợp giữa các chuyên gia lâu năm và những tài năng trẻ nhiệt huyết. Các thành viên cấp cao mang đến kinh nghiệm vững chắc trong gia công phần mềm và phát triển hệ thống quy mô lớn, trong khi các kỹ sư trẻ đóng góp những ý tưởng mới mẻ, năng lượng dồi dào và niềm đam mê mãnh liệt với công việc. Cùng nhau, chúng tôi cung cấp các giải pháp công nghệ tin cậy, có khả năng mở rộng và đổi mới cho khách hàng.",
+    "seeMore": "Xem thêm",
+    "seeLess": "Thu gọn"
   },
   "services": {
     "title": "Các",

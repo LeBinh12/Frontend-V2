@@ -14,7 +14,7 @@ const Header = () => {
   const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -32,6 +32,21 @@ const Header = () => {
     { label: t('nav.team'), href: '/#team' },
     { label: t('nav.about'), href: '/#about' },
   ];
+
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Check if it's a hash link on the same page
+    if (href.startsWith('/#')) {
+      e.preventDefault();
+      const id = href.split('#')[1];
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setMobileOpen(false);
+        // Optional: Update URL hash without reload
+        window.history.pushState(null, '', href);
+      }
+    }
+  };
 
   return (
     <>
@@ -87,10 +102,10 @@ const Header = () => {
             
             <div className="hidden md:flex justify-center flex-2">
               <Nav className="flex items-center text-lg">
-                <Nav.Item as={Link} href="/#services">{t('nav.services')}</Nav.Item>
-                <Nav.Item as={Link} href="/#portfolio">{t('nav.portfolio')}</Nav.Item>
-                <Nav.Item as={Link} href="/#team">{t('nav.team')}</Nav.Item>
-                <Nav.Item as={Link} href="/#about">{t('nav.about')}</Nav.Item>               
+                <Nav.Item as={Link} href="/#services" onClick={(e: any) => handleScroll(e, '/#services')}>{t('nav.services')}</Nav.Item>
+                <Nav.Item as={Link} href="/#portfolio" onClick={(e: any) => handleScroll(e, '/#portfolio')}>{t('nav.portfolio')}</Nav.Item>
+                <Nav.Item as={Link} href="/#team" onClick={(e: any) => handleScroll(e, '/#team')}>{t('nav.team')}</Nav.Item>
+                <Nav.Item as={Link} href="/#about" onClick={(e: any) => handleScroll(e, '/#about')}>{t('nav.about')}</Nav.Item>               
               </Nav>
             </div>
             
@@ -134,7 +149,7 @@ const Header = () => {
                 key={item.label} 
                 href={item.href} 
                 className="text-2xl font-display font-medium text-text-muted hover:text-primary transition-colors"
-                onClick={() => setMobileOpen(false)}
+                onClick={(e) => handleScroll(e, item.href)}
               >
                 {item.label}
               </Link>
