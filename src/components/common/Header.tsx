@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Nav, Navbar, Drawer } from 'rsuite';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { mockData } from '@/data/mockData';
@@ -15,6 +16,7 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
   const { t, i18n } = useTranslation();
+  const pathname = usePathname();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -34,8 +36,8 @@ const Header = () => {
   ];
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Check if it's a hash link on the same page
-    if (href.startsWith('/#')) {
+    // Only smooth scroll if we are on the home page
+    if (pathname === '/' && href.startsWith('/#')) {
       e.preventDefault();
       const id = href.split('#')[1];
       const element = document.getElementById(id);
@@ -46,6 +48,7 @@ const Header = () => {
         window.history.pushState(null, '', href);
       }
     }
+    // If not on home page, allow default Link behavior to /#section
   };
 
   return (
