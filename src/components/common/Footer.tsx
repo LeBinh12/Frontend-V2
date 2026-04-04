@@ -6,13 +6,14 @@ import Link from 'next/link';
 import { mockData } from '@/data/mockData';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const Footer = () => {
   const { t } = useTranslation();
 
   return (
     <footer className="bg-bg-dark border-t border-white/5 pt-20 pb-10">
-      <div className="container mx-auto px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <Row gutter={30}>
             <Col xs={24} md={8} className="mb-10 md:mb-0">
@@ -20,12 +21,14 @@ const Footer = () => {
                 <motion.div
                   whileHover={{ scale: 1.05, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-14 h-14 flex items-center justify-center "
+                  className="w-14 h-14 flex items-center justify-center relative"
                 >
-                  <img
+                  <Image
                     src="/images/logo-05-none-text-removebg-preview.png"
                     alt="Logo"
-                    className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
+                    width={56}
+                    height={56}
+                    className="object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
                   />
                 </motion.div>
                 <div className="leading-tight hidden sm:block">

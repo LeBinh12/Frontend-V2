@@ -20,7 +20,7 @@ const Technologies = () => {
 
   return (
     <section ref={ref} className="py-24 bg-bg-dark overflow-hidden" id="technologies">
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -74,20 +74,12 @@ const Technologies = () => {
           </Row>
         </Grid>
 
-        {/* Marquee-like tech logos */}
+        {/* Marquee-like tech logos - Optimized with CSS animation for zero JS reflows */}
         <div className="mt-12 py-10 border-t border-white/5 overflow-hidden relative">
           <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-bg-dark to-transparent z-10" />
           <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-bg-dark to-transparent z-10" />
           
-          <motion.div 
-            animate={{ x: [0, -1000] }}
-            transition={{ 
-              duration: 20, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-            className="flex items-center gap-16 whitespace-nowrap opacity-30 grayscale"
-          >
+          <div className="flex items-center gap-16 whitespace-nowrap opacity-30 grayscale animate-marquee hover:[animation-play-state:paused]">
             {[
               'REACT', 'NODE.JS', 'TYPESCRIPT', 'AZURE', 'DOCKER', 'KUBERNETES', 
               '.NET', 'GOLANG', 'NEXT.JS', 'PYTHON', 'PYTORCH',
@@ -98,8 +90,18 @@ const Technologies = () => {
                 {logo}
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
+
+        <style jsx>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1000px); }
+          }
+          .animate-marquee {
+            animation: marquee 25s linear infinite;
+          }
+        `}</style>
       </div>
     </section>
   );

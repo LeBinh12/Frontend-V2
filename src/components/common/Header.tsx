@@ -9,6 +9,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import { mockData } from '@/data/mockData';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -62,28 +63,32 @@ const Header = () => {
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${scrolled || mobileOpen ? 'bg-bg-dark/80 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}
       >
-        <div className="container mx-auto px-6 py-2">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <Navbar appearance="subtle" className="bg-transparent! flex items-center">
             <div className="flex-1">
               <Navbar.Brand as={Link} href="/" className="p-0!">
                 <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 2.2 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="flex items-center gap-3"
                 >
                   {/* Logo */}
-                  <motion.div 
-                    whileHover={{ scale: 1.05, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-14 h-14 flex items-center justify-center"
-                  >
-                    <img 
-                      src="/images/logo-05-none-text-removebg-preview.png" 
-                      alt="Logo" 
-                      className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
-                    />
-                  </motion.div>
+                    <motion.div 
+                      whileHover={{ scale: 1.05, rotate: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-14 h-14 flex items-center justify-center relative"
+                    >
+                      <Image 
+                        src="/images/logo-05-none-text-removebg-preview.png" 
+                        alt="Logo" 
+                        width={56}
+                        height={56}
+                        className="object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
+                        priority
+                        fetchPriority="high"
+                      />
+                    </motion.div>
 
                   {/* Brand Text */}
                   <div className="leading-none hidden sm:block">

@@ -2,6 +2,15 @@ import { Metadata } from 'next';
 import React from 'react';
 import './globals.css';
 import RootClientLayout from './RootClientLayout';
+import { Inter, Outfit, Orbitron, Geist, Geist_Mono } from 'next/font/google';
+import { headers } from 'next/headers';
+
+// Declare ALL fonts here in the Server Component so Next.js generates <link rel="preload"> in the HTML <head>
+const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans', display: 'swap' });
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
+const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-orbitron', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
@@ -36,8 +45,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { headers } from 'next/headers';
-
 export default async function RootLayout({
   children,
 }: {
@@ -47,9 +54,15 @@ export default async function RootLayout({
   const country = headersList.get('x-vercel-ip-country');
   const detectedLang = country === 'VN' ? 'vn' : 'en';
 
+  const fontClasses = `${inter.variable} ${outfit.variable} ${orbitron.variable} ${geistSans.variable} ${geistMono.variable} ${geistSans.className}`;
+
   return (
-    <RootClientLayout detectedLang={detectedLang}>
-      {children}
-    </RootClientLayout>
+    <html lang="en" className={fontClasses} suppressHydrationWarning={true}>
+      <body className="antialiased font-sans">
+        <RootClientLayout detectedLang={detectedLang}>
+          {children}
+        </RootClientLayout>
+      </body>
+    </html>
   );
 }

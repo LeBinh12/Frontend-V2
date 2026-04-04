@@ -2,27 +2,27 @@
 
 import Header from '@/components/common/Header';
 import Hero from '@/components/sections/Hero';
-import Overview from '@/components/sections/Overview';
-import Services from '@/components/sections/Services';
-import Technologies from '@/components/sections/Technologies';
-import Portfolio from '@/components/sections/Portfolio';
-import { motion } from 'framer-motion';
-import GlobalScene from '@/components/canvas/GlobalScene';
-
+import dynamic from 'next/dynamic';
 import SmoothScroll from '@/components/common/SmoothScroll';
-import FooterCopy from '@/components/common/Footer-copy';
-import OurTeam from '@/components/sections/OurTeam';
 
+// GlobalScene (Three.js) - client only, no SSR
+const GlobalScene = dynamic(() => import('@/components/canvas/GlobalScene'), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 bg-bg-dark -z-10" />,
+});
+
+// Below-the-fold sections - lazy loaded for better FCP/LCP
+const Overview = dynamic(() => import('@/components/sections/Overview'));
+const Services = dynamic(() => import('@/components/sections/Services'));
+const OurTeam = dynamic(() => import('@/components/sections/OurTeam'));
+const Portfolio = dynamic(() => import('@/components/sections/Portfolio'));
+const Technologies = dynamic(() => import('@/components/sections/Technologies'));
+const FooterCopy = dynamic(() => import('@/components/common/Footer-copy'));
 
 export default function Home() {
   return (
     <SmoothScroll>
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col min-h-screen w-full"
-      >
+      <div className="flex flex-col min-h-screen w-full">
         <GlobalScene />
         <Header />
         <main className="flex-grow w-full overflow-x-hidden">
@@ -30,13 +30,11 @@ export default function Home() {
           <Overview />
           <Services />
           <OurTeam />
-          {/* <Stats /> */}
           <Portfolio />
           <Technologies />
-          {/* <Team /> */}
         </main>
         <FooterCopy />
-      </motion.div>
+      </div>
     </SmoothScroll>
   );
 }

@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import teamMembersData from '@/data/teamMembers.json';
+import Image from 'next/image';
 
 const teamMembers = teamMembersData;
 
@@ -38,14 +39,16 @@ const TeamMobileList = () => {
             <div 
               style={{ width: mobileSize, height: mobileSize }}
               className={`
-                shrink-0 rounded-full overflow-hidden border-2 shadow-lg
+                shrink-0 rounded-full overflow-hidden border-2 shadow-lg relative
                 ${member.level === 1 ? 'border-primary/60 ring-4 ring-primary/10' : 'border-white/20'}
               `}
             >
-              <img 
-                src="/images/avatar-1.png" 
+              <Image 
+                src="/images/tinified/avatar-1.png" 
                 alt={member.name} 
-                className="w-full h-full object-cover" 
+                fill
+                sizes={`${mobileSize}px`}
+                className="object-cover" 
               />
             </div>
             <div className="flex flex-col justify-center overflow-hidden">
@@ -64,7 +67,7 @@ const TeamMobileList = () => {
       <motion.div 
         initial={false}
         animate={{ height: isExpanded ? 'auto' : 0, opacity: isExpanded ? 1 : 0 }}
-        className="overflow-hidden flex flex-col gap-4"
+        className="overflow-hidden flex flex-col gap-4 will-change-[height,opacity] transform translate-z-0"
       >
         {supportMembers.map((member, idx) => (
           <div 
@@ -73,12 +76,14 @@ const TeamMobileList = () => {
           >
              {/* Slightly smaller avatar for Level 3 */}
             <div 
-              className="w-16 h-16 shrink-0 rounded-full overflow-hidden border border-white/10"
+              className="w-16 h-16 shrink-0 rounded-full overflow-hidden border border-white/10 relative"
             >
-              <img 
-                src="/images/avatar-1.png" 
+              <Image 
+                src="/images/tinified/avatar-1.png" 
                 alt={member.name} 
-                className="w-full h-full object-cover" 
+                fill
+                sizes="64px"
+                className="object-cover" 
               />
             </div>
             <div className="flex flex-col justify-center overflow-hidden">
@@ -116,7 +121,7 @@ const TeamAvatarCloud = () => {
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden select-none z-0">
-      <div className="container mx-auto h-full relative">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 h-full relative">
         {teamMembers.map((member, idx) => (
           <motion.div
             key={idx}
@@ -141,18 +146,23 @@ const TeamAvatarCloud = () => {
           >
             {/* Avatar Container with Bubble Loop Animation */}
             <motion.div
-              animate={{
-                y: [0, -25, 0],
-                x: [0, idx % 2 === 0 ? 10 : -10, 0],
-                scale: [1, 1.05, 1]
+              initial={{ y: 0, x: 0 }}
+              whileInView={{
+                y: [0, -15, 0],
+                x: [0, idx % 2 === 0 ? 8 : -8, 0],
+              }}
+              viewport={{ once: false }}
+              style={{ 
+                width: member.size, 
+                height: member.size,
+                willChange: 'transform'
               }}
               transition={{
-                duration: 4 + Math.random() * 4,
+                duration: 5 + Math.random() * 5,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: member.delay // Using entrance delay as start offset
+                delay: member.delay
               }}
-              style={{ width: member.size, height: member.size }}
               className={`
                 relative rounded-full overflow-hidden border-2 shadow-2xl backdrop-blur-sm transition-all duration-500
                 ${member.level === 1 ? 'border-primary/60 ring-4 ring-primary/10' : 'border-white/10'}
@@ -160,10 +170,12 @@ const TeamAvatarCloud = () => {
                 brightness-90 group-hover/member:brightness-105
               `}
             >
-              <img 
-                src={`/images/avatar-1.png`} 
+              <Image 
+                src={`/images/tinified/avatar-1.png`} 
                 alt={member.name} 
-                className="w-full h-full object-cover transition-all duration-700"
+                fill
+                sizes={`${member.size}px`}
+                className="object-cover transition-all duration-700"
               />
             </motion.div>
 
@@ -203,13 +215,13 @@ const OurTeam = () => {
   const yContent = useTransform(scrollYProgress, [0, 1], [25, -25]);
 
   return (
-    <section ref={ref} className="py-24 bg-transparent overflow-hidden relative" id="team">
+    <section ref={ref} className="py-24  bg-transparent overflow-hidden relative" id="team">
       {/* Desktop Cloud Background - Visible only on LG */}
       <div className="hidden lg:block">
         <TeamAvatarCloud />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 pointer-events-none">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pointer-events-none">
           <Grid fluid className="p-0!">
             <Row gutter={40} className="items-center">
               {/* Text Section */}

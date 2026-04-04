@@ -31,7 +31,7 @@ const Stats = () => {
       {/* Background Decorative Element */}
       <motion.div style={{ scaleX: scaleLine }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Grid fluid className="p-0!">
           <Row gutter={40}>
             {lStats.map((stat, i) => (

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mockData } from '@/data/mockData';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 const Preloader = () => {
   const [loading, setLoading] = useState(true);
@@ -31,26 +32,29 @@ const Preloader = () => {
         >
           <div className="relative flex flex-col items-center">
             {/* Animated Logo "L" */}
-            <motion.div
-              initial={{ scale: 0.5, opacity: 0, rotate: -45 }}
-              animate={{ 
-                scale: 1, 
-                opacity: 1, 
-                rotate: 0,
-                transition: { 
-                  duration: 0.8, 
-                  ease: "easeOut" 
-                }
-              }}
-              className="w-55 h-55 flex items-center justify-center mb-8"
-            >
-              <img 
-                src="/images/logo-05-none-text-removebg-preview.png" 
-                alt="Logo" 
-                className="w-full h-full object-contain p-2 filter 
-           drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
-              />
-            </motion.div> 
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0, rotate: -45 }}
+                animate={{ 
+                  scale: 1, 
+                  opacity: 1, 
+                  rotate: 0,
+                  transition: { 
+                    duration: 0.8, 
+                    ease: "easeOut" 
+                  }
+                }}
+                className="w-55 h-55 flex items-center justify-center mb-8 relative"
+              >
+                <Image 
+                  src="/images/logo-05-none-text-removebg-preview.png" 
+                  alt="Logo" 
+                  width={220}
+                  height={220}
+                  className="object-contain p-2 filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
+                  priority
+                  fetchPriority="high"
+                />
+              </motion.div> 
 
             {/* Vertical Brand Text */}
             <div className="flex flex-col items-center gap-1 text-center">
@@ -109,9 +113,9 @@ const Preloader = () => {
 
             {/* Decorative Line Underneath */}
             <motion.div
-              initial={{ width: 0, opacity: 0 }}
+              initial={{ scaleX: 0, opacity: 0 }}
               animate={{ 
-                width: "100%", 
+                scaleX: 1, 
                 opacity: 1,
                 transition: { 
                   duration: 1, 
@@ -119,7 +123,8 @@ const Preloader = () => {
                   ease: "easeInOut"
                 }
               }}
-              className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-4"
+              style={{ originX: 0.5 }}
+              className="h-px w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-4"
             />
           </div>
           

@@ -73,7 +73,7 @@ export const mockData = {
       title: "PetroPoint TMS",
       category: "SaaS",
       categoryKey: "saas",
-      image: "/images/portfolio-SaaS.png",
+      image: "/images/tinified/portfolio-SaaS.png",
       description: "Hệ thống quản lý trạm xăng thông minh giúp tối ưu hóa vận hành, quản lý tồn kho và kiểm soát giao dịch.",
       technologies: ["Next.js", "TypeScript", "Tailwind", ".NET 9", "PostgreSQL"]
     },
@@ -82,7 +82,7 @@ export const mockData = {
       title: "American Wire Group (BuyAWG)",
       category: "Web Development",
       categoryKey: "webDev",
-      image: "/images/portfolio-awg.png",
+      image: "/images/tinified/portfolio-awg.png",
       description: "Thiết kế và cập nhật giao diện website hiện đại, tối ưu trải nghiệm người dùng và hiệu suất hệ thống.",
       technologies: ["WordPress", "PHP", "CSS3", "JavaScript", "SEO Optimization"]
     },
@@ -91,7 +91,7 @@ export const mockData = {
       title: "Chat Messaging",
       category: "Internal System",
       categoryKey: "internalSystem",
-      image: "/images/portfolio-chat.png",
+      image: "/images/tinified/portfolio-chat.png",
       description: "Internal system featuring multimedia messaging, video calls, and integrated task management. Built with Golang, Reactjs, Kafka, Tailwind, and Framer Motion.",
       technologies: ["Golang", "Reactjs", "Kafka", "Tailwind", "Framer Motion"]
     }

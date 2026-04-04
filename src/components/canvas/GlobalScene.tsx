@@ -10,7 +10,7 @@ import { useScroll } from 'framer-motion';
 
 const ParticleField = () => {
   const ref = useRef<any>(null);
-  const sphere = useMemo(() => random.inSphere(new Float32Array(24000), { radius: 1.8 }), []);
+  const sphere = useMemo(() => random.inSphere(new Float32Array(2000), { radius: 1.8 }), []);
   
   // Create a connection to the global scroll
   const { scrollYProgress } = useScroll();
@@ -53,7 +53,11 @@ const ParticleField = () => {
 const GlobalScene = () => {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
-      <Canvas camera={{ position: [0, 0, 1] }}>
+      <Canvas 
+        camera={{ position: [0, 0, 1] }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: false, powerPreference: "low-power" }}
+      >
         <ParticleField />
       </Canvas>
     </div>

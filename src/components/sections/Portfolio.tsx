@@ -8,6 +8,7 @@ import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 
 const Portfolio = () => {
   const { t } = useTranslation();
@@ -29,13 +30,13 @@ const Portfolio = () => {
   };
 
   return (
-    <section ref={ref} className="py-24 bg-bg-card/30 overflow-hidden" id="portfolio">
+    <section ref={ref} className="py-24 min-h-screen bg-bg-card/30 overflow-hidden" id="portfolio">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ amount: 0.3, once: false }}
         transition={{ duration: 0.8 }}
-        className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4 sm:gap-6"
+        className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4 sm:gap-6"
       >
         <div className="max-w-2xl">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">{t('portfolio.title')} <span className="text-primary">{t('portfolio.highlight')}</span></h2>
@@ -50,7 +51,7 @@ const Portfolio = () => {
         </Link>
       </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <Row gutter={40}>
             {mockData.portfolio.map((project, i) => (
@@ -69,11 +70,13 @@ const Portfolio = () => {
                   transition={{ duration: 0.5, ease: "easeOut" }} 
                 >
                   <Link href={`/portfolio/${project.id}`} className="block">
-                    <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20">
-                      <img 
+                    <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 group">
+                      <Image 
                         src={project.image} 
                         alt={t(`portfolio.${projectKeys[i]}.title`)}
-                        className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       
                       {/* Modern Overlay */}

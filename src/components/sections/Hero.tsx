@@ -6,6 +6,7 @@ import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -83,24 +84,28 @@ const Hero = () => {
                   style={{ 
                     y: yImage, 
                     opacity: opacityHero, 
-                    willChange: 'transform',
+                    willChange: 'transform, opacity',
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    transformStyle: 'preserve-3d'
+                    transformStyle: 'preserve-3d',
+                    zIndex: hoveredId === 'main' ? 40 : 20,
                   }}
                   animate={{
                     scale: hoveredId === 'main' ? 1.05 : hoveredId ? 0.9 : 1,
                     rotate: hoveredId === 'main' ? 0 : -3,
                     opacity: hoveredId && hoveredId !== 'main' ? 0.4 : 1,
-                    zIndex: hoveredId === 'main' ? 40 : 20,
                   }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="w-full h-full rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 pointer-events-auto"
+                  className="w-full h-full rounded-[32px] overflow-hidden border-8 border-white/5 shadow-2xl shadow-primary/20 pointer-events-auto relative"
                 >
-                  <img 
+                  <Image 
                     src={mockData.portfolio[0].image} 
                     alt="Main Feature" 
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="470px"
+                    className="object-cover"
+                    priority
+                    fetchPriority="high"
                   />
                 </motion.div>
               </div>
@@ -113,13 +118,14 @@ const Hero = () => {
                   onMouseEnter={() => setHoveredId('floating1')}
                   style={{ 
                     y: yFloating1, 
-                    willChange: 'transform',
+                    willChange: 'transform, opacity',
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transformStyle: 'preserve-3d',
                     position: 'absolute',
                     top: 0,
-                    right: 0
+                    right: 0,
+                    zIndex: hoveredId === 'floating1' ? 50 : 30,
                   }}
                   animate={{
                     scale: hoveredId === 'floating1' ? 1 : hoveredId ? 0.4 : 0.5,
@@ -127,15 +133,18 @@ const Hero = () => {
                     x: hoveredId === 'floating1' ? -120 : 0,
                     y: hoveredId === 'floating1' ? 40 : 0,
                     opacity: hoveredId && hoveredId !== 'floating1' ? 0.2 : 1,
-                    zIndex: hoveredId === 'floating1' ? 50 : 30,
                   }}
                   transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                  className="w-[440px] h-[320px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-top-right pointer-events-auto"
+                  className="w-[440px] h-[320px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-top-right pointer-events-auto relative"
                 >
-                  <img 
+                  <Image 
                     src={mockData.portfolio[1].image} 
                     alt="Floating 1" 
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="440px"
+                    className="object-cover"
+                    priority
+                    fetchPriority="high"
                   />
                   <div className="absolute inset-0 bg-black/20" />
                 </motion.div>
@@ -149,13 +158,14 @@ const Hero = () => {
                   onMouseEnter={() => setHoveredId('floating2')}
                   style={{ 
                     y: yFloating2, 
-                    willChange: 'transform',
+                    willChange: 'transform, opacity',
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transformStyle: 'preserve-3d',
                     position: 'absolute',
                     bottom: 0,
-                    left: 0
+                    left: 0,
+                    zIndex: hoveredId === 'floating2' ? 50 : 30,
                   }}
                   animate={{
                     scale: hoveredId === 'floating2' ? 1 : hoveredId ? 0.35 : 0.45,
@@ -163,15 +173,18 @@ const Hero = () => {
                     x: hoveredId === 'floating2' ? 120 : 0,
                     y: hoveredId === 'floating2' ? -40 : 0,
                     opacity: hoveredId && hoveredId !== 'floating2' ? 0.2 : 1,
-                    zIndex: hoveredId === 'floating2' ? 50 : 30,
                   }}
                   transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                  className="w-[400px] h-[400px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-bottom-left pointer-events-auto"
+                  className="w-[400px] h-[400px] rounded-3xl overflow-hidden border-4 border-white/10 shadow-xl origin-bottom-left pointer-events-auto relative"
                 >
-                   <img 
+                   <Image 
                     src={mockData.portfolio[2].image} 
                     alt="Floating 2" 
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="400px"
+                    className="object-cover"
+                    priority
+                    fetchPriority="high"
                   />
                   <div className="absolute inset-0 bg-black/20" />
                 </motion.div>
@@ -179,8 +192,12 @@ const Hero = () => {
 
                {/* Decorative Circle Elements - Parallaxed with dots */}
                <motion.div 
+                 initial={{ rotate: 0 }}
+                 whileInView={{ rotate: 360 }}
+                 viewport={{ once: false }}
                  style={{ y: yFloating2 }} 
-                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full -z-10 animate-[spin_60s_linear_infinite]"
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full -z-10"
+                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
                >
                  {[...Array(8)].map((_, i) => (
                    <div 
@@ -197,8 +214,12 @@ const Hero = () => {
                </motion.div>
 
                <motion.div 
+                 initial={{ rotate: 0 }}
+                 whileInView={{ rotate: -360 }}
+                 viewport={{ once: false }}
                  style={{ y: yFloating1 }} 
-                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] border border-white/5 rounded-full -z-10 animate-[spin_40s_linear_infinite_reverse]"
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] border border-white/5 rounded-full -z-10"
+                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                >
                  {[...Array(6)].map((_, i) => (
                    <div 
@@ -220,9 +241,9 @@ const Hero = () => {
       </div>
 
 
-      {/* Decorative Blur Orbs */}
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 translate-x-1/2" />
-      <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] -z-10" />
+      {/* Optimized Decorative Blur Orbs - Reduced blur radius for faster rendering */}
+      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-primary/15 rounded-full blur-[80px] -z-10 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-accent/8 rounded-full blur-[60px] -z-10 pointer-events-none" />
     </section>
   );
 };

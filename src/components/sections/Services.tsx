@@ -58,7 +58,7 @@ const Services = () => {
           WebkitBackfaceVisibility: 'hidden',
           transformStyle: 'preserve-3d'
         }}
-        className="container mx-auto px-4 sm:px-6 text-center mb-12 sm:mb-16"
+        className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12 sm:mb-16"
       >
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">{t('services.title')} <span className="text-primary">{t('services.highlight')}</span></h2>
         <p className="text-sm sm:text-base md:text-lg text-text-muted max-w-2xl mx-auto">
@@ -66,7 +66,7 @@ const Services = () => {
         </p>
       </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <motion.div
             variants={containerVariants}

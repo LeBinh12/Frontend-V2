@@ -21,7 +21,7 @@ const Overview = () => {
 
   return (
     <section ref={ref} className="py-24 bg-bg-dark overflow-hidden" id="about">
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <Row gutter={60} className="items-center">
             <Col xs={24} lg={12} className="mb-8 sm:mb-10 lg:mb-0">
@@ -89,7 +89,7 @@ const Overview = () => {
                               opacity: hoveredIdx === idx ? 1 : 0
                             }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden ml-2 pl-4"
+                            className="overflow-hidden ml-2 pl-4 will-change-[height,opacity] transform translate-z-0"
                           >
                             <div className="pl-2 py-2 border-l-2 border-primary rounded-l-lg">
                               <p className="text-sm text-text-muted leading-relaxed max-w-[90%] font-light">

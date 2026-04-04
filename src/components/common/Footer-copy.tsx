@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Twitter, Github, MessageCircle, Linkedin, Mail } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import ContactModal from './ContactModal';
+import Image from 'next/image';
 
 const FooterCopy = () => {  
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ const FooterCopy = () => {
 
   return (
     <footer className="relative z-10 bg-bg-dark border-t border-white/5 pt-20 pb-10">
-      <div className="container mx-auto px-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-10 md:gap-0">
           {/* Left: Logo and Description */}
           <div className="max-w-md">
@@ -24,12 +25,14 @@ const FooterCopy = () => {
               <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-14 h-14 flex items-center justify-center "
+                className="w-14 h-14 flex items-center justify-center relative"
               >
-                <img
+                <Image
                   src="/images/logo-05-none-text-removebg-preview.png"
                   alt="Logo"
-                  className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
+                  width={56}
+                  height={56}
+                  className="object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
                 />
               </motion.div>
               <div className="leading-none hidden sm:block">
