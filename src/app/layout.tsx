@@ -13,13 +13,13 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 
 const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-orbitron', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
-  description: 'Lucid Technology là công ty công nghệ chuyên về phát triển phần mềm, chuyển đổi số và dịch vụ tư vấn công nghệ. Chúng tôi tập trung xây dựng các hệ thống an toàn, có khả năng mở rộng và chất lượng cao, giúp các doanh nghiệp tối ưu hóa hoạt động và nâng cao lợi thế cạnh tranh trong kỷ nguyên số.',
+  title: 'Lucid Technology - Digital Transformation',
+  description: 'Lucid Technology is a tech company specializing in software development, digital transformation, and technology consulting. We build secure, scalable systems that help businesses optimize operations and enhance competitive advantage in the digital era.',
   keywords: ['software development', 'digital transformation', 'IT consulting', 'Lucid Technology', 'phát triển phần mềm', 'chuyển đổi số'],
   authors: [{ name: 'Lucid Technology Team' }],
   openGraph: {
-    title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
-    description: 'Xây dựng tương lai & Thúc đẩy đổi mới kỹ thuật số với Lucid Technology.',
+    title: 'Lucid Technology - Digital Transformation',
+    description: 'Building the Future & Empowering Digital Innovation with Lucid Technology.',
     url: 'https://lucidtech.vn',
     siteName: 'Lucid Technology',
     images: [
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
         alt: 'Lucid Technology Logo',
       },
     ],
-    locale: 'vi_VN',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Lucid Technology - Tiên phong trong Biên giới kỹ thuật số',
-    description: 'Xây dựng tương lai & Thúc đẩy đổi mới kỹ thuật số với Lucid Technology.',
+    title: 'Lucid Technology - Digital Transformation',
+    description: 'Building the Future & Empowering Digital Innovation with Lucid Technology.',
     images: ['/images/logo-none.png'],
   },
   icons: {

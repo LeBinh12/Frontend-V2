@@ -4,7 +4,7 @@ export const mockData = {
     tagline: "#lucidtechvn #lucidtechnologyvn, #lctvn",
     description: "We build the next generation of decentralized applications and high-performance infrastructure for the web3 era.",
     email: "contact@lucidtech.vn",
-    phone: "(+84) 792 502 502",
+    phone: "(+84) 328 0750 14",
     address: "61 Tan Trong Hamlet, My An Hung Commune, Dong Thap Province, 810000, Vietnam",
     images: {
       office: "/images/office_exterior.jpg",
@@ -20,27 +20,27 @@ export const mockData = {
   services: [
     {
       id: 1,
-      title: "Smart Gas Station Solution",
-      description: "A comprehensive gas station management software system built on over 30 years of real-world industry experience. It integrates sales management, inventory control, accounts receivable, employee management, and real-time reporting. User-friendly interface with multi-branch synchronization and automatic cloud data backup",
+      title: "Software Development",
+      description: "Design and development of websites, mobile applications, and enterprise management software tailored to specific business needs. Our experienced development team understands business processes and provides optimal solutions using modern technologies, with long-term maintenance and operational support",
       icon: "Code"
     },
     {
       id: 2,
-      title: "Custom Software Development",
-      description: "Design and development of websites, mobile applications, and enterprise management software tailored to specific business needs. Our experienced development team understands business processes and provides optimal solutions using modern technologies, with long-term maintenance and operational support",
-      icon: "Mind"
-    },
-    {
-      id: 3,
       title: "Digital Transformation Consulting",
       description: "Providing end-to-end digital transformation consulting services for small and medium-sized enterprises. We analyze existing processes, propose suitable technology solutions, provide staff training, and support implementation to help businesses optimize costs, improve efficiency, and enhance competitive advantages.",
       icon: "Cloud"
     },
     {
-      id: 4,
+      id: 3,
       title: "IT Recruitment & Staffing Services",
       description: "Supporting businesses in sourcing and recruiting high-quality IT talent. We provide IT staffing services for both project-based and long-term engagements, with experienced professionals in software development, system administration, and information security",
       icon: "Design"
+    },
+    {
+      id: 4,
+      title: "Smart Gas Station Solution",
+      description: "A comprehensive gas station management software system built on over 30 years of real-world industry experience. It integrates sales management, inventory control, accounts receivable, employee management, and real-time reporting. User-friendly interface with multi-branch synchronization and automatic cloud data backup",
+      icon: "Code"
     }
   ],
   technologies: [

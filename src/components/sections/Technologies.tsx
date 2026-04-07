@@ -19,14 +19,14 @@ const Technologies = () => {
   const yCards = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
   return (
-    <section ref={ref} className="py-24 bg-bg-dark overflow-hidden" id="technologies">
+    <section ref={ref} className="py-20 bg-bg-dark overflow-hidden" id="technologies">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ amount: 0.3, once: false }}
           transition={{ duration: 0.8 }}
-          className="mb-12 sm:mb-16"
+          className="mb-10 sm:mb-13"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">
             {t('technologies.title')} <span className="text-primary">{t('technologies.highlight')}</span> {t('technologies.stack')}
@@ -37,9 +37,9 @@ const Technologies = () => {
         </motion.div>
 
         <Grid fluid className="p-0!">
-          <Row gutter={40}>
+          <Row gutter={30}>
             {categories.map((category, i) => (
-              <Col key={category} xs={24} md={12} lg={8} className="mb-8 sm:mb-10 md:mb-12">
+              <Col key={category} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.98 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -52,7 +52,7 @@ const Technologies = () => {
                     transformStyle: 'preserve-3d',
                     willChange: 'opacity, transform'
                   }}
-                  className="bg-bg-card/50 border border-white/5 rounded-2xl p-8 h-full transition-colors hover:border-primary/20"
+                  className="flex-1 bg-bg-card/50 border border-white/5 rounded-2xl p-6 h-full transition-colors hover:border-primary/20"
                 >
                   <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-primary mb-4 sm:mb-6 uppercase tracking-widest text-xs sm:text-sm">{t(`technologies.categories.${category}`)}</h3>
                   <TagGroup className="flex flex-wrap gap-3">

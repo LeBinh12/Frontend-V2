@@ -20,10 +20,10 @@ const Overview = () => {
   const yContent = useTransform(scrollYProgress, [0, 1], [25, -25]);
 
   return (
-    <section ref={ref} className="py-24 bg-bg-dark overflow-hidden" id="about">
+    <section ref={ref} className="py-20 bg-bg-dark overflow-hidden" id="about">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
-          <Row gutter={60} className="items-center">
+          <Row gutter={40} className="items-center">
             <Col xs={24} lg={12} className="mb-8 sm:mb-10 lg:mb-0">
               <motion.div 
                 style={{ 
@@ -39,7 +39,7 @@ const Overview = () => {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative h-full"
               >
-                <div className="h-full flex flex-col gap-6 p-6 sm:p-10 rounded-2xl bg-bg-card border border-white/10 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+                <div className="h-full flex flex-col gap-6 p-6 sm:p-8 rounded-2xl bg-bg-card border border-white/10 backdrop-blur-md shadow-2xl relative overflow-hidden group">
                   {/* Decorative background gradient */}
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/5 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none" />
@@ -57,8 +57,8 @@ const Overview = () => {
 
                   
                   {/* Guidelines Section */}
-                  <div className="flex-grow py-4">
-                    <h3 className="text-lg font-display font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-3">
+                  <div className="flex-grow">
+                    <h3 className="text-lg font-display font-bold text-white mb-3 uppercase tracking-widest flex items-center gap-3">
                       <span className="w-10 h-[2px] bg-primary rounded-full"></span>
                       {t('overview.guidelines.title')}
                     </h3>
@@ -119,7 +119,7 @@ const Overview = () => {
                   {t('overview.description')}
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-8 md:mt-12">
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-8 md:mt-10">
                   {mockData.company.stats.map((stat, i) => (
                     <motion.div 
                       key={i}

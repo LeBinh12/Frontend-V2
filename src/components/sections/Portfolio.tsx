@@ -30,13 +30,13 @@ const Portfolio = () => {
   };
 
   return (
-    <section ref={ref} className="py-24 min-h-screen bg-bg-card/30 overflow-hidden" id="portfolio">
+    <section ref={ref} className="py-20 min-h-[80vh] bg-bg-card/30 overflow-hidden" id="portfolio">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ amount: 0.3, once: false }}
         transition={{ duration: 0.8 }}
-        className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4 sm:gap-6"
+        className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-13 gap-4 sm:gap-6"
       >
         <div className="max-w-2xl">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">{t('portfolio.title')} <span className="text-primary">{t('portfolio.highlight')}</span></h2>
@@ -53,9 +53,9 @@ const Portfolio = () => {
 
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
-          <Row gutter={40}>
+          <Row gutter={30}>
             {mockData.portfolio.map((project, i) => (
-              <Col key={project.id} xs={24} md={12} lg={8} className="mb-8 sm:mb-10 md:mb-12">
+              <Col key={project.id} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
                 <motion.div 
                   style={{ 
                     y: getParallaxY(i), 

@@ -13,19 +13,12 @@ import Image from 'next/image';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
   const { t, i18n } = useTranslation();
   const pathname = usePathname();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious() ?? 0;
-    if (latest > previous && latest > 150 && !mobileOpen) {
-      setHidden(true);
-    } else {
-      setHidden(false);
-    }
     setScrolled(latest > 50);
   });
 
@@ -55,12 +48,6 @@ const Header = () => {
   return (
     <>
       <motion.header 
-        variants={{
-          visible: { y: 0 },
-          hidden: { y: "-100%" },
-        }}
-        animate={hidden ? "hidden" : "visible"}
-        transition={{ duration: 0.35, ease: "easeInOut" }}
         className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${scrolled || mobileOpen ? 'bg-bg-dark/80 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}
       >
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
@@ -174,6 +161,63 @@ const Header = () => {
           </div>
         </Drawer.Body>
       </Drawer>
+
+      {/* Scroll To Top Button */}
+      <AnimatePresence>
+        {scrolled && (
+          <motion.div
+            key="scroll-top"
+            initial={{ opacity: 0, scale: 0.5, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 30 }}
+            transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+            className="fixed bottom-8 right-8 z-50 w-14 rounded-full h-14"
+          >
+            {/* Pulsing glow ring with 3-color mix - uses rounded-full and blur */}
+            <motion.div
+              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.2, 0.5] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-full blur-lg"
+              style={{
+                backgroundImage: 'linear-gradient(135deg, #4FA3D1, #8DC63F, #F7941D)',
+              }}
+            />
+
+            {/* Button Container - ensure circularity with overflow-hidden */}
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="relative w-full h-full rounded-full shadow-2xl flex items-center justify-center group overflow-hidden border border-white/10"
+              style={{
+                backgroundImage: 'linear-gradient(135deg, #4FA3D1 0%, #8DC63F 50%, #F7941D 100%)',
+              }}
+              aria-label="Scroll to top"
+            >
+              {/* Shine overlay on hover */}
+              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-full" />
+
+              {/* Arrow icon */}
+              <motion.svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="relative z-10"
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </motion.svg>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

@@ -36,7 +36,7 @@ const itemVariants: Variants = {
 
 const Services = () => {
   const { t } = useTranslation();
-  const serviceKeys = ['blockchain', 'ai', 'cloud', 'design'];
+  const serviceKeys = ['cloud', 'ai', 'design', 'blockchain'];
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -46,7 +46,7 @@ const Services = () => {
   const yHeader = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section ref={ref} className="py-24 bg-bg-card/30 overflow-hidden" id="services">
+    <section ref={ref} className="py-15 bg-bg-card/30 overflow-hidden" id="services">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -58,7 +58,7 @@ const Services = () => {
           WebkitBackfaceVisibility: 'hidden',
           transformStyle: 'preserve-3d'
         }}
-        className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12 sm:mb-16"
+        className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 sm:mb-13"
       >
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">{t('services.title')} <span className="text-primary">{t('services.highlight')}</span></h2>
         <p className="text-sm sm:text-base md:text-lg text-text-muted max-w-2xl mx-auto">
@@ -67,26 +67,26 @@ const Services = () => {
       </motion.div>
 
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <Grid fluid className="p-0!">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ amount: 0.1, once: false }}
-          >
-            <Row gutter={30}>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ amount: 0.1, once: false }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 auto-rows-fr"
+        >
               {mockData.services.map((service, i) => (
-                <Col key={service.id} xs={24} md={12} lg={6} className="mb-6 sm:mb-8">
-                  <motion.div 
-                    variants={itemVariants}
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transformStyle: 'preserve-3d'
-                    }}
-                  >
+                <motion.div 
+                  key={service.id}
+                  variants={itemVariants}
+                  className="flex flex-col h-full"
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d'
+                  }}
+                >
                     <Panel 
-                      className="h-[470px] flex flex-col 
+                      className="flex-1 h-full flex flex-col 
                                 bg-bg-card border border-white/5! 
                                 transition-all duration-300 
                                 hover:-translate-y-2 hover:border-primary/50! 
@@ -108,12 +108,9 @@ const Services = () => {
                         </p>
                       </div>
                     </Panel>
-                  </motion.div>
-                </Col>
+                </motion.div>
               ))}
-            </Row>
-          </motion.div>
-        </Grid>
+        </motion.div>
       </div>
     </section>
   );

@@ -35,15 +35,15 @@ const Hero = () => {
                 {t('hero.badge')}
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl mb-4 sm:mb-6 md:mb-8 leading-[1.1] tracking-tight text-white break-words">
+              <span className="block font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl mb-4 sm:mb-6 md:mb-8 leading-[1.1] tracking-tight break-words text-transparent bg-clip-text bg-gradient-to-r from-[#4FA3D1] via-[#8DC63F] to-[#F7941D]">
                 {t('hero.title')}
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                <span>
                   {t('hero.highlight')}
                 </span>
-              </h1>
+              </span>
               
-              <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-text-muted mb-6 sm:mb-8 md:mb-10 leading-relaxed max-w-2xl">
+              <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-text-muted mb-6 sm:mb-8 md:mb-10 leading-relaxed max-w-2xl text-justify">
                 {t('hero.description')}
               </p>
               

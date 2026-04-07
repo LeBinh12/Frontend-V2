@@ -76,7 +76,7 @@
       "description": "Providing end-to-end digital transformation consulting services for small and medium-sized enterprises. We analyze existing processes, propose suitable technology solutions, provide staff training, and support implementation to help businesses optimize costs, improve efficiency, and enhance competitive advantages."
     },
     "cloud": {
-      "title": "Custom Software Development",
+      "title": "Software Development",
       "description": "Design and development of websites, mobile applications, and enterprise management software tailored to specific business needs. Our experienced development team understands business processes and provides optimal solutions using modern technologies, with long-term maintenance and operational support."
     },
     "design": {
@@ -250,7 +250,8 @@
     "info": {
       "email": "Email Us",
       "phone": "Call Us",
-      "visit": "Visit Us"
+      "visit": "Visit Us",
+      "address": "No. 61 DT848, Tan My, My An Hung, Dong Thap, Vietnam"
     }
   },
   "footer": {
