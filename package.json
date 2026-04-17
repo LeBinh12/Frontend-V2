@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:init": "prisma db push && prisma db seed",
+    "db:push": "prisma db push --accept-data-loss",
     "db:setup": "ts-node --project scripts/tsconfig.json scripts/db-setup.ts"
   },
   "prisma": {
@@ -37,7 +38,8 @@
     "react-icons": "^5.5.0",
     "rsuite": "^6.1.1",
     "sass": "^1.97.2",
-    "three": "^0.182.0"
+    "three": "^0.182.0",
+    "prisma": "^6.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -48,7 +50,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
-    "prisma": "^6.4.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
