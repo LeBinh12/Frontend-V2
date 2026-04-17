@@ -6,11 +6,15 @@ import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { useContent } from '@/hooks/useContent';
 import Image from 'next/image';
 
 const Hero = () => {
   const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { content } = useContent();
+  const companyStats = content?.company?.stats || mockData.company.stats;
+
   const { scrollY, scrollYProgress } = useScroll(); // Added scrollYProgress
   
   // Parallax Transforms
@@ -19,7 +23,6 @@ const Hero = () => {
   const yFloating1 = useTransform(scrollYProgress, [0, 1], [0, -60]); // Reduced from -120
   const yFloating2 = useTransform(scrollYProgress, [0, 1], [0, -150]); // Reduced from -300
   const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
 
   return (
     <section className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden w-full" id="hero">
@@ -57,10 +60,10 @@ const Hero = () => {
               </div>
               
               <div className="mt-4 sm:mt-7 md:mt-10 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 text-text-muted max-w-md sm:max-w-none">
-                {mockData.company.stats.slice(0, 3).map((stat, i) => (
+                {companyStats.slice(0, 3).map((stat, i) => (
                   <div key={i} className="flex flex-col">
                     <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white">{stat.value}</span>
-                    <span className="text-xs sm:text-sm uppercase tracking-widest mt-1">{t(`stats.${(stat as any).labelKey}`)}</span>
+                    <span className="text-xs sm:text-sm uppercase tracking-widest mt-1">{t(`stats.${(stat as any).key || (stat as any).labelKey}`)}</span>
                   </div>
                 ))}
               </div>

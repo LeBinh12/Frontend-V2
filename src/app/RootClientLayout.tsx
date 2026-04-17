@@ -4,6 +4,7 @@ import '@/i18n';
 import React from 'react';
 import { CustomProvider } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css';
+import { usePathname } from 'next/navigation';
 import Preloader from '@/components/common/Preloader';
 import CustomCursor from '@/components/common/CustomCursor';
 import { useTranslation } from 'react-i18next';
@@ -38,10 +39,13 @@ export default function RootClientLayout({
     return () => window.removeEventListener('pageshow', handlePageShow);
   }, [detectedLang, i18n]);
 
+  const pathname = usePathname();
+  const isAdminPage = pathname?.startsWith('/admin') || pathname?.startsWith('/admin-lucidtech');
+
   return (
     <CustomProvider theme="dark">
       <CustomCursor />
-      <Preloader />
+      {!isAdminPage && <Preloader />}
       {children}
     </CustomProvider>
   );

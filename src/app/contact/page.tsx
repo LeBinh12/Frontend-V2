@@ -11,9 +11,12 @@ import { useTranslation } from 'react-i18next';
 import SmoothScroll from '@/components/common/SmoothScroll';
 import { useRef } from 'react';
 import FooterCopy from '@/components/common/Footer-copy';
+import { useContent } from '@/hooks/useContent';
 
 const ContactPage = () => {
   const { t } = useTranslation();
+  const { content } = useContent();
+  const companyInfo = content?.company || mockData.company;
   const [formValue, setFormValue] = useState({
     name: '',
     email: '',
@@ -117,8 +120,8 @@ const ContactPage = () => {
 
                   <div className="space-y-6">
                     {[
-                      { icon: Mail, label: 'contact.info.email', value: mockData.company.email },
-                      { icon: Phone, label: 'contact.info.phone', value: mockData.company.phone },
+                      { icon: Mail, label: 'contact.info.email', value: companyInfo.email },
+                      { icon: Phone, label: 'contact.info.phone', value: companyInfo.phone },
                       { 
                         icon: ({ size = 24, ...props }: any) => (
                           <svg width={size} height={size} {...props} fill="currentColor" viewBox="0 0 24 24">
@@ -126,8 +129,8 @@ const ContactPage = () => {
                           </svg>
                         ), 
                         label: 'WhatsApp', 
-                        value: mockData.company.phone,
-                        href: `https://wa.me/${mockData.company.phone.replace(/[^0-9]/g, '')}`
+                        value: companyInfo.phone,
+                        href: `https://wa.me/${companyInfo.phone.replace(/[^0-9]/g, '')}`
                       },
                       { icon: MapPin, label: 'contact.info.visit', value: t('contact.info.address') },
                     ].map((item, i) => {

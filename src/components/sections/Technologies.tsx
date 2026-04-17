@@ -6,10 +6,13 @@ import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 const Technologies = () => {
   const { t } = useTranslation();
-  const categories = Array.from(new Set(mockData.technologies.map(t => t.category)));
+  const { content } = useContent();
+  const technologiesData = content?.technologies || mockData.technologies;
+  const categories = Array.from(new Set(technologiesData.map(t => t.category)));
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -56,7 +59,7 @@ const Technologies = () => {
                 >
                   <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-primary mb-4 sm:mb-6 uppercase tracking-widest text-xs sm:text-sm">{t(`technologies.categories.${category}`)}</h3>
                   <TagGroup className="flex flex-wrap gap-3">
-                    {mockData.technologies
+                    {technologiesData
                       .filter(t => t.category === category)
                       .map((tech, i) => (
                         <Tag 

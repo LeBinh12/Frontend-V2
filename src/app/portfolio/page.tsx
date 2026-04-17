@@ -10,25 +10,21 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import SmoothScroll from '@/components/common/SmoothScroll';
 import { useRef } from 'react';
-
 import { useTranslation } from 'react-i18next';
-import FooterCopy from '../../components/common/Footer-copy';
+import FooterCopy from '@/components/common/Footer-copy';
+import { useContent } from '@/hooks/useContent';
 
 const PortfolioPage = () => {
   const { t } = useTranslation();
+  const { content } = useContent();
+  const projectsData = content?.portfolio && content.portfolio.length > 0 ? content.portfolio : mockData.portfolio;
   const [filter, setFilter] = useState('all');
   
-  const projectKeyMap: Record<number, string> = {
-    1: 'nebula',
-    2: 'vortex',
-    3: 'titan'
-  };
-
-  const categories = ['all', ...Array.from(new Set(mockData.portfolio.map(p => (p as any).categoryKey)))];
+  const categories = ['all', ...Array.from(new Set(projectsData.map(p => (p as any).categoryKey)))];
   
   const filteredProjects = filter === 'all' 
-    ? mockData.portfolio 
-    : mockData.portfolio.filter(p => (p as any).categoryKey === filter);
+    ? projectsData 
+    : projectsData.filter(p => (p as any).categoryKey === filter);
 
 
   const ref = useRef(null);
@@ -91,7 +87,7 @@ const PortfolioPage = () => {
               <Row gutter={40}>
                 <AnimatePresence mode="popLayout">
                   {filteredProjects.map((project, i) => (
-                    <Col key={project.id} xs={24} md={12} lg={8} className="mb-12">
+                    <Col key={(project as any).key || (project as any).id || i} xs={24} md={12} lg={8} className="mb-12">
                       <motion.div
                         style={{
                           backfaceVisibility: 'hidden',
@@ -106,11 +102,11 @@ const PortfolioPage = () => {
                         transition={{ duration: 0.5, ease: "easeOut" }} // Removed stagger delay on scroll settles
                         className="group cursor-pointer"
                       >
-                        <Link href={`/portfolio/${project.id}`} className="block">
-                          <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20">
+                        <Link href={`/portfolio/${(project as any).key || (project as any).id}`} className="block">
+                          <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 uppercase">
                             <img 
                               src={project.image} 
-                              alt={t(`portfolio.${projectKeyMap[project.id]}.title`)}
+                              alt={(project as any).title}
                               className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
                             />
                             
@@ -127,14 +123,14 @@ const PortfolioPage = () => {
                           <div className="flex items-center justify-between mb-3">
                              <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
                           </div>
-                          <Link href={`/portfolio/${project.id}`}>
+                          <Link href={`/portfolio/${(project as any).key || (project as any).id}`}>
                             <h3 className="text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">
-                              {t(`portfolio.${projectKeyMap[project.id]}.title`)}
+                              {(project as any).title}
                               <ArrowUpRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                             </h3>
                           </Link>
                           <p className="text-text-muted leading-relaxed line-clamp-2">
-                            {t(`portfolio.${projectKeyMap[project.id]}.description`)}
+                            {(project as any).description}
                           </p>
                         </div>
                       </motion.div>

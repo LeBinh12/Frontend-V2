@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StaticContent {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  contentEn String   @map("content_en")
+  contentVn String   @map("content_vn")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("static_content")
+}
+
+model Service {
+  id            Int      @id @default(autoincrement())
+  key           String   @unique
+  icon          String
+  titleEn       String   @map("title_en")
+  titleVn       String   @map("title_vn")
+  descriptionEn String   @map("description_en")
+  descriptionVn String   @map("description_vn")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("services")
+}
+
+model TechnologyCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("technology_categories")
+}
+
+model Technology {
+  id        Int      @id @default(autoincrement())
+  name      String
+  category  String
+  icon      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("technologies")
+}
+
+model PortfolioItem {
+  id            Int      @id @default(autoincrement())
+  key           String?  @unique
+  titleEn       String   @map("title_en")
+  titleVn       String   @map("title_vn")
+  descriptionEn String   @map("description_en")
+  descriptionVn String   @map("description_vn")
+  image         String
+  categoryKey   String   @map("category_key")
+  technologies  String[]
+  showOnHome    Boolean  @default(false) @map("show_on_home")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("portfolio_items")
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String
+  roleEn    String   @map("role_en")
+  roleVn    String   @map("role_vn")
+  bioEn     String?  @map("bio_en")
+  bioVn     String?  @map("bio_vn")
+  avatar    String?
+  level     Int      @default(3)
+  top       String?
+  right     String?
+  size      Int?
+  delay     Float?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("team_members")
+}
+
+model CompanyInfo {
+  id          Int      @id @default(1)
+  name        String
+  tagline     String?
+  email       String?
+  phone       String?
+  addressEn   String?  @map("address_en")
+  addressVn   String?  @map("address_vn")
+  officeImage String?  @map("office_image")
+  teamImage   String?  @map("team_image")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("company_info")
+}
+
+model Stat {
+  id       Int     @id @default(autoincrement())
+  key      String  @unique
+  labelEn  String  @map("label_en")
+  labelVn  String  @map("label_vn")
+  value    String
+  detailEn String? @map("detail_en")
+  detailVn String? @map("detail_vn")
+
+  @@map("stats")
+}
+
+model Manager {
+  id        String      @id @default(uuid())
+  username  String      @unique
+  password  String
+  fullName  String?     @map("full_name")
+  email     String?     @unique
+  role      ManagerRole @default(STAFF)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("managers")
+}
+
+enum ManagerRole {
+  ADMIN
+  MANAGER
+  STAFF
+}

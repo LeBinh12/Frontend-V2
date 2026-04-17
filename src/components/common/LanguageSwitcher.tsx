@@ -8,13 +8,20 @@ import { ChevronDown } from 'lucide-react';
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const languages = [
     { code: 'en', label: 'English', flag: 'https://flagcdn.com/w40/us.png' },
     { code: 'vn', label: 'Tiếng Việt', flag: 'https://flagcdn.com/w40/vn.png' },
   ];
 
-  const currentLang = languages.find(l => l.code === (i18n.language?.split('-')[0] || 'en')) || languages[0];
+  const currentLang = mounted
+    ? (languages.find(l => l.code === (i18n.language?.split('-')[0] || 'en')) || languages[0])
+    : languages[0]; // Always render English first on server to match SSR output
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

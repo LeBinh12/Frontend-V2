@@ -10,7 +10,7 @@ import { useScroll } from 'framer-motion';
 
 const ParticleField = () => {
   const ref = useRef<any>(null);
-  const sphere = useMemo(() => random.inSphere(new Float32Array(2000), { radius: 1.8 }), []);
+  const sphere = useMemo(() => random.inSphere(new Float32Array(5000), { radius: 1.8 }), []);
   
   // Create a connection to the global scroll
   const { scrollYProgress } = useScroll();

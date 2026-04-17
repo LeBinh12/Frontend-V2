@@ -6,9 +6,11 @@ import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 const Stats = () => {  
   const { t } = useTranslation();
+  const { content } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -17,12 +19,13 @@ const Stats = () => {
   
   const scaleLine = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
 
-  const lStats = [
-    { key: 'assets', val: mockData.bigStats[0].value },
-    { key: 'nodes', val: mockData.bigStats[1].value },
-    { key: 'speed', val: mockData.bigStats[2].value },
-    { key: 'uptime', val: mockData.bigStats[3].value },
-  ];
+  // Use stats from BE that represent "big stats" (usually excluding company small stats)
+  const bigStatsData = (content?.stats || []).filter(s => !['founded', 'engineers', 'projects', 'clients'].includes(s.key)) || mockData.bigStats;
+  
+  const lStats = bigStatsData.slice(0, 4).map((s, i) => ({
+    key: (s as any).key || (i === 0 ? 'assets' : i === 1 ? 'nodes' : i === 2 ? 'speed' : 'uptime'),
+    val: (s as any).value || (s as any).val
+  }));
 
   const detailKeys = ['moM', 'distributed', 'industryLeading', 'enterpriseGrade'];
 

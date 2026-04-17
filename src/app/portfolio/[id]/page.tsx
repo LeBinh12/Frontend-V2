@@ -10,166 +10,181 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle2, Target, Lightbulb } from 'lucide-react';
 import SmoothScroll from '@/components/common/SmoothScroll';
-import { useRef } from 'react';
+
 
 import { useTranslation } from 'react-i18next';
 import FooterCopy from '@/components/common/Footer-copy';
+import { useContent } from '@/hooks/useContent';
 
 const CaseStudyPage = () => {
   const { t } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
-  
-  const project = mockData.portfolio.find(p => p.id === Number(id));
+  const { content } = useContent();
+  const [mounted, setMounted] = React.useState(false);
 
-  if (!project) {
-    return (
-      <div className="flex flex-col min-h-screen bg-bg-dark items-center justify-center p-6 text-center">
-        <h1 className="text-4xl font-display font-bold mb-4">{t('portfolio.detail.notFound.title')}</h1>
-        <p className="text-text-muted mb-8">{t('portfolio.detail.notFound.description')}</p>
-        <Link href="/portfolio">
-            <Button appearance="primary" size="lg" className="rounded-full font-bold">{t('portfolio.detail.notFound.backButton')}</Button>
-        </Link>
-      </div>
-    );
-  }
+  // Use window scroll — more stable than a targeted ref in SSR environments
+  const { scrollYProgress } = useScroll();
+  const yHero = useTransform(scrollYProgress, [0, 0.3], [0, 60]);
+  const scaleHero = useTransform(scrollYProgress, [0, 0.3], [1, 1.08]);
 
-  const resultsList = t('portfolio.detail.results.list', { returnObjects: true }) as string[];
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
+  // Data selection
+  const projectsData = content?.portfolio && content.portfolio.length > 0 ? content.portfolio : mockData.portfolio;
+  const project = projectsData.find(p => (p as any).key === id || (p as any).id === Number(id));
+  const resultsList = t('portfolio.detail.results.list', { returnObjects: true }) as string[] || [];
 
-  const yHero = useTransform(scrollYProgress, [0, 0.5], [0, 50]);
-  const scaleHero = useTransform(scrollYProgress, [0, 0.5], [1, 1.05]);
+  // Resolve category label — fall back to raw categoryKey if translation is missing
+  const categoryKey = (project as any)?.categoryKey || '';
+  const categoryTranslated = t(`portfolio.categories.${categoryKey}`, { defaultValue: '' });
+  const categoryLabel = categoryTranslated && categoryTranslated !== `portfolio.categories.${categoryKey}`
+    ? categoryTranslated
+    : categoryKey;
+
+
+  // Loading or Error States should come after hooks
+  if (!mounted) return null;
 
   return (
     <SmoothScroll>
-      <div ref={ref} className="flex flex-col min-h-screen bg-bg-dark">
+      <div className="flex flex-col min-h-screen bg-bg-dark">
         <Header />
         
         <main className="flex-grow pt-32 pb-24 overflow-hidden">
-          {/* Navigation & Header */}
-          <div className="container mx-auto px-6">
-            <button 
-              onClick={() => router.back()} 
-              className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 group"
-            >
-              <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
-              <span className="font-bold">{t('portfolio.detail.back')}</span>
-            </button>
+          {!project ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <h1 className="text-4xl font-display font-bold mb-4">{t('portfolio.detail.notFound.title')}</h1>
+              <p className="text-text-muted mb-8">{t('portfolio.detail.notFound.description')}</p>
+              <Link href="/portfolio">
+                  <Button appearance="primary" size="lg" className="rounded-full font-bold">{t('portfolio.detail.notFound.backButton')}</Button>
+              </Link>
+            </div>
+          ) : (
+            <>
+              {/* Navigation & Header */}
+              <div className="container mx-auto px-6">
+                <button 
+                  onClick={() => router.back()} 
+                  className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 group"
+                >
+                  <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
+                  <span className="font-bold">{t('portfolio.detail.back')}</span>
+                </button>
 
-            <motion.div
-              style={{
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d'
-              }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
-              <h1 className="text-5xl md:text-8xl mb-5 text-white">{project.title}</h1>
-            </motion.div>
-          </div>
+                <motion.div
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d'
+                  }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
+                  <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                  <h1 className="text-5xl md:text-8xl mb-5 text-white">{project.title}</h1>
+                </motion.div>
+              </div>
 
-          {/* Hero Image */}
-          <div className="w-full relative px-3 z-0">
-            <motion.div
-              style={{ 
-                y: yHero, 
-                scale: scaleHero,
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d'
-              }}
-              className="w-full"
-            >
-              <motion.img 
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, ease: "circOut" }}
-                src={project.image} 
-                alt={project.title}
-                className="w-full aspect-video object-contain rounded-3xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg-dark rounded-3xl mx-6" />
-            </motion.div>
-          </div>
+              {/* Hero Image */}
+              <div className="w-full relative px-3 z-0">
+                <motion.div
+                  style={{ 
+                    y: yHero, 
+                    scale: scaleHero,
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d'
+                  }}
+                  className="w-full"
+                >
+                    <motion.img 
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, ease: "circOut" }}
+                    src={project.image || "/images/placeholder.jpg"} 
+                    alt={project.title}
+                    className="w-full aspect-video object-contain rounded-3xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg-dark rounded-3xl mx-6" />
+                </motion.div>
+              </div>
 
-        {/* Content Section */}
-        <div className="container mx-auto px-6 relative z-10 bg-bg-dark pt-20 -mt-20 rounded-t-[3rem]">
-          <Grid fluid className="p-0!">
-            <Row gutter={60}>
-              <Col xs={24} lg={16}>
-                <div className="mb-20">
-                  <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                    <Target className="text-primary" /> {t('portfolio.detail.challenge.title')}
-                  </h2>
-                  <p className="text-xl text-text-muted leading-relaxed">
-                    {t('portfolio.detail.challenge.description', { title: project.title })}
-                  </p>
-                </div>
-
-                <div className="mb-20">
-                  <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                    <Lightbulb className="text-primary" /> {t('portfolio.detail.solution.title')}
-                  </h2>
-                  <p className="text-xl text-text-muted leading-relaxed">
-                    {t('portfolio.detail.solution.description')}
-                  </p>
-                </div>
-
-                <div>
-                  <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                    <CheckCircle2 className="text-primary" /> {t('portfolio.detail.results.title')}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {resultsList.map((result, i) => (
-                      <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
-                        <CheckCircle2 className="text-primary" size={20} />
-                        <span className="text-white font-medium">{result}</span>
+              {/* Content Section */}
+              <div className="container mx-auto px-6 relative z-10 bg-bg-dark pt-20 -mt-20 rounded-t-[3rem]">
+                <Grid fluid className="p-0!">
+                  <Row gutter={60}>
+                    <Col xs={24} lg={16}>
+                      <div className="mb-20">
+                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
+                          <Target className="text-primary" /> {t('portfolio.detail.challenge.title')}
+                        </h2>
+                        <p className="text-xl text-text-muted leading-relaxed">
+                          {t('portfolio.detail.challenge.description', { title: project.title })}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </Col>
 
-              <Col xs={24} lg={8}>
-                <div className="bg-bg-card border border-white/5 p-8 rounded-3xl sticky top-32">
-                  <h4 className="text-sm uppercase tracking-widest text-text-muted mb-6">{t('portfolio.detail.technologies')}</h4>
-                  <div className="flex flex-wrap gap-2 mb-10">
-                    {(project.technologies || ["Next.js", "Three.js", "Tailwind", "Framer Motion", "WebGL"]).map(tech => (
-                      <span key={tech} className="px-4 py-1.5 bg-white/5 rounded-full text-sm text-white border border-white/10">{tech}</span>
-                    ))}
-                  </div>
-
-                  <Divider className="bg-white/5! mb-8" />
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.duration')}</h4>
-                      <p className="text-white font-bold">{t('portfolio.detail.durationValue')}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.service')}</h4>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                      <div className="mb-20">
+                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
+                          <Lightbulb className="text-primary" /> {t('portfolio.detail.solution.title')}
+                        </h2>
+                        <p className="text-xl text-text-muted leading-relaxed">
+                          {t('portfolio.detail.solution.description')}
+                        </p>
                       </div>
-                    </div>
-                  </div>
 
-                  <Link href="/contact">
-                    <Button appearance="primary" block size="lg" className="rounded-xl font-bold mt-10">{t('portfolio.detail.startProject')}</Button>
-                  </Link>
-                </div>
-              </Col>
-            </Row>
-          </Grid>
-        </div>
+                      <div>
+                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
+                          <CheckCircle2 className="text-primary" /> {t('portfolio.detail.results.title')}
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {resultsList.map((result, i) => (
+                            <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
+                              <CheckCircle2 className="text-primary" size={20} />
+                              <span className="text-white font-medium">{result}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col xs={24} lg={8}>
+                      <div className="bg-bg-card border border-white/5 p-8 rounded-3xl sticky top-32">
+                        <h4 className="text-sm uppercase tracking-widest text-text-muted mb-6">{t('portfolio.detail.technologies')}</h4>
+                        <div className="flex flex-wrap gap-2 mb-10">
+                          {(project.technologies || ["Next.js", "Three.js", "Tailwind", "Framer Motion", "WebGL"]).map(tech => (
+                            <span key={tech} className="px-4 py-1.5 bg-white/5 rounded-full text-sm text-white border border-white/10">{tech}</span>
+                          ))}
+                        </div>
+
+                        <Divider className="bg-white/5! mb-8" />
+                        
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.duration')}</h4>
+                            <p className="text-white font-bold">{t('portfolio.detail.durationValue')}</p>
+                          </div>
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.service')}</h4>
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Link href="/contact">
+                          <Button appearance="primary" block size="lg" className="rounded-xl font-bold mt-10">{t('portfolio.detail.startProject')}</Button>
+                        </Link>
+                      </div>
+                    </Col>
+                  </Row>
+                </Grid>
+              </div>
+            </>
+          )}
         </main>
       
         <FooterCopy />

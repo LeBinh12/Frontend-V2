@@ -1,14 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Grid, Row, Col, Panel } from 'rsuite';
 import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useRef } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 const Team = () => {
   const { t } = useTranslation();
+  const { content } = useContent();
+  const allTeamMembers = content?.team && content.team.length > 0 ? content.team : [];
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -17,23 +19,26 @@ const Team = () => {
 
   const yCards = useTransform(scrollYProgress, [0, 1], [30, -30]);
   
-  // Categorize members
-  const technicalLeaders = [
-    { ...mockData.team[1], role: t('team.roles.technicalLeader'), key: "Henry", name: t('team.members.henry') }
-  ];
+  // Categorize members based on level from BE (1: Leadership, 2: Technical, 3+: Support/Dev)
+  // If no BE data, fallback to mock categorization
+  const technicalLeaders = allTeamMembers.length > 0 
+    ? allTeamMembers.filter(m => (m as any).level === 2)
+    : [{ ...mockData.team[1], role: t('team.roles.technicalLeader'), key: "Henry", name: t('team.members.henry') }];
   
-  const leaders = [
-    { ...mockData.team[0], role: t('team.roles.leader'), key: "Steven", name: t('team.members.steven') }
-  ];
+  const leaders = allTeamMembers.length > 0 
+    ? allTeamMembers.filter(m => (m as any).level === 1)
+    : [{ ...mockData.team[0], role: t('team.roles.leader'), key: "Steven", name: t('team.members.steven') }];
   
-  const devs = [
-    { ...mockData.team[2], role: t('team.roles.developer'), key: "JohnB", name: t('team.members.johnb') },
-    { ...mockData.team[1], role: t('team.roles.developer'), key: "Rinyal", name: t('team.members.rinyal') },
-    { ...mockData.team[0], role: t('team.roles.devops'), key: "Dora Ho", name: t('team.members.dora') },
-    { ...mockData.team[2], role: t('team.roles.tester'), key: "Emily", name: t('team.members.emily') },
-    { ...mockData.team[2], role: t('team.roles.devops'), key: "Jayden Ngo", name: t('team.members.jayden') },
-    { ...mockData.team[2], role: t('team.roles.developer'), key: "Mat", name: t('team.members.mat') },
-  ];
+  const devs = allTeamMembers.length > 0 
+    ? allTeamMembers.filter(m => (m as any).level >= 3)
+    : [
+        { ...mockData.team[2], role: t('team.roles.developer'), key: "JohnB", name: t('team.members.johnb') },
+        { ...mockData.team[1], role: t('team.roles.developer'), key: "Rinyal", name: t('team.members.rinyal') },
+        { ...mockData.team[0], role: t('team.roles.devops'), key: "Dora Ho", name: t('team.members.dora') },
+        { ...mockData.team[2], role: t('team.roles.tester'), key: "Emily", name: t('team.members.emily') },
+        { ...mockData.team[2], role: t('team.roles.devops'), key: "Jayden Ngo", name: t('team.members.jayden') },
+        { ...mockData.team[2], role: t('team.roles.developer'), key: "Mat", name: t('team.members.mat') },
+      ];
 
   const renderMemberCard = (member: any, index: number) => (
     <motion.div
@@ -70,10 +75,10 @@ const Team = () => {
           {/* Info */}
           <div className="text-center z-10">
             <h3 className="text-lg font-display font-bold text-white mb-1 group-hover:text-primary transition-colors">
-              {member.name}
+              {(member as any).name}
             </h3>
             <p className="text-xs uppercase tracking-widest text-text-muted group-hover:text-white transition-colors">
-              {member.role}
+              {(member as any).role}
             </p>
           </div>
 

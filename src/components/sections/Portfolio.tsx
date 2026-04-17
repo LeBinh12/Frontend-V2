@@ -9,10 +9,15 @@ import Link from 'next/link';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
+import { useContent } from '@/hooks/useContent';
 
 const Portfolio = () => {
   const { t } = useTranslation();
-  const projectKeys = ['nebula', 'vortex', 'titan'];
+  const { content } = useContent();
+  const projectsData = (content?.portfolio || mockData.portfolio)
+    .filter((p: any) => p.showOnHome)
+    .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0))
+    .slice(0, 3);
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -54,8 +59,8 @@ const Portfolio = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <Row gutter={30}>
-            {mockData.portfolio.map((project, i) => (
-              <Col key={project.id} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
+            {projectsData.map((project, i) => (
+              <Col key={(project as any).key || (project as any).id || i} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
                 <motion.div 
                   style={{ 
                     y: getParallaxY(i), 
@@ -69,11 +74,11 @@ const Portfolio = () => {
                   viewport={{ amount: 0.1, once: false }}
                   transition={{ duration: 0.5, ease: "easeOut" }} 
                 >
-                  <Link href={`/portfolio/${project.id}`} className="block">
+                  <Link href={`/portfolio/${(project as any).key || (project as any).id}`} className="block">
                     <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 group">
                       <Image 
                         src={project.image} 
-                        alt={t(`portfolio.${projectKeys[i]}.title`)}
+                        alt={(project as any).title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -94,14 +99,14 @@ const Portfolio = () => {
                      <div className="flex items-center justify-between mb-3">
                         <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
                      </div>
-                    <Link href={`/portfolio/${project.id}`}>
+                    <Link href={`/portfolio/${(project as any).key || (project as any).id}`}>
                       <h3 className="text-lg sm:text-xl md:text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">
-                        {t(`portfolio.${projectKeys[i]}.title`)}
+                        {(project as any).title}
                         <ArrowUpRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                       </h3>
                     </Link>
                     <p className="text-sm sm:text-base text-text-muted leading-relaxed line-clamp-2">
-                      {t(`portfolio.${projectKeys[i]}.description`)}
+                      {(project as any).description}
                     </p>
                   </div>
                 </motion.div>

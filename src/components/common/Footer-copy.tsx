@@ -10,10 +10,13 @@ import { Twitter, Github, MessageCircle, Linkedin, Mail } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import ContactModal from './ContactModal';
 import Image from 'next/image';
+import { useContent } from '@/hooks/useContent';
 
 const FooterCopy = () => {  
   const { t } = useTranslation();
+  const { content } = useContent();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const companyName = content?.company?.name || mockData.company.name;
 
   return (
     <footer className="relative z-10 bg-bg-dark border-t border-white/5 pt-20 pb-10">
@@ -74,7 +77,7 @@ const FooterCopy = () => {
 
         <div className="flex items-center justify-center text-text-muted text-sm">
           <p className="text-center">
-            © {new Date().getFullYear()} {mockData.company.name}. {t('footer.copyright')}
+            © {new Date().getFullYear()} {companyName}. {t('footer.copyright')}
           </p>
         </div>
       </div>

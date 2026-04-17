@@ -2,9 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  reactStrictMode: false, // Prevents double-rendering in development which can hide performance issues
+  reactStrictMode: false,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production', // Minimizes JS bundle size
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb', // Allow larger image uploads
+    },
   },
   images: {
     remotePatterns: [

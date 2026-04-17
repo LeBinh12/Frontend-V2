@@ -6,11 +6,10 @@ import { mockData } from '@/data/mockData';
 import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from 'framer-motion';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useContent } from '@/hooks/useContent';
 
 import teamMembersData from '@/data/teamMembers.json';
 import Image from 'next/image';
-
-const teamMembers = teamMembersData;
 
 const getInitials = (name: string) => {
   return name
@@ -100,7 +99,11 @@ const TeamMarqueeColumn = ({ members, speed = 0.3, reverse = false }: { members:
 
 const OurTeam = () => {
   const { t } = useTranslation();
+  const { content } = useContent();
   const ref = useRef(null);
+
+  // Use team data from BE if available, otherwise fallback to teamMembersData
+  const teamMembers = content?.team && content.team.length > 0 ? content.team : teamMembersData;
 
   // Split team members into 2 groups for the 2 columns
   const midPoint = Math.ceil(teamMembers.length / 2);
@@ -120,20 +123,18 @@ const OurTeam = () => {
                 viewport={{ amount: 0.3 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
-                <div className="flex flex-col max-w-full">
-                  {/* Decorative Line */}
-                  <div className="w-20 h-1 bg-primary mb-6 rounded-full"></div>
+                {/* Decorative Line */}
+                <div className="w-20 h-1 bg-primary mb-6 rounded-full"></div>
 
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-6 leading-tight font-display font-bold">
-                    {t('ourTeam.title')} <br/>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                      {t('ourTeam.highlight')}
-                    </span>
-                  </h2>
-                  <p className="text-sm sm:text-base md:text-lg text-text-muted leading-relaxed text-justify">
-                    {t('ourTeam.description')}
-                  </p>
-                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-6 leading-tight font-display font-bold">
+                  {t('ourTeam.title')} <br/>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                    {t('ourTeam.highlight')}
+                  </span>
+                </h2>
+                <p className="text-sm sm:text-base md:text-lg text-text-muted leading-relaxed max-w-lg">
+                  {t('ourTeam.description')}
+                </p>
               </motion.div>
             </Col>
 

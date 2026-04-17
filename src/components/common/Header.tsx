@@ -17,6 +17,11 @@ const Header = () => {
   const { scrollY } = useScroll();
   const { t, i18n } = useTranslation();
   const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
@@ -97,10 +102,10 @@ const Header = () => {
             
             <div className="hidden md:flex justify-center flex-2">
               <Nav className="flex items-center text-lg">
-                <Nav.Item as={Link} href="/#services" onClick={(e: any) => handleScroll(e, '/#services')}>{t('nav.services')}</Nav.Item>
-                <Nav.Item as={Link} href="/#portfolio" onClick={(e: any) => handleScroll(e, '/#portfolio')}>{t('nav.portfolio')}</Nav.Item>
-                <Nav.Item as={Link} href="/#team" onClick={(e: any) => handleScroll(e, '/#team')}>{t('nav.team')}</Nav.Item>
-                <Nav.Item as={Link} href="/#about" onClick={(e: any) => handleScroll(e, '/#about')}>{t('nav.about')}</Nav.Item>               
+                <Nav.Item suppressHydrationWarning as={Link} href="/#services" onClick={(e: any) => handleScroll(e, '/#services')}>{t('nav.services')}</Nav.Item>
+                <Nav.Item suppressHydrationWarning as={Link} href="/#portfolio" onClick={(e: any) => handleScroll(e, '/#portfolio')}>{t('nav.portfolio')}</Nav.Item>
+                <Nav.Item suppressHydrationWarning as={Link} href="/#team" onClick={(e: any) => handleScroll(e, '/#team')}>{t('nav.team')}</Nav.Item>
+                <Nav.Item suppressHydrationWarning as={Link} href="/#about" onClick={(e: any) => handleScroll(e, '/#about')}>{t('nav.about')}</Nav.Item>               
               </Nav>
             </div>
             

@@ -7,12 +7,17 @@ import { Code, Fuel, TrendingUp, Users } from 'lucide-react';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 const iconMap: Record<string, any> = {
   blockchain: <Fuel className="w-10 h-10 text-primary" />,
   ai: <TrendingUp className="w-10 h-10 text-primary" />,
   cloud: <Code className="w-10 h-10 text-primary" />,
   design: <Users className="w-10 h-10 text-primary" />,
+  SoftwareDevelopment: <Code className="w-10 h-10 text-primary" />,
+  DigitalTransformationConsulting: <TrendingUp className="w-10 h-10 text-primary" />,
+  ITRecruitmentStaffingServices: <Users className="w-10 h-10 text-primary" />,
+  SmartGasStationSolution: <Fuel className="w-10 h-10 text-primary" />,
 };
 
 const containerVariants: Variants = {
@@ -36,7 +41,8 @@ const itemVariants: Variants = {
 
 const Services = () => {
   const { t } = useTranslation();
-  const serviceKeys = ['cloud', 'ai', 'design', 'blockchain'];
+  const { content } = useContent();
+  const servicesData = content?.services || mockData.services;
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -74,9 +80,9 @@ const Services = () => {
           viewport={{ amount: 0.1, once: false }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 auto-rows-fr"
         >
-              {mockData.services.map((service, i) => (
+              {servicesData.map((service, i) => (
                 <motion.div 
-                  key={service.id}
+                  key={(service as any).key || i}
                   variants={itemVariants}
                   className="flex flex-col h-full"
                   style={{
@@ -94,17 +100,17 @@ const Services = () => {
                     >
                       {/* Icon */}
                       <div className="mb-6 p-4 inline-block bg-primary/5 rounded-2xl group-hover:bg-primary/10 transition-colors self-start">
-                        {iconMap[serviceKeys[i]] || <Code className="w-10 h-10 text-primary" />}
+                        {iconMap[(service as any).key] || <Code className="w-10 h-10 text-primary" />}
                       </div>
 
                       {/* Content */}
                       <div className="flex-1 flex flex-col">
                         <h3 className="text-lg sm:text-xl mb-3 sm:mb-4 group-hover:text-primary transition-colors ">
-                          {t(`services.${serviceKeys[i]}.title`)}
+                          {(service as any).title}
                         </h3>
 
                         <p className="text-sm sm:text-base text-text-muted mt-auto">
-                          {t(`services.${serviceKeys[i]}.description`)}
+                          {(service as any).description}
                         </p>
                       </div>
                     </Panel>

@@ -66,3 +66,125 @@ html {
   z-index: 0;
   pointer-events: none;
 }
+
+
+:root {
+    --grid-min-height: 605px;
+}
+
+@media (max-width: 640px) {
+    :root {
+        --grid-min-height: 540px;
+    }
+
+    .ag-paging-panel {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 4px !important;
+        gap: 0 !important;
+        height: auto !important;
+        /* Allow it to find its natural height */
+        min-height: 38px !important;
+        max-height: 42px !important;
+        overflow: visible !important;
+        /* Don't hide overflow if buttons are tight */
+        border-top: 1px solid #e2e8f0 !important;
+    }
+
+    /* 1 to 4/4 - Ẩn trên mobile theo yêu cầu */
+    .ag-paging-row-summary-panel {
+        display: none !important;
+    }
+
+    /* Page 1 of 1 (1/1) - Ở giữa */
+    .ag-paging-page-summary-panel {
+        order: 2 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 1 1 0% !important;
+        white-space: nowrap !important;
+        font-size: 11px !important;
+    }
+
+    /* Page size - Sát góc phải */
+    .ag-paging-size-selector {
+        order: 3 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex: 0 0 auto !important;
+        width: 52px !important;
+        white-space: nowrap !important;
+        font-size: 11px !important;
+        padding-right: 2px !important;
+    }
+
+    /* Compact description text */
+    .ag-paging-description {
+        margin: 0 4px !important;
+        display: flex !important;
+        gap: 2px !important;
+    }
+
+    /* Hide the "Page" prefix span if it somehow survives localeText='' */
+    .ag-paging-description>span:first-child:empty,
+    .ag-paging-description>span:first-child {
+        display: none !important;
+    }
+
+    /* Compact the size selector dropdown */
+    .ag-paging-size-selector .ag-picker-field {
+        width: 48px !important;
+        min-width: 48px !important;
+        margin: 0 0 0 4px !important;
+    }
+
+    /* Hide "per page" text on mobile */
+    .ag-paging-size-selector>span:not(.ag-picker-field) {
+        display: none !important;
+    }
+
+    /* Make navigation buttons tiny but accessible */
+    .ag-paging-panel .ag-paging-button {
+        padding: 0 2px !important;
+        margin: 0 !important;
+    }
+
+    .ag-paging-panel .ag-icon {
+        font-size: 14px !important;
+    }
+}
+
+/* Global Ag-Grid Centering Fixes */
+.ag-theme-quartz .ag-cell,
+.ag-theme-quartz-dark .ag-cell {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.ag-theme-quartz .ag-cell-wrapper,
+.ag-theme-quartz-dark .ag-cell-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.ag-theme-quartz .ag-header-cell-label,
+.ag-theme-quartz-dark .ag-header-cell-label {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+}
+
+.ag-theme-quartz .ag-header-cell,
+.ag-theme-quartz-dark .ag-header-cell {
+    display: flex !important;
+    align-items: center !important;
+}
+
