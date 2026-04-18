@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import prisma from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +12,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Name, email, and message are required' },
         { status: 400 }
+      );
+    }
+
+    // Save to database
+    try {
+      await (prisma as any).contact.create({
+        data: {
+          name,
+          email,
+          phone: phone || null,
+          subject: subject || null,
+          message,
+        },
+      });
+    } catch (dbError) {      
+      // If DB save fails, we should return an error if we want data integrity
+      return NextResponse.json(
+        { 
+          error: 'Database error: Could not save contact information.',
+          details: dbError instanceof Error ? dbError.message : String(dbError)
+        },
+        { status: 500 }
       );
     }
 
@@ -39,6 +62,7 @@ export async function POST(request: NextRequest) {
             <p><strong>Email:</strong> ${email}</p>
             ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
             ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
+            <p><strong>Time:</strong> ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</p>
           </div>
           <div style="margin: 20px 0;">
             <h3 style="color: #333;">Message:</h3>
@@ -50,19 +74,26 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Send email asynchronously (fire-and-forget)
-    // We do NOT await this promise, so the response returns immediately.
-    transporter.sendMail(mailOptions)
-      .then(() => {
-        console.log(`Email sent successfully to ${mailOptions.to}`);
-      })
-      .catch((error) => {
-        console.error('Error sending email in background:', error);
-      });
+    // Send email synchronously to ensure it completes before response
+    // Or at least catch errors properly
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`✅ Email sent successfully to ${mailOptions.to}`);
+    } catch (emailError) {
+      console.error('❌ Error sending email:', emailError);
+      // We might choose to return 206 or 200 since DB is already saved
+      return NextResponse.json(
+        { 
+          message: 'Data saved to DB but email sending failed.',
+          error: emailError instanceof Error ? emailError.message : String(emailError)
+        },
+        { status: 200 } // Still 200 because DB saved successfully
+      );
+    }
 
-    // Return success response immediately
+    // Return success response
     return NextResponse.json(
-      { message: 'Email queued for sending' },
+      { message: 'Contact saved and email sent successfully' },
       { status: 200 }
     );
   } catch (error) {

@@ -285,6 +285,7 @@
       "tech": "Technologies",
       "company": "Company Info",
       "accounts": "Admin Accounts",
+      "contacts": "Customer Contacts",
       "systemManagement": "SYSTEM MANAGEMENT",
       "userRole": "Senior Manager",
       "viewSite": "Visit Site"
@@ -302,7 +303,6 @@
       "of": "of",
       "rowsPerPage": "Rows per page",
       "noData": "No data found",
-      "loading": "Loading...",
       "searchPlaceholder": "Search...",
       "page": "Page",
       "next": "Next",
@@ -493,6 +493,30 @@
       "editTitle": "Edit Account",
       "saveSuccess": "Account saved successfully!",
       "deleteConfirm": "Are you sure you want to delete this account?"
+    },
+    "contacts": {
+      "pageTitle": "Contact Management",
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "message": "Message Content",
+      "time": "Sending Time",
+      "status": "Status",
+      "changeStatus": "Change Status",
+      "statusUpdateTitle": "Update Status",
+      "updateStatusFor": "Update status for customer:",
+      "statuses": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "active": "Active",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "search": "Search contacts...",
+      "empty": "No contacts found.",
+      "confirmDeleteTitle": "Delete Contact",
+      "confirmDeleteDesc": "This action will permanently remove this customer's contact information from the system."
     }
   }
 }

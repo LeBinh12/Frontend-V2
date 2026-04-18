@@ -188,3 +188,27 @@ html {
     align-items: center !important;
 }
 
+/* RSuite Submenu Pull Left Override - Fix layout shift and flickering */
+.rs-dropdown-item.rs-dropdown-menu-pull-left {
+  position: relative;
+}
+
+/* Ensure the submenu actually pops out without affecting parent size */
+.rs-dropdown-item.rs-dropdown-menu-pull-left > .rs-dropdown-menu {
+  position: absolute !important;
+  right: 100% !important;
+  left: auto !important;
+  top: 0 !important;
+  /* Use padding instead of margin to bridge the hover gap */
+  padding-right: 5px !important; 
+  /* Offset the inner list to create a visual gap while maintaining the bridge */
+  margin-right: -5px !important; 
+  box-shadow: -4px 0 12px rgba(0,0,0,0.15) !important;
+  z-index: 1000 !important;
+  display: none;
+}
+
+/* Show on hover specifically for this structure */
+.rs-dropdown-item.rs-dropdown-menu-pull-left:hover > .rs-dropdown-menu {
+  display: block;
+}

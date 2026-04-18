@@ -132,3 +132,18 @@ enum ManagerRole {
   MANAGER
   STAFF
 }
+
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contacts")
+}
+

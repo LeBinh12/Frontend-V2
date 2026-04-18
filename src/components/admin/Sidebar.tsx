@@ -19,10 +19,12 @@ import {
   Building2,
   ArrowUpRight,
   Globe,
+  MessageSquare,
 } from 'lucide-react';
 
 const navItems = [
   { name: 'dashboard',      href: '/admin-lucidtech',                 icon: LayoutDashboard },
+    { name: 'contacts',       href: '/admin-lucidtech/contacts',        icon: MessageSquare },
   { name: 'content',        href: '/admin-lucidtech/content',         icon: FileText },
   { name: 'services',       href: '/admin-lucidtech/services',        icon: Briefcase },
   { name: 'portfolio',      href: '/admin-lucidtech/portfolio',       icon: ImageIcon },

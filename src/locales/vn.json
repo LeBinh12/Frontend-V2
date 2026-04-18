@@ -285,6 +285,7 @@
       "tech": "Công nghệ",
       "company": "Thông tin công ty",
       "accounts": "Tài khoản Quản trị",
+      "contacts": "Liên hệ khách hàng",
       "systemManagement": "QUẢN LÝ HỆ THỐNG",
       "userRole": "Quản lý cấp cao",
       "viewSite": "Xem trang chủ"
@@ -302,7 +303,6 @@
       "of": "trong số",
       "rowsPerPage": "Số dòng mỗi trang",
       "noData": "Không tìm thấy dữ liệu",
-      "loading": "Đang tải dữ liệu...",
       "searchPlaceholder": "Tìm kiếm...",
       "page": "Trang",
       "next": "Kế tiếp",
@@ -493,6 +493,30 @@
       "editTitle": "Chỉnh sửa tài khoản",
       "saveSuccess": "Đã lưu tài khoản thành công!",
       "deleteConfirm": "Bạn có chắc chắn muốn xóa tài khoản này?"
+    },
+    "contacts": {
+      "pageTitle": "Quản lý liên hệ",
+      "name": "Họ và tên",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "subject": "Chủ đề",
+      "message": "Nội dung tin nhắn",
+      "time": "Thời gian gửi",
+      "status": "Trạng thái",
+      "changeStatus": "Thay đổi trạng thái",
+      "statusUpdateTitle": "Cập nhật trạng thái",
+      "updateStatusFor": "Cập nhật trạng thái cho khách hàng:",
+      "statuses": {
+        "pending": "Chờ xử lý",
+        "processing": "Đang xử lý",
+        "active": "Đang hợp tác",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy"
+      },
+      "search": "Tìm kiếm liên hệ...",
+      "empty": "Không tìm thấy ý kiến liên hệ nào.",
+      "confirmDeleteTitle": "Xóa liên hệ",
+      "confirmDeleteDesc": "Hành động này sẽ xóa vĩnh viễn thông tin liên hệ của khách hàng khỏi hệ thống."
     }
   }
 }

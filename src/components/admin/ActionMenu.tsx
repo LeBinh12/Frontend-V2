@@ -8,6 +8,9 @@ export interface ActionMenuItem {
   eventKey: string;
   onClick: () => void;
   isDanger?: boolean;
+  active?: boolean;
+  activeColor?: string;
+  children?: ActionMenuItem[];
 }
 
 interface ActionMenuProps {
@@ -22,20 +25,70 @@ const DI: any = Dropdown.Item;
 const DS: any = Dropdown.Separator;
 
 export default function ActionMenu({ items, isDark, className }: ActionMenuProps) {
+  const findItem = (items: ActionMenuItem[], key: string): ActionMenuItem | undefined => {
+    for (const item of items) {
+      if (item.eventKey === key) return item;
+      if (item.children) {
+        const found = findItem(item.children, key);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
+  const renderItem = (item: ActionMenuItem, idx: number) => {
+    if (item.children && item.children.length > 0) {
+      return (
+        <Dropdown.Menu 
+          key={item.eventKey} 
+          title={item.label} 
+          icon={item.icon} 
+          trigger="hover"
+          // Force the submenu to the left via style if needed, 
+          // though pullLeft should handle it. 
+          // We'll add a style hint to ensure it's prioritized.
+          style={{ position: 'relative' }}
+          className="rs-dropdown-menu-pull-left"
+        >
+          {item.children.map((child, cIdx) => renderItem(child, cIdx))}
+        </Dropdown.Menu>
+      );
+    }
+
+    const activeStyle = item.active && item.activeColor ? {
+      color: item.activeColor,
+      fontWeight: 'bold',
+      backgroundColor: isDark ? `${item.activeColor}10` : `${item.activeColor}15`,
+    } : {};
+
+    return (
+      <React.Fragment key={item.eventKey}>
+        {idx > 0 && item.isDanger && <DS />}
+        <DI 
+          eventKey={item.eventKey} 
+          icon={item.icon}
+          active={item.active}
+          style={activeStyle}
+          className={item.active && !item.activeColor ? (isDark ? '!bg-blue-500/20 !text-blue-400' : '!bg-blue-50 !text-blue-600') : ''}
+        >
+          <span className={`
+            ${item.isDanger ? 'text-red-500 font-medium' : ''}
+            ${item.active ? 'font-bold' : ''}
+          `}>
+            {item.label}
+          </span>
+        </DI>
+      </React.Fragment>
+    );
+  };
+
   const menu = (
     <Popover full>
       <DM onSelect={(key: string) => {
-        const item = items.find(i => i.eventKey === key);
+        const item = findItem(items, key);
         if (item) item.onClick();
       }}>
-        {items.map((item, idx) => (
-          <React.Fragment key={item.eventKey}>
-            {idx > 0 && item.isDanger && <DS />}
-            <DI eventKey={item.eventKey} icon={item.icon}>
-              <span className={item.isDanger ? 'text-red-500 font-medium' : ''}>{item.label}</span>
-            </DI>
-          </React.Fragment>
-        ))}
+        {items.map((item, idx) => renderItem(item, idx))}
       </DM>
     </Popover>
   );
