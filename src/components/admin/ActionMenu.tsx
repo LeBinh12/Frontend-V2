@@ -4,7 +4,7 @@ import { MoreVertical } from 'lucide-react';
 
 export interface ActionMenuItem {
   label: string;
-  icon?: React.ReactNode;
+  icon?: React.ReactElement;
   eventKey: string;
   onClick: () => void;
   isDanger?: boolean;
@@ -39,7 +39,7 @@ export default function ActionMenu({ items, isDark, className }: ActionMenuProps
   const renderItem = (item: ActionMenuItem, idx: number) => {
     if (item.children && item.children.length > 0) {
       return (
-        <Dropdown.Menu 
+        <DM 
           key={item.eventKey} 
           title={item.label} 
           icon={item.icon} 
@@ -51,7 +51,7 @@ export default function ActionMenu({ items, isDark, className }: ActionMenuProps
           className="rs-dropdown-menu-pull-left"
         >
           {item.children.map((child, cIdx) => renderItem(child, cIdx))}
-        </Dropdown.Menu>
+        </DM>
       );
     }
 
