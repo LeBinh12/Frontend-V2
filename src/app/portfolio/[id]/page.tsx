@@ -17,7 +17,7 @@ import FooterCopy from '@/components/common/Footer-copy';
 import { useContent } from '@/hooks/useContent';
 
 const CaseStudyPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const { content } = useContent();
@@ -39,8 +39,8 @@ const CaseStudyPage = () => {
 
   // Resolve category label — fall back to raw categoryKey if translation is missing
   const categoryKey = (project as any)?.categoryKey || '';
-  const categoryTranslated = t(`portfolio.categories.${categoryKey}`, { defaultValue: '' });
-  const categoryLabel = categoryTranslated && categoryTranslated !== `portfolio.categories.${categoryKey}`
+  const categoryTranslated = t(`portfolio.categories.${categoryKey.toLowerCase()}`, { defaultValue: '' });
+  const categoryLabel = categoryTranslated && categoryTranslated !== `portfolio.categories.${categoryKey.toLowerCase()}`
     ? categoryTranslated
     : categoryKey;
 
@@ -84,7 +84,7 @@ const CaseStudyPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                  <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                  <span className="text-primary text-sm uppercase font-bold tracking-[0.3em] mb-4 block">{categoryLabel}</span>
                   <h1 className="text-5xl md:text-8xl mb-5 text-white">{project.title}</h1>
                 </motion.div>
               </div>
@@ -118,37 +118,36 @@ const CaseStudyPage = () => {
                 <Grid fluid className="p-0!">
                   <Row gutter={60}>
                     <Col xs={24} lg={16}>
-                      <div className="mb-20">
-                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                          <Target className="text-primary" /> {t('portfolio.detail.challenge.title')}
-                        </h2>
-                        <p className="text-xl text-text-muted leading-relaxed">
-                          {t('portfolio.detail.challenge.description', { title: project.title })}
-                        </p>
-                      </div>
-
-                      <div className="mb-20">
-                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                          <Lightbulb className="text-primary" /> {t('portfolio.detail.solution.title')}
-                        </h2>
-                        <p className="text-xl text-text-muted leading-relaxed">
-                          {t('portfolio.detail.solution.description')}
-                        </p>
-                      </div>
-
-                      <div>
-                        <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
-                          <CheckCircle2 className="text-primary" /> {t('portfolio.detail.results.title')}
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {resultsList.map((result, i) => (
-                            <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
-                              <CheckCircle2 className="text-primary" size={20} />
-                              <span className="text-white font-medium">{result}</span>
-                            </div>
-                          ))}
+                      {/* Case Study Content from DB */}
+                      {(project.contentEn || project.contentVn) ? (
+                        <div className="mb-20">
+                          <h2 className="text-4xl font-display font-bold mb-10 text-white flex items-center gap-4">
+                            <span className="w-8 h-1 bg-primary rounded-full"></span>
+                            {t('portfolio.detail.projectDetailHeader', 'Project Case Study')}
+                          </h2>
+                          <div 
+                            className="prose prose-xl prose-invert max-w-none 
+                              prose-headings:font-display prose-headings:font-bold prose-headings:text-white
+                              prose-p:text-text-muted prose-p:leading-relaxed
+                              prose-li:text-text-muted
+                              prose-img:rounded-3xl prose-img:shadow-2xl prose-img:border prose-img:border-white/5
+                              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                              prose-strong:text-white"
+                            dangerouslySetInnerHTML={{ 
+                              __html: (i18n.language === 'en' ? (project.contentEn || project.contentVn) : (project.contentVn || project.contentEn)) || '' 
+                            }}
+                          />
                         </div>
-                      </div>
+                      ) : (
+                        <div className="mb-20">
+                          <h2 className="text-3xl font-display font-bold mb-6 flex items-center gap-4 text-white">
+                            <Target className="text-primary" /> {t('portfolio.detail.challenge.title')}
+                          </h2>
+                          <p className="text-xl text-text-muted leading-relaxed">
+                            {t('portfolio.detail.challenge.description', { title: project.title })}
+                          </p>
+                        </div>
+                      )}
                     </Col>
 
                     <Col xs={24} lg={8}>
@@ -165,12 +164,25 @@ const CaseStudyPage = () => {
                         <div className="space-y-6">
                           <div>
                             <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.duration')}</h4>
-                            <p className="text-white font-bold">{t('portfolio.detail.durationValue')}</p>
+                            <p className="text-white font-bold">
+                              {(() => {
+                                const dur = (project as any).duration;
+                                if (!dur) return t('portfolio.detail.durationValue');
+                                const parts = dur.split(' ');
+                                if (parts.length === 2) {
+                                  const u = parts[1].toLowerCase();
+                                  if (['day', 'ngày', 'days'].includes(u)) return `${parts[0]} ${t('units.day')}`;
+                                  if (['month', 'tháng', 'months'].includes(u)) return `${parts[0]} ${t('units.month')}`;
+                                  if (['year', 'năm', 'years'].includes(u)) return `${parts[0]} ${t('units.year')}`;
+                                }
+                                return dur;
+                              })()}
+                            </p>
                           </div>
                           <div>
                             <h4 className="text-xs uppercase tracking-widest text-text-muted mb-2">{t('portfolio.detail.service')}</h4>
                             <div className="flex items-center justify-between mb-3">
-                              <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                              <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{categoryLabel}</span>
                             </div>
                           </div>
                         </div>

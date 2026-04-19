@@ -116,6 +116,11 @@
     "viewAll": "View All Work",
     "viewCase": "View Case Study",
     "contactCTA": "Contact Us Now",
+    "units": {
+      "day": "Day",
+      "month": "Month",
+      "year": "Year"
+    },
     "nebula": {
       "title": "PetroPoint TMS",
       "description": "Smart gas station management system (SaaS) designed to optimize operational processes, manage fuel inventory, control sales transactions, and minimize payment errors."
@@ -142,7 +147,10 @@
         "backButton": "Back to Portfolio"
       },
       "back": "Back",
-      "caseStudy": "Case Study",
+      "projectDetailHeader": "Project Case Study",
+      "caseStudy": {
+        "title": "Project Case Study"
+      },
       "challenge": {
         "title": "The Challenge",
         "description": "Developing {{title}} presented unique technical hurdles. Our primary objective was to create a scalable platform that could handle high transaction volumes while maintaining peak security standards. The complexity involved integrating multiple third-party systems without compromising on performance or user experience."
@@ -338,10 +346,13 @@
       "view": "Detail",
       "clearFilters": "Clear Filters",
       "confirmDeleteTitle": "Confirm Delete",
-      "confirmDeleteDesc": "This action cannot be undone. Data will be permanently removed from the system.",
+      "confirmDeleteDesc": "Are you sure you want to delete this item? This action cannot be undone.",
+      "viewSite": "View on Site",
       "typeToConfirm": "Type {{label}} to confirm",
       "key": "Key",
-      "createdAt": "Created At"
+      "createdAt": "Created At",
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "dashboard": {
       "overview": "System Overview",
@@ -410,7 +421,22 @@
       "order": "Order",
       "showOnHome": "Show on Home",
       "sortOrder": "Sort Order",
-      "limitReached": "Maximum of 3 projects can be displayed on the home page."
+      "limitReached": "Maximum of 3 projects can be displayed on the home page.",
+      "units": {
+        "title": "Unit"
+      },
+      "manageCategories": "Manage Categories",
+      "categoryName": "Category Name",
+      "noCategories": "No categories found.",
+      "selectCategory": "Select Category",
+      "duration": "Duration",
+      "detailTitle": "Project Details",
+      "detailTitleEn": "Project Case Study (English)",
+      "detailTitleVn": "Project Case Study (Vietnamese)",
+      "caseStudyPreview": "Case Study Preview",
+      "previewContent": "Details",
+      "homePage": "Home Page",
+      "confirmDeleteDesc": "This action cannot be undone. Data will be permanently removed from the system."
     },
     "team": {
       "pageTitle": "Team",

@@ -116,6 +116,11 @@
     "viewAll": "Xem tất cả công việc",
     "viewCase": "Xem chi tiết dự án",
     "contactCTA": "Liên hệ với chúng tôi ngay",
+    "units": {
+      "day": "Ngày",
+      "month": "Tháng",
+      "year": "Năm"
+    },
     "nebula": {
       "title": "PetroPoint TMS",
       "description": "PetroPoint TMS là một hệ thống phần mềm quản lý trạm xăng được xây dựng để đáp ứng nhu cầu tối ưu hóa quy trình vận hành và quản lý tại các trạm xăng. Sản phẩm này giải quyết các vấn đề như quản lý tồn kho nhiên liệu, kiểm soát các giao dịch bán hàng, và giảm thiểu sai sót trong quá trình thanh toán (SaaS)."
@@ -142,7 +147,10 @@
         "backButton": "Quay lại Portfolio"
       },
       "back": "Quay lại",
-      "caseStudy": "Dự án",
+      "projectDetailHeader": "Chi tiết dự án",
+      "caseStudy": {
+        "title": "Chi tiết dự án"
+      },
       "challenge": {
         "title": "Thách thức",
         "description": "Việc phát triển {{title}} đặt ra những rào cản kỹ thuật độc nhất. Mục tiêu chính của chúng tôi là tạo ra một nền tảng có khả năng mở rộng, có thể xử lý khối lượng giao dịch lớn trong khi vẫn duy trì các tiêu chuẩn bảo mật cao nhất. Sự phức tạp bao gồm việc tích hợp nhiều hệ thống bên thứ ba mà không ảnh hưởng đến hiệu suất hoặc trải nghiệm người dùng."
@@ -339,9 +347,12 @@
       "clearFilters": "Xóa bộ lọc",
       "confirmDeleteTitle": "Xác nhận xóa",
       "confirmDeleteDesc": "Hành động này không thể hoàn tác. Dữ liệu sẽ bị xóa vĩnh viễn khỏi hệ thống.",
+      "viewSite": "Xem trên trang chủ",
       "typeToConfirm": "Nhập {{label}} để xác nhận",
       "key": "Khóa",
-      "createdAt": "Ngày tạo"
+      "createdAt": "Ngày tạo",
+      "active": "Hoạt động",
+      "inactive": "Ẩn"
     },
     "dashboard": {
       "overview": "Tổng quan hệ thống",
@@ -410,7 +421,22 @@
       "order": "Thứ tự",
       "showOnHome": "Hiển thị trang chủ",
       "sortOrder": "Thứ tự sắp xếp",
-      "limitReached": "Tối đa chỉ có 3 dự án được hiển thị trên trang chủ."
+      "limitReached": "Tối đa chỉ có 3 dự án được hiển thị trên trang chủ.",
+      "units": {
+        "title": "Đơn vị"
+      },
+      "manageCategories": "Quản lý danh mục",
+      "categoryName": "Tên danh mục",
+      "noCategories": "Chưa có danh mục nào.",
+      "selectCategory": "Chọn danh mục",
+      "duration": "Thời gian",
+      "detailTitle": "Chi tiết dự án",
+      "detailTitleEn": "Chi tiết dự án (Tiếng Anh)",
+      "detailTitleVn": "Chi tiết dự án (Tiếng Việt)",
+      "caseStudyPreview": "Bản xem trước Case Study",
+      "previewContent": "Chi Tiết",
+      "homePage": "Trang Chủ",
+      "confirmDeleteDesc": "Hành động này không thể hoàn tác. Dữ liệu sẽ bị xóa vĩnh viễn khỏi hệ thống."
     },
     "team": {
       "pageTitle": "Đội ngũ",

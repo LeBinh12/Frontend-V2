@@ -21,14 +21,15 @@ import type {
     ValueSetterParams
 } from "ag-grid-community";
 
-import { ModuleRegistry, ClientSideRowModelModule, CsvExportModule, RowSelectionModule, PaginationModule, ValidationModule } from "ag-grid-community";
+import { ModuleRegistry, ClientSideRowModelModule, CsvExportModule, RowSelectionModule, PaginationModule, ValidationModule, UndoRedoEditModule } from "ag-grid-community";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CsvExportModule,
     RowSelectionModule,
     PaginationModule,
-    ValidationModule
+    ValidationModule,
+    UndoRedoEditModule
 ]);
 
 const getAgGridLocale = (t: any) => ({

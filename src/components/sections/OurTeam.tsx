@@ -116,7 +116,7 @@ const OurTeam = () => {
         <Grid fluid className="p-0!">
           <Row gutter={30} className="items-start">
             {/* Text Section - Left Column */}
-            <Col xs={24} lg={10}>
+            <Col xs={24} lg={12}>
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -132,14 +132,14 @@ const OurTeam = () => {
                     {t('ourTeam.highlight')}
                   </span>
                 </h2>
-                <p className="text-sm sm:text-base md:text-lg text-text-muted leading-relaxed max-w-lg">
+                <p className="text-sm sm:text-base md:text-lg text-text-muted leading-relaxed text-justify">
                   {t('ourTeam.description')}
                 </p>
               </motion.div>
             </Col>
 
             {/* Dual Marquee Section - Right Column */}
-            <Col xs={24} lg={14} className="mt-8 lg:mt-0">
+            <Col xs={24} lg={12} className="mt-8 lg:mt-0">
               <div className="relative w-full h-[450px] overflow-hidden pointer-events-auto">
                 
                 {/* Gradient Fades */}

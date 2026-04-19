@@ -13,9 +13,9 @@ import { useContent } from '@/hooks/useContent';
 
 const Portfolio = () => {
   const { t } = useTranslation();
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const projectsData = (content?.portfolio || mockData.portfolio)
-    .filter((p: any) => p.showOnHome)
+    .filter((p: any) => p.showOnHome || p.showOnHome === undefined)
     .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0))
     .slice(0, 3);
   const ref = useRef(null);
@@ -59,7 +59,24 @@ const Portfolio = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <Grid fluid className="p-0!">
           <Row gutter={30}>
-            {projectsData.map((project, i) => (
+            {loading ? (Array(3).fill(0).map((_, i) => (
+              <Col key={`skeleton-${i}`} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
+                <motion.div 
+                  style={{ y: getParallaxY(i) }}
+                  className="animate-pulse"
+                >
+                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-white/5 border border-white/10" />
+                  <div className="px-2">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-20 h-6 bg-white/5 rounded-full" />
+                    </div>
+                    <div className="w-3/4 h-8 bg-white/5 rounded mb-3" />
+                    <div className="w-full h-4 bg-white/5 rounded mb-2" />
+                    <div className="w-5/6 h-4 bg-white/5 rounded" />
+                  </div>
+                </motion.div>
+              </Col>
+            ))) : (projectsData.map((project, i) => (
               <Col key={(project as any).key || (project as any).id || i} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
                 <motion.div 
                   style={{ 
@@ -78,7 +95,7 @@ const Portfolio = () => {
                     <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 group">
                       <Image 
                         src={project.image} 
-                        alt={(project as any).title}
+                        alt={(project as any).title || ""}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -111,7 +128,7 @@ const Portfolio = () => {
                   </div>
                 </motion.div>
               </Col>
-            ))}
+            )))}
           </Row>
         </Grid>
       </div>

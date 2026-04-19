@@ -61,12 +61,24 @@ model PortfolioItem {
   image         String
   categoryKey   String   @map("category_key")
   technologies  String[]
-  showOnHome    Boolean  @default(false) @map("show_on_home")
-  sortOrder     Int      @default(0) @map("sort_order")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  showOnHome    Boolean  @default(false) @map("show_on_home")
+  sortOrder     Int      @default(0) @map("sort_order")
+  contentEn     String?  @map("content_en")
+  contentVn     String?  @map("content_vn")
+  duration      String?  @default("")
 
   @@map("portfolio_items")
+}
+
+model PortfolioCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("portfolio_categories")
 }
 
 model TeamMember {
@@ -127,13 +139,6 @@ model Manager {
   @@map("managers")
 }
 
-enum ManagerRole {
-  ADMIN
-  MANAGER
-  STAFF
-}
-
-
 model Contact {
   id        Int      @id @default(autoincrement())
   name      String
@@ -147,3 +152,8 @@ model Contact {
   @@map("contacts")
 }
 
+enum ManagerRole {
+  ADMIN
+  MANAGER
+  STAFF
+}

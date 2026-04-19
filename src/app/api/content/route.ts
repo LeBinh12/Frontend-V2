@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     // 3. Fetch Portfolio
     const portfolio = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder" 
+      `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder", content_en as "contentEn", content_vn as "contentVn", duration 
        FROM portfolio_items 
        ORDER BY sort_order ASC, id ASC`
     );
@@ -37,7 +37,10 @@ export async function GET(request: NextRequest) {
       sortOrder: Number(p.sortOrder) || 0,
       image: p.image,
       categoryKey: p.categoryKey,
-      technologies: p.technologies
+      technologies: p.technologies,
+      contentEn: p.contentEn,
+      contentVn: p.contentVn,
+      duration: p.duration
     }));
 
     // 4. Fetch Team

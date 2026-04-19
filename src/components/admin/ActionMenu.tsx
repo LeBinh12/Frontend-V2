@@ -4,12 +4,13 @@ import { MoreVertical } from 'lucide-react';
 
 export interface ActionMenuItem {
   label: string;
-  icon?: React.ReactElement;
+  icon?: React.ReactNode;
   eventKey: string;
   onClick: () => void;
   isDanger?: boolean;
   active?: boolean;
   activeColor?: string;
+  disabled?: boolean;
   children?: ActionMenuItem[];
 }
 
@@ -39,10 +40,10 @@ export default function ActionMenu({ items, isDark, className }: ActionMenuProps
   const renderItem = (item: ActionMenuItem, idx: number) => {
     if (item.children && item.children.length > 0) {
       return (
-        <DM 
+        <Dropdown.Menu 
           key={item.eventKey} 
           title={item.label} 
-          icon={item.icon} 
+          icon={item.icon as any} 
           trigger="hover"
           // Force the submenu to the left via style if needed, 
           // though pullLeft should handle it. 
@@ -51,7 +52,7 @@ export default function ActionMenu({ items, isDark, className }: ActionMenuProps
           className="rs-dropdown-menu-pull-left"
         >
           {item.children.map((child, cIdx) => renderItem(child, cIdx))}
-        </DM>
+        </Dropdown.Menu>
       );
     }
 
@@ -66,8 +67,9 @@ export default function ActionMenu({ items, isDark, className }: ActionMenuProps
         {idx > 0 && item.isDanger && <DS />}
         <DI 
           eventKey={item.eventKey} 
-          icon={item.icon}
+          icon={item.icon as any}
           active={item.active}
+          disabled={item.disabled}
           style={activeStyle}
           className={item.active && !item.activeColor ? (isDark ? '!bg-blue-500/20 !text-blue-400' : '!bg-blue-50 !text-blue-600') : ''}
         >

@@ -18,6 +18,8 @@ export interface PublicContent {
     image: string;
     categoryKey: string;
     technologies: string[];
+    contentEn: string | null;
+    contentVn: string | null;
   }>;
   team: Array<{
     name: string;

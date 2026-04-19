@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS "portfolio_categories" (
+    "id" SERIAL PRIMARY KEY,
+    "name" TEXT NOT NULL UNIQUE,
+    "sort_order" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
