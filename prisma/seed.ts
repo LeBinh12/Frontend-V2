@@ -191,6 +191,30 @@ async function main() {
     });
   }
 
+  console.log('💻 Seeding Technologies...');
+  await prisma.technology.deleteMany({}); // Xoá trước để tránh trùng lặp do không có unique key
+
+  const technologiesToSeed = [
+    { name: "React", category: "Frontend" },
+    { name: "Next.js", category: "Frontend" },
+    { name: "ASP.NET MVC", category: "Frontend" },
+    { name: "Angular", category: "Frontend" },
+    { name: "React Native", category: "Mobile Development" },
+    { name: ".NET MAUI", category: "Mobile Development" },
+    { name: "ASP.NET Web API", category: "Backend" },
+    { name: "Golang", category: "Backend" },
+    { name: "PyTorch", category: "AI & Machine Learning" },
+    { name: "TensorFlow", category: "AI & Machine Learning" },
+    { name: "Kubernetes", category: "Cloud & DevOps" },
+    { name: "Docker", category: "Cloud & DevOps" },
+    { name: "Terraform", category: "Cloud & DevOps" },
+    { name: "Azure", category: "Cloud & DevOps" }
+  ];
+
+  await prisma.technology.createMany({
+    data: technologiesToSeed
+  });
+
   console.log('👥 Seeding Team Members (merged coords + personas + roles)...');
   // Clear existing to avoid duplicates if re-running
   await prisma.teamMember.deleteMany({});

@@ -32,7 +32,7 @@ const Technologies = () => {
           className="mb-10 sm:mb-13"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">
-            {t('technologies.title')} <span className="text-primary">{t('technologies.highlight')}</span> {t('technologies.stack')}
+            {t('technologies.title')} <span className="text-primary">{t('technologies.highlight')}</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-text-muted max-w-2xl leading-relaxed">
             {t('technologies.subtitle')}
