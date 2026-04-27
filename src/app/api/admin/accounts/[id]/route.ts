@@ -9,7 +9,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { username, password, fullName, email, role } = body;
+    const { username, password, fullName, email, role, roleIds } = body;
 
     // Check if account exists
     const account = await prisma.manager.findUnique({ where: { id } });
@@ -43,6 +43,14 @@ export async function PUT(
       role,
     };
 
+    // Sync roles
+    if (Array.isArray(roleIds)) {
+      data.roles = {
+        deleteMany: {},
+        create: roleIds.map((roleId: string) => ({ roleId }))
+      };
+    }
+
     // Only update password if provided
     if (password) {
       data.password = await bcrypt.hash(password, 10);
@@ -51,10 +59,22 @@ export async function PUT(
     const updatedAccount = await prisma.manager.update({
       where: { id },
       data,
-      select: { id: true, username: true, fullName: true, email: true, role: true, createdAt: true }
+      select: { 
+        id: true, username: true, fullName: true, email: true, role: true, createdAt: true,
+        roles: {
+          select: {
+            role: {
+              select: { id: true, name: true }
+            }
+          }
+        }
+      }
     });
 
-    return NextResponse.json(updatedAccount);
+    return NextResponse.json({
+      ...updatedAccount,
+      assignedRoles: updatedAccount.roles.map(r => r.role)
+    });
   } catch (error) {
     console.error(`PUT /api/admin/accounts/[id] error:`, error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

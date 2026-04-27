@@ -18,9 +18,12 @@ export async function GET(request: NextRequest) {
     const [items, total] = await Promise.all([
       prisma.technology.findMany({
         where: where as any,
+        include: {
+          cat: true,
+        },
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { category: 'asc' },
+        orderBy: { name: 'asc' },
       }),
       prisma.technology.count({ where: where as any }),
     ]);
@@ -35,11 +38,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, category, icon } = body;
+    const { name, category, categoryId } = body;
     if (!name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
-    const item = await prisma.technology.create({ data: { name, category: category ?? '', icon } });
+    
+    const item = await prisma.technology.create({ 
+      data: { 
+        name, 
+        category: category ?? '', 
+        categoryId: categoryId ? Number(categoryId) : null
+      },
+      include: {
+        cat: true
+      }
+    });
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
+    console.error('POST /api/admin/technologies error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

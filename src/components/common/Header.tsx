@@ -176,7 +176,7 @@ const Header = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 30 }}
             transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
-            className="fixed bottom-8 right-8 z-50 w-14 rounded-full h-14"
+            className="fixed bottom-2 right-5 z-50 w-14 h-14 flex items-center justify-center rounded-full"
           >
             {/* Pulsing glow ring with 3-color mix - uses rounded-full and blur */}
             <motion.div
@@ -193,8 +193,11 @@ const Header = () => {
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="relative w-full h-full rounded-full shadow-2xl flex items-center justify-center group overflow-hidden border border-white/10"
+              className="relative rounded-full shadow-2xl flex items-center justify-center group overflow-hidden border border-white/10"
               style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '9999px',        // ← force override mọi CSS khác
                 backgroundImage: 'linear-gradient(135deg, #4FA3D1 0%, #8DC63F 50%, #F7941D 100%)',
               }}
               aria-label="Scroll to top"

@@ -9,9 +9,15 @@ import DataTable, { DataTableColumn } from '@/components/admin/DataTable';
 import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal';
 import { Edit2, Loader2, Plus, Save, Trash2, X, Zap, Code, Fuel, TrendingUp, Users, Cloud, Laptop, Rocket, Shield, Cpu, Globe } from 'lucide-react';
 import ActionMenu from '@/components/admin/ActionMenu';
+import { useAdminAuth } from '@/context/AdminAuthContext';
+import { toaster, Notification } from 'rsuite';
 
 const ICON_COMPONENTS: Record<string, any> = {
   Code, Fuel, TrendingUp, Users, Cloud, Laptop, Rocket, Shield, Cpu, Globe, Zap,
+  it_staffing: Users,
+  smart_gas_station: Fuel,
+  digital_transformation: TrendingUp,
+  software_development: Code,
   design: Code,
   blockchain: Fuel,
   ai: TrendingUp,
@@ -38,9 +44,27 @@ interface Service {
   titleVn: string;
   descriptionEn: string;
   descriptionVn: string;
+  showOnHome: boolean;
+  sortOrder: number;
 }
 
-const EMPTY: Omit<Service, 'id'> = { key: '', icon: '', titleEn: '', titleVn: '', descriptionEn: '', descriptionVn: '' };
+const EMPTY: Omit<Service, 'id'> = { key: '', icon: '', titleEn: '', titleVn: '', descriptionEn: '', descriptionVn: '', showOnHome: false, sortOrder: 0 };
+
+const Toggle = ({ checked, onChange, label, isDark, loading }: { checked: boolean, onChange: (v: boolean) => void, label?: string, isDark: boolean, loading?: boolean }) => (
+  <div className="flex items-center gap-2">
+    <button
+      disabled={loading}
+      onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
+      className={`relative !inline-flex h-5 w-9 shrink-0 cursor-pointer !rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${checked ? 'bg-blue-600' : (isDark ? 'bg-slate-700' : 'bg-slate-300')}`}
+    >
+      <span
+        className={`pointer-events-none !items-center inline-flex h-5 w-5 border transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-4' : 'translate-x-0'}`}
+      >
+        {loading && <Loader2 size={10} className="animate-spin text-blue-600 m-auto" />}
+      </span>
+    </button>
+  </div>
+);
 
 function ServiceModal({ open, onClose, onSave, item, isDark }: {
   open: boolean; onClose: () => void; onSave: (d: Omit<Service, 'id'>) => Promise<void>; item: Service | null; isDark: boolean;
@@ -48,7 +72,18 @@ function ServiceModal({ open, onClose, onSave, item, isDark }: {
   const { t } = useTranslation();
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { setForm(item ? { key: item.key, icon: item.icon, titleEn: item.titleEn, titleVn: item.titleVn, descriptionEn: item.descriptionEn, descriptionVn: item.descriptionVn } : EMPTY); }, [item, open]);
+  useEffect(() => { 
+    setForm(item ? { 
+      key: item.key, 
+      icon: item.icon, 
+      titleEn: item.titleEn, 
+      titleVn: item.titleVn, 
+      descriptionEn: item.descriptionEn, 
+      descriptionVn: item.descriptionVn,
+      showOnHome: Boolean(item.showOnHome),
+      sortOrder: Number(item.sortOrder) || 0
+    } : EMPTY); 
+  }, [item, open]);
   if (!open) return null;
 
   const bg = isDark ? '#0f172a' : '#ffffff', border = isDark ? '#1e293b' : '#e2e8f0';
@@ -77,6 +112,18 @@ function ServiceModal({ open, onClose, onSave, item, isDark }: {
           </div>
           {F(t('admin.services.descEn'), <textarea style={{ ...inp, resize: 'vertical', minHeight: 64 }} value={form.descriptionEn} placeholder="English description..." onChange={e => setForm(f => ({ ...f, descriptionEn: e.target.value }))} />)}
           {F(t('admin.services.descVn'), <textarea style={{ ...inp, resize: 'vertical', minHeight: 64 }} value={form.descriptionVn} placeholder="Mô tả tiếng Việt..." onChange={e => setForm(f => ({ ...f, descriptionVn: e.target.value }))} />)}
+          
+          <div className='!rounded-lg' style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: label, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('admin.portfolio.showOnHome')}</label>
+              <div style={{ height: 32, display: 'flex', alignItems: 'center' }}>
+                <Toggle checked={form.showOnHome} onChange={val => setForm(f => ({ ...f, showOnHome: val }))} isDark={isDark} />
+              </div>
+            </div>
+            {F(t('admin.portfolio.sortOrder'), 
+              <input type="number" style={{ ...inp, width: 80 }} value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} />
+            )}
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '12px 18px', borderTop: `1px solid ${border}` }}>
           <button onClick={onClose} style={{ padding: '7px 16px', fontSize: 12, fontWeight: 600, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>{t('admin.common.cancel')}</button>
@@ -100,6 +147,12 @@ export default function ServicesPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<Service | null>(null);
   const [deleteItem, setDeleteItem] = useState<Service | null>(null);
+  const [togglingHomeId, setTogglingHomeId] = useState<number | null>(null);
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('SERVICES', 'CREATE');
+  const canUpdate = canDo('SERVICES', 'UPDATE');
+  const canDelete = canDo('SERVICES', 'DELETE');
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -112,9 +165,12 @@ export default function ServicesPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        q: search
+        q: search,
+        _t: Date.now().toString()
       });
-      const res = await fetch(`/api/admin/services?${params.toString()}`);
+      const res = await fetch(`/api/admin/services?${params.toString()}`, { 
+        cache: 'no-store'
+      });
       const d = await res.json();
       setRows(d.items || []);
       setTotal(d.total || 0);
@@ -135,15 +191,60 @@ export default function ServicesPage() {
   }, [fetchData]);
 
   const handleAdd = useCallback(async (f: Omit<Service, 'id'>) => {
-    await fetch('/api/admin/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) });
+    const res = await fetch('/api/admin/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) });
+    const d = await res.json();
+    if (res.status === 400 && d.error === 'LIMIT_REACHED') {
+      toaster.push(<Notification type="error" header="Limit Reached" closable>{t('admin.portfolio.limitReached')}</Notification>, { placement: 'topEnd' });
+      return;
+    }
     await fetchData();
-  }, [fetchData]);
+  }, [fetchData, t]);
 
   const handleEdit = useCallback(async (f: Omit<Service, 'id'>) => {
     if (!editItem) return;
-    await fetch(`/api/admin/services/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) });
-    await fetchData();
-  }, [editItem, fetchData]);
+    try {
+      const res = await fetch(`/api/admin/services/${editItem.id}`, { 
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(f) 
+      });
+      const d = await res.json();
+      if (res.status === 400 && d.error === 'LIMIT_REACHED') {
+        toaster.push(<Notification type="error" header="Limit Reached" closable>{t('admin.portfolio.limitReached')}</Notification>, { placement: 'topEnd' });
+        return;
+      }
+      if (res.ok) {
+        setRows(prev => prev.map(item => item.id === editItem.id ? d : item));
+        fetchData();
+      } else {
+        await fetchData();
+      }
+    } catch (e) {
+      console.error(e);
+      await fetchData();
+    }
+  }, [editItem, fetchData, t]);
+
+  const handleToggleHome = async (item: Service) => {
+    setTogglingHomeId(item.id);
+    try {
+      const newVal = !item.showOnHome;
+      const res = await fetch(`/api/admin/services/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showOnHome: newVal }),
+        cache: 'no-store'
+      });
+      const d = await res.json();
+      if (res.status === 400 && d.error === 'LIMIT_REACHED') {
+        toaster.push(<Notification type="error" header="Limit Reached" closable>{t('admin.portfolio.limitReached')}</Notification>, { placement: 'topEnd' });
+        return;
+      }
+      await fetchData();
+    } finally {
+      setTogglingHomeId(null);
+    }
+  };
 
   const handleDelete = useCallback(async () => {
     if (!deleteItem) return;
@@ -156,6 +257,16 @@ export default function ServicesPage() {
     { key: 'icon', header: t('admin.services.icon'), width: 80, align: 'center', render: r => <ServiceIcon iconName={r.icon} isDark={isDark} /> },
     { key: 'titleEn', header: t('admin.services.titleEn'), flexGrow: 1, render: r => <span className="text-xs font-semibold">{r.titleEn}</span> },
     { key: 'titleVn', header: t('admin.services.titleVn'), flexGrow: 1, render: r => <span className="text-xs">{r.titleVn}</span> },
+    { key: 'showOnHome', header: t('admin.portfolio.home'), width: 110, render: r => (
+      <Toggle 
+        checked={r.showOnHome} 
+        onChange={() => canUpdate && handleToggleHome(r)} 
+        label={r.showOnHome ? `#${r.sortOrder || 0}` : undefined} 
+        isDark={isDark} 
+        loading={togglingHomeId === r.id}
+      />
+    )},
+    { key: 'sortOrder', header: t('admin.portfolio.order'), width: 100, align: 'center', render: r => <span className="text-xs font-mono">{r.sortOrder}</span> },
     { key: 'descriptionEn', header: t('admin.common.actions'), flexGrow: 2, render: r => <span className="text-xs line-clamp-2">{r.descriptionEn}</span> },
     {
       key: 'actions', header: t('admin.common.actions'), width: 80, align: 'right', fixed: 'right',
@@ -163,31 +274,37 @@ export default function ServicesPage() {
         <ActionMenu 
           isDark={isDark}
           items={[
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit', 'Chỉnh sửa'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => { setEditItem(r); setFormOpen(true); } 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t]);
+  ], [isDark, t, canUpdate, canDelete, rows]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <DataManagementLayout
         searchTerm={search} onSearchTermChange={setSearch} onSearch={handleSearch}
         advancedOpen={false} onToggleAdvanced={() => {}} searchPlaceholder={t('admin.services.search')} controlSize="sm" isDark={isDark}
-        searchBarExtras={<Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold"><Plus size={14} /> {t('admin.common.addNew')}</Button>}
+        searchBarExtras={
+          canCreate && (
+            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+              <Plus size={14} /> {t('admin.common.addNew')}
+            </Button>
+          )
+        }
       >
         <DataTable
           data={rows}

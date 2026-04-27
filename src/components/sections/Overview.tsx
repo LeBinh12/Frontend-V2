@@ -10,7 +10,7 @@ import { useContent } from '@/hooks/useContent';
 
 const Overview = () => {
   const { t } = useTranslation();
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const companyStats = content?.company?.stats || mockData.company.stats;
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const ref = useRef(null);
@@ -123,19 +123,28 @@ const Overview = () => {
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-8 md:mt-10">
-                  {companyStats.map((stat, i) => (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: 50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ amount: 0.3 }}
-                      transition={{ delay: 0.1 + i * 0.1, duration: 0.6 }}
-                      className="border-l-2 border-primary/30 pl-6"
-                    >
-                      <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</p>
-                      <p className="text-xs sm:text-sm text-text-muted uppercase tracking-widest">{t(`stats.${(stat as any).key || (stat as any).labelKey}`)}</p>
-                    </motion.div>
-                  ))}
+                  {loading ? (
+                    Array(4).fill(0).map((_, i) => (
+                      <div key={`stat-skeleton-${i}`} className="border-l-2 border-white/5 pl-6 animate-pulse">
+                        <div className="w-16 h-8 bg-white/5 rounded mb-2" />
+                        <div className="w-24 h-4 bg-white/5 rounded" />
+                      </div>
+                    ))
+                  ) : (
+                    companyStats.map((stat, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ amount: 0.3 }}
+                        transition={{ delay: 0.1 + i * 0.1, duration: 0.6 }}
+                        className="border-l-2 border-primary/30 pl-6"
+                      >
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</p>
+                        <p className="text-xs sm:text-sm text-text-muted uppercase tracking-widest">{t(`stats.${(stat as any).key || (stat as any).labelKey}`)}</p>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               </motion.div>
             </Col>

@@ -63,22 +63,29 @@ const PortfolioPage = () => {
 
           {/* Filters */}
           <div className="container mx-auto px-6 mb-12 flex flex-wrap justify-center gap-4">
-            {categories.map((cat, i) => (
-              <motion.button
-                key={cat}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => setFilter(cat)}
-                className={`px-6 py-2 rounded-full font-bold transition-all ${
-                  filter === cat 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' 
-                    : 'bg-white/5 text-text-muted hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                {cat === 'all' ? t('portfolio.page.filterAll') : t(`portfolio.categories.${cat}`)}
-              </motion.button>
-            ))}
+            {categories.map((cat, i) => {
+              const label = cat === 'all' 
+                ? t('portfolio.page.filterAll') 
+                : t(`portfolio.categories.${cat}`, { 
+                    defaultValue: projectsData.find(p => (p as any).categoryKey === cat)?.categoryName || cat 
+                  });
+              return (
+                <motion.button
+                  key={cat}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => setFilter(cat)}
+                  className={`px-6 py-2 rounded-full font-bold transition-all ${
+                    filter === cat 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' 
+                      : 'bg-white/5 text-text-muted hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {label}
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Projects Grid */}
@@ -121,7 +128,9 @@ const PortfolioPage = () => {
 
                         <div className="px-2">
                           <div className="flex items-center justify-between mb-3">
-                             <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
+                             <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">
+                               {t(`portfolio.categories.${(project as any).categoryKey}`, { defaultValue: (project as any).categoryName })}
+                             </span>
                           </div>
                           <Link href={`/portfolio/${(project as any).key || (project as any).id}`}>
                             <h3 className="text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">

@@ -5,38 +5,18 @@ export async function GET() {
   try {
     const [
       activeUsers,
-      services,
       portfolioItems,
-      teamMembers,
-      stats,
-      technologies,
-      staticContent
+      contacts,
     ] = await Promise.all([
       prisma.manager.count(),
-      prisma.service.count(),
       prisma.portfolioItem.count(),
-      prisma.teamMember.count(),
-      prisma.stat.count(),
-      prisma.technology.count(),
-      prisma.staticContent.count(),
+      prisma.contact.count(),
     ]);
 
-    const totalContentItems = 
-      services + 
-      portfolioItems + 
-      teamMembers + 
-      stats + 
-      technologies + 
-      staticContent;
-
-    // Placeholder for total visits as we don't have tracking yet
-    // Returning a realistic looking number or just 0
-    const totalVisits = 12456 + (activeUsers * 10); 
-
     return NextResponse.json({
-      totalVisits,
+      contacts,
       activeUsers,
-      contentItems: totalContentItems,
+      portfolioItems,
       languages: 2
     });
   } catch (error) {

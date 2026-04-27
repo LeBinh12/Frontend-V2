@@ -10,6 +10,7 @@ import DataManagementLayout from '@/components/admin/DataManagementLayout';
 import DataTable, { DataTableColumn } from '@/components/admin/DataTable';
 import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal';
 import ImageUploader from '@/components/admin/ImageUploader';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface TeamMember {
   id: number;
@@ -174,6 +175,12 @@ export default function TeamPage() {
   const [detailItem, setDetailItem] = useState<TeamMember | null>(null);
   const [deleteItem, setDeleteItem] = useState<TeamMember | null>(null);
 
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('TEAM', 'CREATE');
+  const canUpdate = canDo('TEAM', 'UPDATE');
+  const canDelete = canDo('TEAM', 'DELETE');
+
   // Pagination state
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -185,9 +192,10 @@ export default function TeamPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        q: search
+        q: search,
+        _t: Date.now().toString()
       });
-      const res = await fetch(`/api/admin/team?${params.toString()}`);
+      const res = await fetch(`/api/admin/team?${params.toString()}`, { cache: 'no-store' });
       const d = await res.json();
       setRows(d.items || []);
       setTotal(d.total || 0);
@@ -208,7 +216,15 @@ export default function TeamPage() {
   }, [fetchData]);
 
   const handleAdd = async (f: Omit<TeamMember, 'id'>) => { await fetch('/api/admin/team', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) }); await fetchData(); };
-  const handleEdit = async (f: Omit<TeamMember, 'id'>) => { if (!editItem) return; await fetch(`/api/admin/team/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) }); await fetchData(); };
+  const handleEdit = async (f: Omit<TeamMember, 'id'>) => {
+    if (!editItem) return;
+    const res = await fetch(`/api/admin/team/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f), cache: 'no-store' });
+    const d = await res.json();
+    if (res.ok) {
+      setRows(prev => prev.map(item => item.id === editItem.id ? d : item));
+    }
+    await fetchData();
+  };
   const handleDelete = async () => { if (!deleteItem) return; await fetch(`/api/admin/team/${deleteItem.id}`, { method: 'DELETE' }); await fetchData(); };
 
   const columns: DataTableColumn<TeamMember>[] = useMemo(() => [
@@ -236,31 +252,37 @@ export default function TeamPage() {
               eventKey: 'view', 
               onClick: () => setDetailItem(r) 
             },
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => { setEditItem(r); setFormOpen(true); } 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t]);
+  ], [isDark, t, rows, canUpdate, canDelete]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <DataManagementLayout
         searchTerm={search} onSearchTermChange={setSearch} onSearch={handleSearch}
         advancedOpen={false} onToggleAdvanced={() => {}} searchPlaceholder={t('admin.team.search')} controlSize="sm" isDark={isDark}
-        searchBarExtras={<Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold"><Plus size={14} /> {t('admin.common.addNew')}</Button>}
+        searchBarExtras={
+          canCreate && (
+            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+              <Plus size={14} /> {t('admin.common.addNew')}
+            </Button>
+          )
+        }
       >
         <DataTable
           data={rows}

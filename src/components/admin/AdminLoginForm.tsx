@@ -58,14 +58,14 @@ const AdminLoginForm = () => {
     <div className="w-full max-w-md p-8">
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-        <p className="text-slate-400">Please enter your credentials to access the portal.</p>
+        <p className="text-white/60">Please enter your credentials to access the portal.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300 ml-1">Username</label>
+          <label className="text-sm font-medium text-white ml-1">Username</label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-emerald-400 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-white/40 group-focus-within:text-emerald-400 transition-colors">
               <User size={18} />
             </div>
             <input
@@ -73,16 +73,16 @@ const AdminLoginForm = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+              className="block w-full pl-10 pr-3 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
               placeholder="Enter username"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300 ml-1">Password</label>
+          <label className="text-sm font-medium text-white ml-1">Password</label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-emerald-400 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-white/40 group-focus-within:text-emerald-400 transition-colors">
               <Lock size={18} />
             </div>
             <input
@@ -90,13 +90,13 @@ const AdminLoginForm = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full pl-10 pr-12 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+              className="block w-full pl-10 pr-12 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-emerald-400 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/40 hover:text-emerald-400 transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -125,7 +125,7 @@ const AdminLoginForm = () => {
         </button>
       </form>
       
-      <div className="mt-8 text-center text-slate-500 text-sm">
+      <div className="mt-8 text-center text-white/40 text-sm">
         <p>© 2026 Lucid Technology. All rights reserved.</p>
       </div>
     </div>

@@ -39,12 +39,17 @@ DATABASE_URL="postgresql://username:password@localhost:5432/lucidtech?schema=pub
 
 ### 4. Database & Schema Initialization
 
-Synchronize the database schema and populate it with initial content and admin accounts:
+To initialize the database, apply the schema, and automatically populate it with initial data (including admin accounts), run the following command once:
 
 ```bash
 npm run db:init
 ```
-*This command runs `prisma db push` and `prisma db seed` sequentially.*
+*Note: This command performs `prisma db push` followed by `prisma db seed`. You do **not** need to run a separate seeding command after this.*
+
+If you encounter an error regarding the "Prisma Client," run:
+```bash
+npx prisma generate
+```
 
 ### 5. Running the Application
 

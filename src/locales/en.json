@@ -11,7 +11,7 @@
     "menu": "Menu"
   },
   "hero": {
-    "badge": "NEXT GENERATION TECHNOLOGY",  
+    "badge": "NEXT GENERATION TECHNOLOGY",
     "title": "Building the Future &",
     "highlight": "Empowering Digital Innovation",
     "description": "Lucid Technology is a technology company specializing in software development, digital transformation, and technology consulting services. We focus on building secure, scalable, and high-quality systems that help businesses optimize operations and enhance their competitive advantage in the digital era",
@@ -67,19 +67,19 @@
     "title": "Our",
     "highlight": "Core Services",
     "description": "We offer a comprehensive suite of services to help you build and scale your digital vision.",
-    "blockchain": {
+    "smart_gas_station": {
       "title": "Smart Gas Station Solution",
       "description": "A comprehensive gas station management software system built on over 30 years of real-world industry experience. It integrates sales management, inventory control, accounts receivable, employee management, and real-time reporting. User-friendly interface with multi-branch synchronization and automatic cloud data backup."
     },
-    "ai": {
+    "digital_transformation": {
       "title": "Digital Transformation Consulting",
       "description": "Providing end-to-end digital transformation consulting services for small and medium-sized enterprises. We analyze existing processes, propose suitable technology solutions, provide staff training, and support implementation to help businesses optimize costs, improve efficiency, and enhance competitive advantages."
     },
-    "cloud": {
+    "software_development": {
       "title": "Software Development",
       "description": "Design and development of websites, mobile applications, and enterprise management software tailored to specific business needs. Our experienced development team understands business processes and provides optimal solutions using modern technologies, with long-term maintenance and operational support."
     },
-    "design": {
+    "it_staffing": {
       "title": "IT Recruitment & Staffing Services",
       "description": "Supporting businesses in sourcing and recruiting high-quality IT talent. We provide IT staffing services for both project-based and long-term engagements, with experienced professionals in software development, system administration, and information security."
     }
@@ -105,10 +105,9 @@
     "subtitle": "A selection of projects where technical excellence meets business impact. We take pride in every line of code.",
     "categories": {
       "saas": "SaaS",
-      "webDev": "Web Development",
-      "internalSystem": "Internal System",
+      "webdev": "Web Development",
+      "internalsystem": "Internal System",
       "virtual": "Virtual / Simulation",
-      "Virtual": "Virtual / Simulation",
       "mobile": "Mobile App",
       "ai": "AI & Machine Learning",
       "ecommerce": "E-Commerce"
@@ -181,12 +180,13 @@
     "stack": "Stack",
     "subtitle": "Our technology choices are driven by performance, scalability, and developer experience. We stay ahead of the curve so you don't have to.",
     "categories": {
-      "Frontend": "Frontend",
-      "Backend": "Backend",
-      "Web3": "Web3",
-      "AI & Machine Learning": "AI & Machine Learning",
-      "Cloud & DevOps": "Cloud & DevOps",
-      "Mobile Development": "Mobile Development"
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "database": "Database",
+      "web3": "Web3",
+      "ai-machine-learning": "AI & Machine Learning",
+      "cloud-devops": "Cloud & DevOps",
+      "mobile-development": "Mobile Development"
     }
   },
   "team": {
@@ -218,11 +218,6 @@
     "collaboration": {
       "title": "Collaborative Excellence",
       "description": "We believe that the best products are built through open communication and shared passion for technology."
-    },
-    "leo": {
-      "name": "Leo Sterling",
-      "role": "CEO & Founder",
-      "bio": "Visionary leader with 15+ years in the tech industry."
     },
     "sarah": {
       "name": "Sarah Chen",
@@ -284,18 +279,29 @@
   },
   "admin": {
     "menu": {
+      "sections": {
+        "main": "Overview",
+        "content": "Content Management",
+        "company": "Company",
+        "system": "System & Security"
+      },
       "dashboard": "Dashboard",
       "content": "Static Content",
       "services": "Services",
       "portfolio": "Portfolio",
       "team": "Team Members",
       "stats": "Statistics",
-      "tech": "Technologies",
+      "technologies": "Technologies",
       "company": "Company Info",
       "accounts": "Admin Accounts",
       "contacts": "Customer Contacts",
+      "roles": "Roles (Level)",
+      "modules": "Module Management",
+      "permissionsList": "Action Management",
+      "permissions": "Permission Matrix",
       "systemManagement": "SYSTEM MANAGEMENT",
       "userRole": "Senior Manager",
+      "userName": "System Administrator",
       "viewSite": "Visit Site"
     },
     "header": {
@@ -358,9 +364,9 @@
       "overview": "System Overview",
       "lastUpdate": "Last update",
       "stats": {
-        "visits": "Total Visits",
+        "contacts": "Customer Contacts",
         "users": "Active Users",
-        "content": "Content Items",
+        "projects": "Projects Completed",
         "languages": "Languages"
       },
       "activity": {
@@ -416,7 +422,7 @@
       "search": "Search projects...",
       "empty": "No projects found.",
       "confirmDeleteTitle": "Delete Project",
-      "confirmDeleteDesc": "You are deleting a project from the Portfolio. This will remove it from the showcase page.",
+      "confirmDeleteDesc": "This action cannot be undone. Data will be permanently removed from the system.",
       "home": "Home",
       "order": "Order",
       "showOnHome": "Show on Home",
@@ -427,6 +433,8 @@
       },
       "manageCategories": "Manage Categories",
       "categoryName": "Category Name",
+      "categoryNameEn": "Category Name (EN)",
+      "categoryNameVn": "Category Name (VN)",
       "noCategories": "No categories found.",
       "selectCategory": "Select Category",
       "duration": "Duration",
@@ -435,8 +443,7 @@
       "detailTitleVn": "Project Case Study (Vietnamese)",
       "caseStudyPreview": "Case Study Preview",
       "previewContent": "Details",
-      "homePage": "Home Page",
-      "confirmDeleteDesc": "This action cannot be undone. Data will be permanently removed from the system."
+      "homePage": "Home Page"
     },
     "team": {
       "pageTitle": "Team",
@@ -476,6 +483,8 @@
       "confirmDeleteDesc": "You are deleting a technology from the list. This will remove its icon from related projects.",
       "manageCategories": "Manage Categories",
       "categoryName": "Category Name",
+      "categoryNameEn": "Category Name (EN)",
+      "categoryNameVn": "Category Name (VN)",
       "order": "Order",
       "noCategories": "No categories found.",
       "selectCategory": "Select Category"
@@ -515,8 +524,6 @@
       "roleStaff": "Staff",
       "search": "Search accounts...",
       "empty": "No accounts found.",
-      "addTitle": "Add New Account",
-      "editTitle": "Edit Account",
       "saveSuccess": "Account saved successfully!",
       "deleteConfirm": "Are you sure you want to delete this account?"
     },
@@ -543,6 +550,72 @@
       "empty": "No contacts found.",
       "confirmDeleteTitle": "Delete Contact",
       "confirmDeleteDesc": "This action will permanently remove this customer's contact information from the system."
+    },
+    "roles": {
+      "pageTitle": "Role Management",
+      "addTitle": "Add New Role",
+      "editTitle": "Edit Role",
+      "name": "Role Name",
+      "namePlaceholder": "e.g. SUPER_ADMIN",
+      "description": "Description",
+      "descEn": "Description (EN)",
+      "descVn": "Description (VN)",
+      "search": "Search roles...",
+      "empty": "No roles found.",
+      "confirmDeleteTitle": "Delete Role",
+      "confirmDeleteDesc": "Deleting a role will remove all staff from this role. Are you sure?"
+    },
+    "permissions": {
+      "pageTitle": "Permission Matrix",
+      "saveMatrix": "Save Permission Matrix",
+      "module": "Module",
+      "action": "Action",
+      "saveSuccess": "Permission matrix updated successfully!",
+      "loadError": "Failed to load permission matrix",
+      "saveError": "Failed to save permission matrix",
+      "matrixDesc": "Manage permissions for each role across system modules.",
+      "searchPlaceholder": "Search modules...",
+      "groupMode": "Group Mode",
+      "moduleRole": "Module / Role",
+      "selectAll": "Select/Unselect All",
+      "selectAllRole": "Select all for {{role}}",
+      "groupToggle": "Group toggle:",
+      "selectAllModule": "Select all for module {{module}}",
+      "collapsedHint": "{{count}} actions — click arrow to expand",
+      "groupToggleRole": "Select group for {{role}}",
+      "selectAllRolesForAction": "Select all roles for this action",
+      "unsavedChanges": "You have unsaved changes!",
+      "saveNow": "Save Now",
+      "legendAllowed": "Permission granted",
+      "legendDenied": "No permission",
+      "legendHint": "Click cell to toggle permission"
+    },
+    "modules": {
+      "pageTitle": "Module Management (Group)",
+      "addTitle": "Add New Module",
+      "editTitle": "Edit Module",
+      "code": "Module Code",
+      "nameEn": "Name (EN)",
+      "nameVn": "Name (VN)",
+      "search": "Search modules...",
+      "syncSidebar": "Sync from Sidebar",
+      "empty": "No modules found.",
+      "confirmDeleteTitle": "Confirm Delete Module",
+      "confirmDeleteDesc": "Deleting a module will remove all its related permissions in the matrix."
+    },
+    "permissionsList": {
+      "pageTitle": "Action Management (Permission)",
+      "addTitle": "Add New Action",
+      "editTitle": "Edit Action",
+      "code": "Action Code",
+      "nameEn": "Name (EN)",
+      "nameVn": "Name (VN)",
+      "search": "Search actions...",
+      "addCommon": "Add Common Actions",
+      "empty": "No actions found.",
+      "confirmDeleteTitle": "Confirm Delete Action",
+      "confirmDeleteDesc": "Deleting an action will remove it from all modules in the permission matrix."
     }
   }
 }
+

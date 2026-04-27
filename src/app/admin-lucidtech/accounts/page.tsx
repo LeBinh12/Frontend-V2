@@ -7,9 +7,10 @@ import DataManagementLayout from '@/components/admin/DataManagementLayout';
 import DataTable, { DataTableColumn } from '@/components/admin/DataTable';
 import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal';
 import AdminConfirmResetModal from '@/components/admin/AdminConfirmResetModal';
-import { Button, Dropdown, Whisper, Popover } from 'rsuite';
+import { Button, Dropdown, Whisper, Popover, TagPicker, Stack, Modal } from 'rsuite';
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '@/components/admin/ActionMenu';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface Manager {
   id: string;
@@ -18,6 +19,7 @@ interface Manager {
   email: string | null;
   role: 'ADMIN' | 'MANAGER' | 'STAFF';
   createdAt: string;
+  assignedRoles?: { id: string; name: string }[];
 }
 
 const ROLE_META: Record<string, { label: string; color: string; Icon: typeof Crown | typeof ShieldCheck | typeof ShieldAlert }> = {
@@ -31,7 +33,8 @@ const EMPTY_FORM = {
   password: '',
   fullName: '',
   email: '',
-  role: 'STAFF' as 'ADMIN' | 'MANAGER' | 'STAFF'
+  role: 'STAFF' as 'ADMIN' | 'MANAGER' | 'STAFF',
+  roleIds: [] as string[]
 };
 
 function AccountModal({ open, onClose, onSave, item, isDark }: {
@@ -42,14 +45,23 @@ function AccountModal({ open, onClose, onSave, item, isDark }: {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => { 
+  const [availableRoles, setAvailableRoles] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
     if (open) {
+      // Fetch available roles
+      fetch('/api/admin/roles')
+        .then(res => res.json())
+        .then(data => setAvailableRoles(data))
+        .catch(console.error);
+
       setForm(item ? { 
         username: item.username, 
         password: '', 
         fullName: item.fullName || '', 
         email: item.email || '', 
-        role: item.role 
+        role: item.role,
+        roleIds: item.assignedRoles?.map(r => r.id) || []
       } : EMPTY_FORM);
       setError(null);
     }
@@ -85,19 +97,20 @@ function AccountModal({ open, onClose, onSave, item, isDark }: {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-      <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, width: 480, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${border}` }}>
+    <Modal open={open} onClose={onClose} size="sm" backdrop="static" className="!flex !items-center !min-h-screen" style={{ display: 'flex', alignItems: 'center', marginTop: 0 }}>
+      <Modal.Header>
+        <Modal.Title>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ padding: 6, background: 'rgba(59,130,246,0.1)', borderRadius: 8 }}>
               <UserCog size={18} color="#3b82f6" />
             </div>
             <span style={{ fontSize: 15, fontWeight: 700, color: text }}>{item ? t('admin.accounts.editTitle') : t('admin.accounts.addTitle')}</span>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: label, padding: 4 }}><X size={18} /></button>
-        </div>
-        
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+        </Modal.Title>
+      </Modal.Header>
+      
+      <Modal.Body style={{ overflow: 'visible' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           {error && (
             <div style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, color: '#ef4444', fontSize: 12, fontWeight: 600 }}>
               {error}
@@ -111,52 +124,57 @@ function AccountModal({ open, onClose, onSave, item, isDark }: {
                 <input style={{ ...inp, paddingLeft: 32, fontFamily: 'monospace', opacity: item ? 0.6 : 1 }} value={form.username} readOnly={!!item} placeholder="e.g. admin" onChange={e => setForm(f => ({ ...f, username: e.target.value }))} />
               </div>
             )}
-            {F(t('admin.accounts.role'), 
-              <select style={inp} value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as any }))}>
-                <option value="ADMIN">{t('admin.accounts.roleAdmin')}</option>
-                <option value="MANAGER">{t('admin.accounts.roleManager')}</option>
-                <option value="STAFF">{t('admin.accounts.roleStaff')}</option>
-              </select>
+            {F(t('admin.accounts.fullName'), 
+              <input style={inp} value={form.fullName} placeholder="Họ và tên" onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))} />
             )}
           </div>
 
-          {F(t('admin.accounts.fullName'), 
-            <input style={inp} value={form.fullName} placeholder="Full name" onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))} />
+          {F(t('admin.menu.roles'), 
+            <TagPicker
+              data={availableRoles.map(r => ({ label: r.name, value: r.id }))}
+              value={form.roleIds}
+              onChange={(val) => setForm(f => ({ ...f, roleIds: val || [] }))}
+              block
+              placeholder="Chọn vai trò (nhóm quyền)..."
+              style={{ width: '100%' }}
+            />
           )}
 
-          {F(t('admin.accounts.email'), 
-             <div style={{ position: 'relative' }}>
-                <Mail size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: label, opacity: 0.5 }} />
-                <input style={{ ...inp, paddingLeft: 32 }} type="email" value={form.email} placeholder="email@example.com" onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
-             </div>
-          )}
-
-          {F(t('admin.accounts.password'), 
-            <div style={{ position: 'relative' }}>
-              <Key size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: label, opacity: 0.5 }} />
-              <input style={{ ...inp, paddingLeft: 32 }} type="password" value={form.password} placeholder={item ? "Leave blank to keep current" : "Enter password"} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
-            </div>,
-            item ? "Optional" : undefined
-          )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {F(t('admin.accounts.email'), 
+               <div style={{ position: 'relative' }}>
+                  <Mail size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: label, opacity: 0.5 }} />
+                  <input style={{ ...inp, paddingLeft: 32 }} type="email" value={form.email} placeholder="email@example.com" onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+               </div>
+            )}
+            {F(t('admin.accounts.password'), 
+              <div style={{ position: 'relative' }}>
+                <Key size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: label, opacity: 0.5 }} />
+                <input style={{ ...inp, paddingLeft: 32 }} type="password" value={form.password} placeholder={item ? "Để trống để giữ nguyên" : "Nhập mật khẩu"} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+              </div>,
+              item ? "Không bắt buộc" : undefined
+            )}
+          </div>
         </div>
+      </Modal.Body>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, padding: '16px 20px', borderTop: `1px solid ${border}` }}>
-          <button onClick={onClose} style={{ padding: '8px 18px', fontSize: 13, fontWeight: 600, borderRadius: 8, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label, transition: 'all 0.2s' }}>{t('admin.common.cancel')}</button>
-          <button 
-            disabled={!form.username.trim() || (!item && !form.password) || saving} 
-            onClick={handleAction}
-            style={{ 
-              padding: '8px 24px', fontSize: 13, fontWeight: 700, borderRadius: 8, cursor: (saving || !form.username.trim()) ? 'not-allowed' : 'pointer', 
-              background: '#3b82f6', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: 8,
-              boxShadow: '0 4px 12px rgba(59,130,246,0.3)', transition: 'all 0.2s'
-            }}>
-            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} {item ? t('admin.common.save') : t('admin.common.add')}
-          </button>
-        </div>
-      </div>
-    </div>
+      <Modal.Footer>
+        <button onClick={onClose} style={{ padding: '8px 18px', fontSize: 13, fontWeight: 600, borderRadius: 8, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label, transition: 'all 0.2s' }}>{t('admin.common.cancel')}</button>
+        <button 
+          disabled={!form.username.trim() || (!item && !form.password) || saving} 
+          onClick={handleAction}
+          style={{ 
+            padding: '8px 24px', fontSize: 13, fontWeight: 700, borderRadius: 8, cursor: (saving || !form.username.trim()) ? 'not-allowed' : 'pointer', 
+            background: '#3b82f6', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: 8,
+            boxShadow: '0 4px 12px rgba(59,130,246,0.3)', transition: 'all 0.2s', marginLeft: 10
+          }}>
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} {item ? t('admin.common.save') : t('admin.common.add')}
+        </button>
+      </Modal.Footer>
+    </Modal>
   );
-}
+}  
+
 
 export default function AdminAccountsPage() {
   const { isDark } = useAdminTheme();
@@ -168,6 +186,11 @@ export default function AdminAccountsPage() {
   const [editItem, setEditItem] = useState<Manager | null>(null);
   const [deleteItem, setDeleteItem] = useState<Manager | null>(null);
   const [resetItem, setResetItem] = useState<Manager | null>(null);
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('ACCOUNTS', 'CREATE');
+  const canUpdate = canDo('ACCOUNTS', 'UPDATE');
+  const canDelete = canDo('ACCOUNTS', 'DELETE');
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -259,23 +282,33 @@ export default function AdminAccountsPage() {
           </div>
           <div>
             <p className="text-xs font-semibold">{r.fullName ?? r.username}</p>
-            <p className="text-[10px] text-slate-400 font-mono">@{r.username}</p>
+            <div className="flex items-center gap-2 mt-0.5 opacity-50">
+              <span className="text-[10px] font-mono">@{r.username}</span>
+              {r.email && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-slate-500" />
+                  <span className="text-[10px]">{r.email}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       ),
     },
-    { key: 'email', header: t('admin.accounts.email'), flexGrow: 1, render: r => <span className="text-[11px] text-slate-400">{r.email ?? '—'}</span> },
     {
-      key: 'role', header: t('admin.accounts.role'), width: 110, align: 'center',
-      render: r => {
-        const m = ROLE_META[r.role] ?? ROLE_META.STAFF;
-        const Icon = m.Icon;
-        return (
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold" style={{ background: `${m.color}18`, color: m.color }}>
-            <Icon size={9} /> {m.label}
-          </div>
-        );
-      },
+      key: 'assignedRoles', header: t('admin.menu.roles'), flexGrow: 1,
+      render: r => (
+        <div className="flex flex-wrap gap-1">
+          {r.assignedRoles?.map(ar => (
+            <span key={ar.id} className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[9px] font-bold border border-blue-500/20 uppercase">
+              {ar.name}
+            </span>
+          ))}
+          {(!r.assignedRoles || r.assignedRoles.length === 0) && (
+            <span className="text-[10px] italic opacity-30">—</span>
+          )}
+        </div>
+      )
     },
     {
       key: 'createdAt', header: t('admin.common.createdAt'), width: 120,
@@ -287,25 +320,25 @@ export default function AdminAccountsPage() {
         <ActionMenu 
           isDark={isDark}
           items={[
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit', 'Chỉnh sửa'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => { setEditItem(r); setFormOpen(true); } 
-            },
-            { 
+            }] : []),
+            ...(canUpdate ? [{ 
               label: t('admin.accounts.resetPassword', 'Reset Password'), 
               icon: <RotateCcw size={14} className="text-amber-500" />, 
               eventKey: 'reset', 
               onClick: () => setResetItem(r) 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
@@ -323,9 +356,11 @@ export default function AdminAccountsPage() {
               {loading ? <Loader2 size={10} className="animate-spin" /> : <ShieldCheck size={10} />}
               {total} {t('admin.accounts.role')}
             </div>
-            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-              <Plus size={14} /> {t('admin.common.addNew')}
-            </Button>
+            {canCreate && (
+              <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+                <Plus size={14} /> {t('admin.common.addNew')}
+              </Button>
+            )}
           </div>
         }
       >

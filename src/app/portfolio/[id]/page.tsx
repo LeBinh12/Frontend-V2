@@ -37,13 +37,10 @@ const CaseStudyPage = () => {
   const project = projectsData.find(p => (p as any).key === id || (p as any).id === Number(id));
   const resultsList = t('portfolio.detail.results.list', { returnObjects: true }) as string[] || [];
 
-  // Resolve category label — fall back to raw categoryKey if translation is missing
+  // Resolve category label — fall back to database name if translation is missing
   const categoryKey = (project as any)?.categoryKey || '';
-  const categoryTranslated = t(`portfolio.categories.${categoryKey.toLowerCase()}`, { defaultValue: '' });
-  const categoryLabel = categoryTranslated && categoryTranslated !== `portfolio.categories.${categoryKey.toLowerCase()}`
-    ? categoryTranslated
-    : categoryKey;
-
+  const categoryName = (project as any)?.categoryName || categoryKey;
+  const categoryLabel = t(`portfolio.categories.${categoryKey.toLowerCase()}`, { defaultValue: categoryName });
 
   // Loading or Error States should come after hooks
   if (!mounted) return null;
@@ -126,7 +123,7 @@ const CaseStudyPage = () => {
                             {t('portfolio.detail.projectDetailHeader', 'Project Case Study')}
                           </h2>
                           <div 
-                            className="prose prose-xl prose-invert max-w-none 
+                            className="prose prose-xl prose-invert max-w-none break-words overflow-hidden
                               prose-headings:font-display prose-headings:font-bold prose-headings:text-white
                               prose-p:text-text-muted prose-p:leading-relaxed
                               prose-li:text-text-muted
@@ -171,9 +168,9 @@ const CaseStudyPage = () => {
                                 const parts = dur.split(' ');
                                 if (parts.length === 2) {
                                   const u = parts[1].toLowerCase();
-                                  if (['day', 'ngày', 'days'].includes(u)) return `${parts[0]} ${t('units.day')}`;
-                                  if (['month', 'tháng', 'months'].includes(u)) return `${parts[0]} ${t('units.month')}`;
-                                  if (['year', 'năm', 'years'].includes(u)) return `${parts[0]} ${t('units.year')}`;
+                                  if (['day', 'ngày', 'days'].includes(u)) return `${parts[0]} ${t('portfolio.units.day')}`;
+                                  if (['month', 'tháng', 'months'].includes(u)) return `${parts[0]} ${t('portfolio.units.month')}`;
+                                  if (['year', 'năm', 'years', 'nằm'].includes(u)) return `${parts[0]} ${t('portfolio.units.year')}`;
                                 }
                                 return dur;
                               })()}

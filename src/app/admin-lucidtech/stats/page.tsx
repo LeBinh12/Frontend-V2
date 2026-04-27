@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useAdminTheme } from '../layout';
 import { Plus, Edit2, Trash2, BarChart2, Loader2, Save, X } from 'lucide-react';
 import ActionMenu from '@/components/admin/ActionMenu';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 import { Button } from 'rsuite';
 import { useTranslation } from 'react-i18next';
 import DataManagementLayout from '@/components/admin/DataManagementLayout';
@@ -90,6 +91,12 @@ export default function StatsPage() {
   const [editItem, setEditItem] = useState<Stat | null>(null);
   const [deleteItem, setDeleteItem] = useState<Stat | null>(null);
 
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('STATS', 'CREATE');
+  const canUpdate = canDo('STATS', 'UPDATE');
+  const canDelete = canDo('STATS', 'DELETE');
+
   // Pagination state
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -101,9 +108,10 @@ export default function StatsPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        q: search
+        q: search,
+        _t: Date.now().toString()
       });
-      const res = await fetch(`/api/admin/stats?${params.toString()}`);
+      const res = await fetch(`/api/admin/stats?${params.toString()}`, { cache: 'no-store' });
       const d = await res.json();
       setRows(d.items || []);
       setTotal(d.total || 0);
@@ -124,7 +132,15 @@ export default function StatsPage() {
   }, [fetchData]);
 
   const handleAdd = async (f: Omit<Stat, 'id'>) => { await fetch('/api/admin/stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) }); await fetchData(); };
-  const handleEdit = async (f: Omit<Stat, 'id'>) => { if (!editItem) return; await fetch(`/api/admin/stats/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) }); await fetchData(); };
+  const handleEdit = async (f: Omit<Stat, 'id'>) => {
+    if (!editItem) return;
+    const res = await fetch(`/api/admin/stats/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f), cache: 'no-store' });
+    const d = await res.json();
+    if (res.ok) {
+      setRows(prev => prev.map(item => item.id === editItem.id ? d : item));
+    }
+    await fetchData();
+  };
   const handleDelete = async () => { if (!deleteItem) return; await fetch(`/api/admin/stats/${deleteItem.id}`, { method: 'DELETE' }); await fetchData(); };
 
   const columns: DataTableColumn<Stat>[] = useMemo(() => [
@@ -142,31 +158,37 @@ export default function StatsPage() {
         <ActionMenu 
           isDark={isDark}
           items={[
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit', 'Chỉnh sửa'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => { setEditItem(r); setFormOpen(true); } 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t]);
+  ], [isDark, t, rows, canUpdate, canDelete]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <DataManagementLayout
         searchTerm={search} onSearchTermChange={setSearch} onSearch={handleSearch}
         advancedOpen={false} onToggleAdvanced={() => {}} searchPlaceholder={t('admin.stats.search')} controlSize="sm" isDark={isDark}
-        searchBarExtras={<Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold"><Plus size={14} /> {t('admin.common.addNew')}</Button>}
+        searchBarExtras={
+          canCreate && (
+            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+              <Plus size={14} /> {t('admin.common.addNew')}
+            </Button>
+          )
+        }
       >
         <DataTable
           data={rows}

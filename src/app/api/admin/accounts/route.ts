@@ -21,14 +21,29 @@ export async function GET(request: NextRequest) {
       prisma.manager.findMany({
         where: where as any,
         orderBy: { createdAt: 'asc' },
-        select: { id: true, username: true, fullName: true, email: true, role: true, createdAt: true },
+        select: { 
+          id: true, username: true, fullName: true, email: true, role: true, createdAt: true,
+          roles: {
+            select: {
+              role: {
+                select: { id: true, name: true }
+              }
+            }
+          }
+        },
         skip: (page - 1) * limit,
         take: limit,
       }),
       prisma.manager.count({ where: where as any }),
     ]);
 
-    return NextResponse.json({ items, total });
+    // Flatten roles
+    const flattenedItems = items.map(item => ({
+      ...item,
+      assignedRoles: item.roles.map(r => r.role)
+    }));
+
+    return NextResponse.json({ items: flattenedItems, total });
   } catch (error) {
     console.error('GET /api/admin/accounts error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -38,7 +53,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password, fullName, email, role } = body;
+    const { username, password, fullName, email, role, roleIds } = body;
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
@@ -70,9 +85,28 @@ export async function POST(request: NextRequest) {
         fullName,
         email,
         role: role || 'STAFF',
+        roles: {
+          create: (roleIds || []).map((roleId: string) => ({
+            roleId
+          }))
+        }
       },
-      select: { id: true, username: true, fullName: true, email: true, role: true, createdAt: true }
+      select: { 
+        id: true, username: true, fullName: true, email: true, role: true, createdAt: true,
+        roles: {
+          select: {
+            role: {
+              select: { id: true, name: true }
+            }
+          }
+        }
+      }
     });
+
+    return NextResponse.json({
+      ...account,
+      assignedRoles: account.roles.map(r => r.role)
+    }, { status: 201 });
 
     return NextResponse.json(account, { status: 201 });
   } catch (error) {

@@ -4,11 +4,12 @@ import prisma from '@/lib/db';
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const [item] = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder", content_en as "contentEn", content_vn as "contentVn", duration, created_at as "createdAt", updated_at as "updatedAt" 
-       FROM portfolio_items WHERE id = $1`,
-      Number(id)
-    );
+    const item = await prisma.portfolioItem.findUnique({
+      where: { id: Number(id) },
+      include: {
+        category: true
+      }
+    });
     
     if (!item) {
       return NextResponse.json({ error: 'Not Found' }, { status: 404 });
@@ -28,84 +29,45 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Check limit for showOnHome (max 3)
     if (body.showOnHome === true) {
-      const result = await prisma.$queryRawUnsafe<any[]>(
-        `SELECT count(*)::int as count FROM portfolio_items WHERE show_on_home = true AND id != $1`,
-        Number(id)
-      );
-      const activeCount = result[0]?.count || 0;
+      const activeCount = await prisma.portfolioItem.count({
+        where: { 
+          showOnHome: true,
+          id: { not: Number(id) }
+        }
+      });
       if (activeCount >= 3) {
         return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 400 });
       }
     }
 
-    if (body.showOnHome !== undefined || body.sortOrder !== undefined) {
-      if (body.showOnHome !== undefined) {
-        await prisma.$executeRawUnsafe(
-          `UPDATE portfolio_items SET show_on_home = $1 WHERE id = $2`,
-          Boolean(body.showOnHome),
-          Number(id)
-        );
+    const updateData: any = {};
+    const fields = [
+      'titleEn', 'titleVn', 'descriptionEn', 'descriptionVn', 
+      'image', 'categoryKey', 'technologies', 'key', 
+      'showOnHome', 'sortOrder', 'contentEn', 'contentVn', 'duration'
+    ];
+
+    fields.forEach(f => {
+      if (body[f] !== undefined) {
+        if (f === 'sortOrder' || f === 'categoryId') {
+          updateData[f] = Number(body[f]);
+        } else {
+          updateData[f] = body[f];
+        }
       }
-      if (body.sortOrder !== undefined) {
-        await prisma.$executeRawUnsafe(
-          `UPDATE portfolio_items SET sort_order = $1 WHERE id = $2`,
-          Number(body.sortOrder),
-          Number(id)
-        );
-      }
-      
-      // If only these fields were updated, fetch and return the result
-      const updatedKeys = Object.keys(body);
-      const isQuickUpdate = updatedKeys.every(k => k === 'showOnHome' || k === 'sortOrder');
-      if (isQuickUpdate) {
-        const [item] = await prisma.$queryRawUnsafe<any[]>(
-          `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder", content_en as "contentEn", content_vn as "contentVn", duration 
-           FROM portfolio_items WHERE id = $1`,
-          Number(id)
-        );
-        return NextResponse.json(item);
-      }
+    });
+
+    if (body.categoryId !== undefined) {
+      updateData.categoryId = body.categoryId ? Number(body.categoryId) : null;
     }
 
-    // Use raw SQL update to bypass Prisma Client validation issues (out-of-sync types)
-    await prisma.$executeRawUnsafe(
-      `UPDATE portfolio_items SET 
-        title_en = $1, 
-        title_vn = $2, 
-        description_en = $3, 
-        description_vn = $4, 
-        image = $5, 
-        category_key = $6, 
-        technologies = $7, 
-        key = $8, 
-        show_on_home = $9, 
-        sort_order = $10, 
-        content_en = $11, 
-        content_vn = $12, 
-        duration = $13,
-        updated_at = NOW() 
-       WHERE id = $14`,
-      body.titleEn ?? '',
-      body.titleVn ?? '',
-      body.descriptionEn ?? '',
-      body.descriptionVn ?? '',
-      body.image ?? '',
-      body.categoryKey ?? '',
-      body.technologies ?? [],
-      body.key ?? null,
-      Boolean(body.showOnHome),
-      Number(body.sortOrder) || 0,
-      body.contentEn ?? '',
-      body.contentVn ?? '',
-      body.duration ?? '',
-      Number(id)
-    );
-
-    const [updatedItem] = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder", content_en as "contentEn", content_vn as "contentVn", duration 
-       FROM portfolio_items WHERE id = $1`,
-      Number(id)
-    );
+    const updatedItem = await prisma.portfolioItem.update({
+      where: { id: Number(id) },
+      data: updateData,
+      include: {
+        category: true
+      }
+    });
 
     return NextResponse.json(updatedItem);
   } catch (error) {

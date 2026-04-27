@@ -99,7 +99,7 @@ const TeamMarqueeColumn = ({ members, speed = 0.3, reverse = false }: { members:
 
 const OurTeam = () => {
   const { t } = useTranslation();
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const ref = useRef(null);
 
   // Use team data from BE if available, otherwise fallback to teamMembersData
@@ -147,18 +147,35 @@ const OurTeam = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-bg-dark to-transparent z-10 pointer-events-none" />
 
                 <div className="grid grid-cols-2 gap-4 lg:gap-6 px-4 h-full">
-                  {/* Column 1: Scrolls Down */}
-                  <TeamMarqueeColumn 
-                    members={leftColMembers} 
-                    speed={0.3} 
-                    reverse={false} 
-                  />
-                  {/* Column 2: Scrolls Up */}
-                  <TeamMarqueeColumn 
-                    members={rightColMembers} 
-                    speed={0.35} 
-                    reverse={true} 
-                  />
+                  {loading ? (
+                    <>
+                      <div className="flex flex-col gap-3 animate-pulse">
+                        {Array(4).fill(0).map((_, i) => (
+                          <div key={`s1-${i}`} className="h-[74px] rounded-2xl bg-white/5 border border-white/5" />
+                        ))}
+                      </div>
+                      <div className="flex flex-col gap-3 animate-pulse">
+                        {Array(4).fill(0).map((_, i) => (
+                          <div key={`s2-${i}`} className="h-[74px] rounded-2xl bg-white/5 border border-white/5" />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Column 1: Scrolls Down */}
+                      <TeamMarqueeColumn 
+                        members={leftColMembers} 
+                        speed={0.3} 
+                        reverse={false} 
+                      />
+                      {/* Column 2: Scrolls Up */}
+                      <TeamMarqueeColumn 
+                        members={rightColMembers} 
+                        speed={0.35} 
+                        reverse={true} 
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </Col>

@@ -12,6 +12,7 @@ import {
   Loader2, CheckCircle2, CheckCircle, XCircle 
 } from 'lucide-react';
 import ActionMenu from '@/components/admin/ActionMenu';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface ContactItem {
   id: number;
@@ -238,6 +239,10 @@ export default function ContactManagementPage() {
   
   const [statusModalItem, setStatusModalItem] = useState<ContactItem | null>(null);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const { canDo } = useAdminAuth();
+
+  const canUpdate = canDo('CONTACTS', 'UPDATE');
+  const canDelete = canDo('CONTACTS', 'DELETE');
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -252,8 +257,9 @@ export default function ContactManagementPage() {
         page: page.toString(),
         limit: limit.toString(),
         q: searchQuery,
+        _t: Date.now().toString()
       });
-      const res = await fetch(`/api/admin/contacts?${params.toString()}`);
+      const res = await fetch(`/api/admin/contacts?${params.toString()}`, { cache: 'no-store' });
       const data = await res.json();
       setRowData(data.items || []);
       setTotal(data.total || 0);
@@ -389,7 +395,7 @@ export default function ContactManagementPage() {
                 setDetailOpen(true);
               } 
             },
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.contacts.changeStatus', 'Thay đổi trạng thái'), 
               icon: <Calendar size={14} />, 
               eventKey: 'status', 
@@ -405,19 +411,19 @@ export default function ContactManagementPage() {
                   onClick: () => handleUpdateStatus(row.id, s)
                 };
               })
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(row),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t, handleUpdateStatus]);
+  ], [isDark, t, handleUpdateStatus, rowData, canUpdate, canDelete]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

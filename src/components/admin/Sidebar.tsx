@@ -20,19 +20,48 @@ import {
   ArrowUpRight,
   Globe,
   MessageSquare,
+  ShieldCheck,
+  Lock,
+  Key,
+  Layers,
 } from 'lucide-react';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
-const navItems = [
-  { name: 'dashboard',      href: '/admin-lucidtech',                 icon: LayoutDashboard },
-    { name: 'contacts',       href: '/admin-lucidtech/contacts',        icon: MessageSquare },
-  { name: 'content',        href: '/admin-lucidtech/content',         icon: FileText },
-  { name: 'services',       href: '/admin-lucidtech/services',        icon: Briefcase },
-  { name: 'portfolio',      href: '/admin-lucidtech/portfolio',       icon: ImageIcon },
-  { name: 'team',           href: '/admin-lucidtech/team',            icon: Users },
-  { name: 'stats',          href: '/admin-lucidtech/stats',           icon: BarChart2 },
-  { name: 'tech',           href: '/admin-lucidtech/technologies',    icon: Cpu },
-  { name: 'company',        href: '/admin-lucidtech/company',         icon: Building2 },
-  { name: 'accounts',       href: '/admin-lucidtech/accounts',        icon: Settings },
+const navGroups = [
+  {
+    title: 'main',
+    items: [
+      { name: 'dashboard',      href: '/admin-lucidtech',                 icon: LayoutDashboard },
+      { name: 'stats',          href: '/admin-lucidtech/stats',           icon: BarChart2 },
+    ]
+  },
+  {
+    title: 'content',
+    items: [
+      { name: 'contacts',       href: '/admin-lucidtech/contacts',        icon: MessageSquare },
+      { name: 'content',        href: '/admin-lucidtech/content',         icon: FileText },
+      { name: 'services',       href: '/admin-lucidtech/services',        icon: Briefcase },
+      { name: 'portfolio',      href: '/admin-lucidtech/portfolio',       icon: ImageIcon },
+      { name: 'technologies',   href: '/admin-lucidtech/technologies',    icon: Cpu },
+      { name: 'team',           href: '/admin-lucidtech/team',            icon: Users },
+    ]
+  },
+  {
+    title: 'company',
+    items: [
+      { name: 'company',        href: '/admin-lucidtech/company',         icon: Building2 },
+    ]
+  },
+  {
+    title: 'system',
+    items: [
+      { name: 'accounts',       href: '/admin-lucidtech/accounts',        icon: Settings },
+      { name: 'roles',          href: '/admin-lucidtech/roles',           icon: ShieldCheck },
+      { name: 'modules',        href: '/admin-lucidtech/modules',         icon: Layers },
+      { name: 'permissionsList', href: '/admin-lucidtech/permissions-list', icon: Key },
+      { name: 'permissions',    href: '/admin-lucidtech/permissions',     icon: Lock },
+    ]
+  }
 ];
 
 interface SidebarProps {
@@ -43,6 +72,7 @@ const Sidebar = ({ isDark }: SidebarProps) => {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router   = useRouter();
+  const { canAccess } = useAdminAuth();
 
   const handleSignOut = () => {
     localStorage.removeItem('adminLoggedIn');
@@ -67,7 +97,7 @@ const Sidebar = ({ isDark }: SidebarProps) => {
   const inactiveIconCls = isDark ? 'text-slate-500 group-hover:text-slate-300' : 'text-black group-hover:text-black';
 
   return (
-    <aside className={`w-64 h-full border-r flex flex-col z-50 transition-colors duration-300 ${bg}`}>
+    <aside className={`w-70 h-full border-r flex flex-col z-50 transition-colors duration-300 ${bg}`}>
 
       {/* Sidebar Header - Logo */}
       <div className={`p-8 border-b ${headerBdr}`}>
@@ -84,33 +114,46 @@ const Sidebar = ({ isDark }: SidebarProps) => {
       </div>
 
       {/* Sidebar Navigation */}
-      <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-        <p className={`px-4 text-[10px] font-bold ${labelColor} uppercase tracking-widest mb-4`}>
-          {t('admin.menu.systemManagement')}
-        </p>
-
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || 
-                           (item.href !== '/admin-lucidtech' && pathname?.startsWith(item.href));
-          const Icon = item.icon;
+      <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+        {navGroups.map((group) => {
+          // Filter items based on permissions
+          const accessibleItems = group.items.filter(item => canAccess(item.name.toUpperCase()));
+          
+          if (accessibleItems.length === 0) return null;
 
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`
-                flex items-center justify-between px-4 py-3 rounded-sm transition-all duration-200 group border-b-2
-                ${isActive ? activeClass : inactiveClass}
-              `}
-            >
-              <div className="flex items-center gap-3">
-                <Icon 
-                  size={20} 
-                  className={isActive ? activeIconCls : inactiveIconCls} 
-                />
-                <span className="text-sm">{t(`admin.menu.${item.name}`)}</span>
+            <div key={group.title} className="space-y-1">
+              <p className={`px-4 text-[10px] font-bold ${labelColor} uppercase tracking-widest mb-3 opacity-70`}>
+                {t(`admin.menu.sections.${group.title}`)}
+              </p>
+              
+              <div className="space-y-1">
+                {accessibleItems.map((item) => {
+                  const isActive = pathname === item.href || 
+                                   (item.href !== '/admin-lucidtech' && pathname?.startsWith(item.href + '/'));
+                  const Icon = item.icon;
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`
+                        flex items-center justify-between px-4 py-3 rounded-sm transition-all duration-200 group border-b-2
+                        ${isActive ? activeClass : inactiveClass}
+                      `}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon 
+                          size={20} 
+                          className={isActive ? activeIconCls : inactiveIconCls} 
+                        />
+                        <span className="text-sm">{t(`admin.menu.${item.name}`)}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-            </Link>
+            </div>
           );
         })}
       </nav>
@@ -133,7 +176,7 @@ const Sidebar = ({ isDark }: SidebarProps) => {
             <UserCircle size={24} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-semibold ${userText} truncate`}>System Admin</p>
+            <p className={`text-sm font-semibold ${userText} truncate`}>{t('admin.menu.userName')}</p>
             <p className={`text-[10px] ${labelColor} uppercase tracking-wider`}>{t('admin.menu.userRole')}</p>
           </div>
         </div>

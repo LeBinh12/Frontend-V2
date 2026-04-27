@@ -17,9 +17,11 @@ export interface PublicContent {
     description: string;
     image: string;
     categoryKey: string;
+    categoryName: string;
     technologies: string[];
     contentEn: string | null;
     contentVn: string | null;
+    duration: string;
   }>;
   team: Array<{
     name: string;

@@ -10,10 +10,10 @@ import { useRef } from 'react';
 import { useContent } from '@/hooks/useContent';
 
 const iconMap: Record<string, any> = {
-  blockchain: <Fuel className="w-10 h-10 text-primary" />,
-  ai: <TrendingUp className="w-10 h-10 text-primary" />,
-  cloud: <Code className="w-10 h-10 text-primary" />,
-  design: <Users className="w-10 h-10 text-primary" />,
+  smart_gas_station: <Fuel className="w-10 h-10 text-primary" />,
+  digital_transformation: <TrendingUp className="w-10 h-10 text-primary" />,
+  software_development: <Code className="w-10 h-10 text-primary" />,
+  it_staffing: <Users className="w-10 h-10 text-primary" />,
   SoftwareDevelopment: <Code className="w-10 h-10 text-primary" />,
   DigitalTransformationConsulting: <TrendingUp className="w-10 h-10 text-primary" />,
   ITRecruitmentStaffingServices: <Users className="w-10 h-10 text-primary" />,
@@ -41,7 +41,7 @@ const itemVariants: Variants = {
 
 const Services = () => {
   const { t } = useTranslation();
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const servicesData = content?.services || mockData.services;
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -80,42 +80,56 @@ const Services = () => {
           viewport={{ amount: 0.1, once: false }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 auto-rows-fr"
         >
-              {servicesData.map((service, i) => (
-                <motion.div 
-                  key={(service as any).key || i}
-                  variants={itemVariants}
-                  className="flex flex-col h-full"
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    transformStyle: 'preserve-3d'
-                  }}
-                >
-                    <Panel 
-                      className="flex-1 h-full flex flex-col 
-                                bg-bg-card border border-white/5! 
-                                transition-all duration-300 
-                                hover:-translate-y-2 hover:border-primary/50! 
-                                group cursor-default"
-                    >
-                      {/* Icon */}
-                      <div className="mb-6 p-4 inline-block bg-primary/5 rounded-2xl group-hover:bg-primary/10 transition-colors self-start">
-                        {iconMap[(service as any).key] || <Code className="w-10 h-10 text-primary" />}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 flex flex-col">
-                        <h3 className="text-lg sm:text-xl mb-3 sm:mb-4 group-hover:text-primary transition-colors ">
-                          {(service as any).title}
-                        </h3>
-
-                        <p className="text-sm sm:text-base text-text-muted mt-auto">
-                          {(service as any).description}
-                        </p>
+              {loading ? (
+                Array(4).fill(0).map((_, i) => (
+                  <div key={`skeleton-${i}`} className="flex flex-col h-full animate-pulse">
+                    <Panel className="flex-1 h-full flex flex-col bg-bg-card border border-white/5!">
+                      <div className="mb-6 p-4 w-18 h-18 bg-white/5 rounded-2xl" />
+                      <div className="flex-1 flex flex-col gap-4">
+                        <div className="w-3/4 h-8 bg-white/5 rounded" />
+                        <div className="w-full h-20 bg-white/5 rounded" />
                       </div>
                     </Panel>
-                </motion.div>
-              ))}
+                  </div>
+                ))
+              ) : (
+                servicesData.map((service, i) => (
+                  <motion.div 
+                    key={(service as any).key || i}
+                    variants={itemVariants}
+                    className="flex flex-col h-full"
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      transformStyle: 'preserve-3d'
+                    }}
+                  >
+                      <Panel 
+                        className="flex-1 h-full flex flex-col 
+                                  bg-bg-card border border-white/5! 
+                                  transition-all duration-300 
+                                  hover:-translate-y-2 hover:border-primary/50! 
+                                  group cursor-default"
+                      >
+                        {/* Icon */}
+                        <div className="mb-6 p-4 inline-block bg-primary/5 rounded-2xl group-hover:bg-primary/10 transition-colors self-start">
+                          {iconMap[(service as any).key] || <Code className="w-10 h-10 text-primary" />}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 flex flex-col">
+                          <h3 className="text-lg sm:text-xl mb-3 sm:mb-4 group-hover:text-primary transition-colors ">
+                            {(service as any).title}
+                          </h3>
+
+                          <p className="text-sm sm:text-base text-text-muted mt-auto">
+                            {(service as any).description}
+                          </p>
+                        </div>
+                      </Panel>
+                  </motion.div>
+                ))
+              )}
         </motion.div>
       </div>
     </section>

@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Users, 
-  MousePointer2, 
-  BarChart3, 
+  Mail,
+  FolderKanban,
   Globe, 
   ArrowUpRight,
   FileText,
@@ -16,9 +16,9 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 
 interface DashboardStats {
-  totalVisits: number;
+  contacts: number;
   activeUsers: number;
-  contentItems: number;
+  portfolioItems: number;
   languages: number;
 }
 
@@ -46,10 +46,10 @@ export default function AdminDashboardPage() {
   }, []);
 
   const stats = useMemo(() => [
-    { name: t('admin.dashboard.stats.visits'),   value: data?.totalVisits.toLocaleString() ?? '0', change: '+12.5%', icon: MousePointer2, color: 'text-blue-400',    iconBg: isDark ? 'bg-blue-900/20'    : 'bg-blue-50'    },
-    { name: t('admin.dashboard.stats.users'),    value: data?.activeUsers.toLocaleString() ?? '0', change: '+5.2%',  icon: Users,         color: 'text-emerald-400', iconBg: isDark ? 'bg-emerald-900/20' : 'bg-emerald-50' },
-    { name: t('admin.dashboard.stats.content'),  value: data?.contentItems.toLocaleString() ?? '0', change: '+2',     icon: BarChart3,      color: 'text-orange-400', iconBg: isDark ? 'bg-orange-900/20'  : 'bg-orange-50'  },
-    { name: t('admin.dashboard.stats.languages'),value: data?.languages.toLocaleString() ?? '2', change: 'En/Vn',  icon: Globe,          color: 'text-purple-400', iconBg: isDark ? 'bg-purple-900/20'  : 'bg-purple-50'  },
+    { name: t('admin.dashboard.stats.contacts'),  value: data?.contacts.toLocaleString() ?? '0',       change: 'CRM',    icon: Mail,          color: 'text-blue-400',    iconBg: isDark ? 'bg-blue-900/20'    : 'bg-blue-50'    },
+    { name: t('admin.dashboard.stats.users'),     value: data?.activeUsers.toLocaleString() ?? '0',     change: 'Admin',  icon: Users,         color: 'text-emerald-400', iconBg: isDark ? 'bg-emerald-900/20' : 'bg-emerald-50' },
+    { name: t('admin.dashboard.stats.projects'),  value: data?.portfolioItems.toLocaleString() ?? '0',  change: 'DB',     icon: FolderKanban,  color: 'text-orange-400',  iconBg: isDark ? 'bg-orange-900/20'  : 'bg-orange-50'  },
+    { name: t('admin.dashboard.stats.languages'), value: data?.languages.toLocaleString() ?? '2',       change: 'En/Vn', icon: Globe,          color: 'text-purple-400',  iconBg: isDark ? 'bg-purple-900/20'  : 'bg-purple-50'  },
   ], [data, isDark, t]);
 
   // Style tokens based on theme

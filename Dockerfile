@@ -9,9 +9,6 @@ RUN npm ci
 # Copy all files
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
 # Build the application
 RUN npm run build
 
@@ -29,14 +26,9 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Copy Prisma schema and entrypoint
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
-
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
-RUN chmod +x entrypoint.sh
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -51,5 +43,6 @@ ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
-# ENTRYPOINT to handle DB sync and env loading
-ENTRYPOINT ["/app/entrypoint.sh"]
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+CMD ["node", "server.js"]

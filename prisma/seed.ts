@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma-client';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -68,15 +68,17 @@ async function main() {
   }
 
   console.log('🛠️ Seeding Services (merged mockData + locales)...');
-  const serviceKeys = ['blockchain', 'ai', 'cloud', 'design'];
+  await prisma.service.deleteMany({}); // Clear existing to avoid stale keys like 'blockchain', 'ai', etc.
+  const serviceKeys = ['smart_gas_station', 'digital_transformation', 'software_development', 'it_staffing'];
   const serviceIcons: Record<string, string> = {
-    blockchain: 'Code',
-    ai: 'Cloud',
-    cloud: 'Design',
-    design: 'Code'
+    smart_gas_station:      'Fuel',
+    digital_transformation: 'TrendingUp',
+    software_development:   'Code',
+    it_staffing:            'Users'
   };
 
-  for (const key of serviceKeys) {
+  for (let i = 0; i < serviceKeys.length; i++) {
+    const key = serviceKeys[i];
     const en = enLocales.services[key];
     const vn = vnLocales.services[key];
     if (en && vn) {
@@ -87,7 +89,9 @@ async function main() {
           titleEn: en.title,
           titleVn: vn.title,
           descriptionEn: en.description,
-          descriptionVn: vn.description
+          descriptionVn: vn.description,
+          showOnHome: true,
+          sortOrder: i + 1
         },
         create: {
           key,
@@ -95,10 +99,33 @@ async function main() {
           titleEn: en.title,
           titleVn: vn.title,
           descriptionEn: en.description,
-          descriptionVn: vn.description
+          descriptionVn: vn.description,
+          showOnHome: true,
+          sortOrder: i + 1
         }
       });
     }
+  }
+
+  console.log('🏗️ Seeding Portfolio Categories...');
+  const portfolioCategories = [
+    { nameEn: 'SaaS', nameVn: 'Phần mềm dịch vụ (SaaS)', key: 'saas', sortOrder: 0 },
+    { nameEn: 'Web Development', nameVn: 'Phát triển Website', key: 'webdev', sortOrder: 1 },
+    { nameEn: 'Internal System', nameVn: 'Hệ thống nội bộ', key: 'internalsystem', sortOrder: 2 },
+    { nameEn: 'Virtual / Simulation', nameVn: 'Ảo hóa / Mô phỏng', key: 'virtual', sortOrder: 3 },
+    { nameEn: 'Mobile App', nameVn: 'Ứng dụng Di động', key: 'mobile', sortOrder: 4 },
+    { nameEn: 'AI & Machine Learning', nameVn: 'AI & Học máy', key: 'ai', sortOrder: 5 },
+    { nameEn: 'E-Commerce', nameVn: 'Thương mại Điện tử', key: 'ecommerce', sortOrder: 6 },
+  ];
+
+  const portfolioCategoryMap: Record<string, number> = {};
+  for (const cat of portfolioCategories) {
+    const created = await prisma.portfolioCategory.upsert({
+      where: { key: cat.key },
+      update: { nameVn: cat.nameVn, key: cat.key, sortOrder: cat.sortOrder },
+      create: { nameEn: cat.nameEn, nameVn: cat.nameVn, key: cat.key, sortOrder: cat.sortOrder }
+    });
+    portfolioCategoryMap[cat.key] = created.id;
   }
 
   console.log('🖼️ Seeding Portfolio (merged mockData + locales)...');
@@ -106,7 +133,7 @@ async function main() {
     { 
       key: 'nebula', 
       image: '/images/tinified/portfolio-SaaS.png', 
-      cat: 'saas', 
+      catKey: 'saas', 
       techs: ["Next.js", "TypeScript", "Tailwind", ".NET 9", "PostgreSQL"],
       duration: "6 Months",
       contentEn: "PetroPoint TMS was developed to digitalize gas station management. The project involved integrating real-time POS data with a central cloud dashboard. We utilized Next.js and .NET 9 to ensure high performance and scalability. The database handles over 500k transactions daily, providing seamless inventory tracking and automated reporting.",
@@ -115,7 +142,7 @@ async function main() {
     { 
       key: 'vortex', 
       image: '/images/tinified/portfolio-awg.png', 
-      cat: 'webDev', 
+      catKey: 'webdev', 
       techs: ["WordPress", "PHP", "CSS3", "JavaScript", "SEO Optimization"],
       duration: "3 Months",
       contentEn: "The BuyAWG project required a complete overhaul of their existing e-commerce platform. We migrated their legacy system to a modern WordPress-based architecture with heavily optimized PHP and CSS3. The focus was on SEO optimization and performance, resulting in a 40% increase in user engagement and sub-second load times.",
@@ -124,7 +151,7 @@ async function main() {
     { 
       key: 'titan', 
       image: '/images/tinified/portfolio-chat.png', 
-      cat: 'internalSystem', 
+      catKey: 'internalsystem', 
       techs: ["Golang", "Reactjs", "Kafka", "Tailwind", "Framer Motion"],
       duration: "4 Months",
       contentEn: "This secure internal messaging system was built to facilitate multimedia communication within enterprise environments. Utilizing Golang for the backend and Reactjs for the frontend, the app supports video calls and real-time task management. Kafka ensures high-throughput message delivery, while Framer Motion provides smooth UI transitions.",
@@ -145,7 +172,8 @@ async function main() {
           descriptionEn: en.description,
           descriptionVn: vn.description,
           image: item.image,
-          categoryKey: item.cat,
+          categoryId: portfolioCategoryMap[item.catKey],
+          categoryKey: item.catKey,
           technologies: item.techs,
           contentEn: item.contentEn,
           contentVn: item.contentVn,
@@ -160,7 +188,8 @@ async function main() {
           descriptionEn: en.description,
           descriptionVn: vn.description,
           image: item.image,
-          categoryKey: item.cat,
+          categoryId: portfolioCategoryMap[item.catKey],
+          categoryKey: item.catKey,
           technologies: item.techs,
           contentEn: item.contentEn,
           contentVn: item.contentVn,
@@ -174,67 +203,73 @@ async function main() {
 
   console.log('🏗️ Seeding Technology Categories...');
   const techCategories = [
-    { name: 'Frontend', sortOrder: 1 },
-    { name: 'Backend', sortOrder: 2 },
-    { name: 'Database', sortOrder: 3 },
-    { name: 'Web3', sortOrder: 4 },
-    { name: 'AI & Machine Learning', sortOrder: 5 },
-    { name: 'Cloud & DevOps', sortOrder: 6 },
-    { name: 'Mobile Development', sortOrder: 7 },
+    { nameEn: 'Frontend', nameVn: 'Frontend', key: 'frontend', sortOrder: 1 },
+    { nameEn: 'Backend', nameVn: 'Backend', key: 'backend', sortOrder: 2 },
+    { nameEn: 'Database', nameVn: 'Cơ sở dữ liệu', key: 'database', sortOrder: 3 },
+    { nameEn: 'Web3', nameVn: 'Web3', key: 'web3', sortOrder: 4 },
+    { nameEn: 'AI & Machine Learning', nameVn: 'AI & Học máy', key: 'ai-machine-learning', sortOrder: 5 },
+    { nameEn: 'Cloud & DevOps', nameVn: 'Cloud & DevOps', key: 'cloud-devops', sortOrder: 6 },
+    { nameEn: 'Mobile Development', nameVn: 'Phát triển di động', key: 'mobile-development', sortOrder: 7 },
   ];
 
+  const techCategoryMap: Record<string, number> = {};
   for (const cat of techCategories) {
-    await prisma.technologyCategory.upsert({
-      where: { name: cat.name },
-      update: { sortOrder: cat.sortOrder },
-      create: { name: cat.name, sortOrder: cat.sortOrder }
+    const created = await prisma.technologyCategory.upsert({
+      where: { key: cat.key },
+      update: { nameVn: cat.nameVn, key: cat.key, sortOrder: cat.sortOrder },
+      create: { nameEn: cat.nameEn, nameVn: cat.nameVn, key: cat.key, sortOrder: cat.sortOrder }
     });
+    techCategoryMap[cat.nameEn] = created.id;
   }
 
   console.log('💻 Seeding Technologies...');
   await prisma.technology.deleteMany({}); // Xoá trước để tránh trùng lặp do không có unique key
 
   const technologiesToSeed = [
-    { name: "React", category: "Frontend" },
-    { name: "Next.js", category: "Frontend" },
-    { name: "ASP.NET MVC", category: "Frontend" },
-    { name: "Angular", category: "Frontend" },
-    { name: "React Native", category: "Mobile Development" },
-    { name: ".NET MAUI", category: "Mobile Development" },
-    { name: "ASP.NET Web API", category: "Backend" },
-    { name: "Golang", category: "Backend" },
-    { name: "PyTorch", category: "AI & Machine Learning" },
-    { name: "TensorFlow", category: "AI & Machine Learning" },
-    { name: "Kubernetes", category: "Cloud & DevOps" },
-    { name: "Docker", category: "Cloud & DevOps" },
-    { name: "Terraform", category: "Cloud & DevOps" },
-    { name: "Azure", category: "Cloud & DevOps" }
+    { name: "React", category: "Frontend", categoryId: techCategoryMap["Frontend"] },
+    { name: "Next.js", category: "Frontend", categoryId: techCategoryMap["Frontend"] },
+    { name: "ASP.NET MVC", category: "Frontend", categoryId: techCategoryMap["Frontend"] },
+    { name: "Angular", category: "Frontend", categoryId: techCategoryMap["Frontend"] },
+    { name: "React Native", category: "Mobile Development", categoryId: techCategoryMap["Mobile Development"] },
+    { name: ".NET MAUI", category: "Mobile Development", categoryId: techCategoryMap["Mobile Development"] },
+    { name: "ASP.NET Web API", category: "Backend", categoryId: techCategoryMap["Backend"] },
+    { name: "Golang", category: "Backend", categoryId: techCategoryMap["Backend"] },
+    { name: "PyTorch", category: "AI & Machine Learning", categoryId: techCategoryMap["AI & Machine Learning"] },
+    { name: "TensorFlow", category: "AI & Machine Learning", categoryId: techCategoryMap["AI & Machine Learning"] },
+    { name: "Kubernetes", category: "Cloud & DevOps", categoryId: techCategoryMap["Cloud & DevOps"] },
+    { name: "Docker", category: "Cloud & DevOps", categoryId: techCategoryMap["Cloud & DevOps"] },
+    { name: "Terraform", category: "Cloud & DevOps", categoryId: techCategoryMap["Cloud & DevOps"] },
+    { name: "Azure", category: "Cloud & DevOps", categoryId: techCategoryMap["Cloud & DevOps"] }
   ];
 
-  await prisma.technology.createMany({
-    data: technologiesToSeed
-  });
+  for (const tech of technologiesToSeed) {
+    await prisma.technology.create({
+      data: tech
+    });
+  }
 
   console.log('👥 Seeding Team Members (merged coords + personas + roles)...');
   // Clear existing to avoid duplicates if re-running
   await prisma.teamMember.deleteMany({});
   
   // Leadership personas from Locales (source of truth for role/bio)
-  const leaders = ['leo', 'sarah', 'marcus'];
+  const leaders = ['sarah', 'marcus'];
   for (const key of leaders) {
-    const personaEn = enLocales.team[key];
-    const personaVn = vnLocales.team[key];
-    await prisma.teamMember.create({
-      data: {
-        name: personaEn.name,
-        roleEn: personaEn.role,
-        roleVn: personaVn.role,
-        bioEn: personaEn.bio,
-        bioVn: personaVn.bio,
-        avatar: '/images/avatar.jpg',
-        level: 1, // High level for leadership
-      }
-    });
+    const personaEn = enLocales.team?.[key];
+    const personaVn = vnLocales.team?.[key];
+    if (personaEn && personaVn) {
+      await prisma.teamMember.create({
+        data: {
+          name: personaEn.name,
+          roleEn: personaEn.role,
+          roleVn: personaVn.role,
+          bioEn: personaEn.bio,
+          bioVn: personaVn.bio,
+          avatar: '/images/avatar.jpg',
+          level: 1, // High level for leadership
+        }
+      });
+    }
   }
 
   // General team from coordinates
@@ -348,7 +383,204 @@ async function main() {
     }
   });
 
+  await seedRBAC(prisma);
+
   console.log('✅ Refined seed completed successfully.');
+}
+
+async function seedRBAC(prisma: PrismaClient) {
+  console.log('🔐 Seeding RBAC System...');
+
+  // 1. Seed Permissions
+  const permissions = [
+    { code: 'READ', nameEn: 'View', nameVn: 'Xem', descriptionEn: 'Can view lists and details', descriptionVn: 'Có quyền xem danh sách và chi tiết' },
+    { code: 'CREATE', nameEn: 'Create', nameVn: 'Thêm mới', descriptionEn: 'Can create new records', descriptionVn: 'Có quyền tạo mới bản ghi' },
+    { code: 'UPDATE', nameEn: 'Update', nameVn: 'Cập nhật', descriptionEn: 'Can edit existing records', descriptionVn: 'Có quyền chỉnh sửa bản ghi' },
+    { code: 'DELETE', nameEn: 'Delete', nameVn: 'Xóa', descriptionEn: 'Can delete records', descriptionVn: 'Có quyền xóa bản ghi' },
+    { code: 'RESET_PASSWORD', nameEn: 'Reset Password', nameVn: 'Đặt lại mật khẩu', descriptionEn: 'Can reset account passwords', descriptionVn: 'Có quyền reset mật khẩu tài khoản' },
+    { code: 'FULL_ACCESS', nameEn: 'Full Access', nameVn: 'Toàn quyền', descriptionEn: 'Has all permissions', descriptionVn: 'Có tất cả các quyền' },
+  ];
+
+  const permissionMap: Record<string, string> = {};
+  for (const p of permissions) {
+    const created = await prisma.permission.upsert({
+      where: { code: p.code },
+      update: { nameEn: p.nameEn, nameVn: p.nameVn, descriptionEn: p.descriptionEn, descriptionVn: p.descriptionVn },
+      create: p,
+    });
+    permissionMap[p.code] = created.id;
+  }
+
+  // 2. Seed Modules
+  const modules = [
+    { code: 'DASHBOARD', nameEn: 'Dashboard', nameVn: 'Bảng điều khiển', descriptionEn: 'Overview page', descriptionVn: 'Trang tổng quan' },
+    { code: 'ACCOUNTS', nameEn: 'Accounts', nameVn: 'Tài khoản', descriptionEn: 'Staff and RBAC management', descriptionVn: 'Quản lý nhân viên và phân quyền' },
+    { code: 'COMPANY', nameEn: 'Company', nameVn: 'Công ty', descriptionEn: 'Company information', descriptionVn: 'Thông tin công ty' },
+    { code: 'CONTACTS', nameEn: 'Contacts', nameVn: 'Liên hệ', descriptionEn: 'Customer contact messages and status management', descriptionVn: 'Tin nhắn liên hệ và quản lý trạng thái' },
+    { code: 'CONTENT', nameEn: 'Content', nameVn: 'Nội dung', descriptionEn: 'Static content and localization', descriptionVn: 'Quản lý nội dung tĩnh và đa ngôn ngữ' },
+    { code: 'PORTFOLIO', nameEn: 'Portfolio', nameVn: 'Dự án', descriptionEn: 'Project portfolio management', descriptionVn: 'Quản lý các dự án portfolio' },
+    { code: 'PORTFOLIO_CATEGORIES', nameEn: 'Portfolio Categories', nameVn: 'Danh mục dự án', descriptionEn: 'Manage categories for portfolio projects', descriptionVn: 'Quản lý danh mục cho các dự án portfolio' },
+    { code: 'SERVICES', nameEn: 'Services', nameVn: 'Dịch vụ', descriptionEn: 'Services offered management', descriptionVn: 'Quản lý các dịch vụ cung cấp' },
+    { code: 'STATS', nameEn: 'Stats', nameVn: 'Thống kê', descriptionEn: 'Company statistics', descriptionVn: 'Số liệu thống kê công ty' },
+    { code: 'TEAM', nameEn: 'Team', nameVn: 'Đội ngũ', descriptionEn: 'Team members management', descriptionVn: 'Quản lý thành viên đội ngũ' },
+    { code: 'TECHNOLOGIES', nameEn: 'Technologies', nameVn: 'Công nghệ', descriptionEn: 'Technology stack management', descriptionVn: 'Quản lý danh mục công nghệ' },
+    { code: 'TECH_CATEGORIES', nameEn: 'Tech Categories', nameVn: 'Danh mục công nghệ', descriptionEn: 'Manage categories for technologies', descriptionVn: 'Quản lý danh mục cho các công nghệ' },
+    { code: 'ROLES', nameEn: 'Roles', nameVn: 'Vai trò', descriptionEn: 'Manage user roles and hierarchies', descriptionVn: 'Quản lý vai trò và cấp bậc' },
+    { code: 'MODULES', nameEn: 'Modules', nameVn: 'Nhóm quyền', descriptionEn: 'Manage system modules', descriptionVn: 'Quản lý các nhóm quyền (Module) hệ thống' },
+    { code: 'PERMISSION_LIST', nameEn: 'Permissions List', nameVn: 'Danh sách quyền', descriptionEn: 'Manage available actions/permissions', descriptionVn: 'Quản lý danh sách các hành động/quyền hạn' },
+    { code: 'PERMISSION_MATRIX', nameEn: 'Permission Matrix', nameVn: 'Ma trận phân quyền', descriptionEn: 'Manage role-based access control matrix', descriptionVn: 'Quản lý ma trận phân quyền hệ thống' },
+  ];
+
+  const moduleMap: Record<string, string> = {};
+  for (const m of modules) {
+    const created = await prisma.module.upsert({
+      where: { code: m.code },
+      update: { nameEn: m.nameEn, nameVn: m.nameVn, descriptionEn: m.descriptionEn, descriptionVn: m.descriptionVn },
+      create: m,
+    });
+    moduleMap[m.code] = created.id;
+  }
+
+  // 3. Seed Roles
+  const roles = [
+    { name: 'SUPER_ADMIN', descriptionEn: 'Full system access', descriptionVn: 'Toàn quyền hệ thống' },
+    { name: 'ADMIN', descriptionEn: 'System administrator', descriptionVn: 'Quản trị viên' },
+    { name: 'CONTENT_MANAGER', descriptionEn: 'Content management only', descriptionVn: 'Quản lý nội dung' },
+    { name: 'STAFF', descriptionEn: 'Read-only staff access', descriptionVn: 'Nhân viên xem dữ liệu' },
+  ];
+
+  const roleMap: Record<string, string> = {};
+  for (const r of roles) {
+    const created = await prisma.role.upsert({
+      where: { name: r.name },
+      update: { descriptionEn: r.descriptionEn, descriptionVn: r.descriptionVn },
+      create: r,
+    });
+    roleMap[r.name] = created.id;
+  }
+
+  // 4. Assign Permissions to Roles (ModulePermission)
+  
+  // SUPER_ADMIN: FULL_ACCESS on all modules
+  for (const m of modules) {
+    await prisma.modulePermission.upsert({
+      where: {
+        roleId_moduleId_permissionId: {
+          roleId: roleMap['SUPER_ADMIN'],
+          moduleId: moduleMap[m.code],
+          permissionId: permissionMap['FULL_ACCESS']
+        }
+      },
+      update: {},
+      create: {
+        roleId: roleMap['SUPER_ADMIN'],
+        moduleId: moduleMap[m.code],
+        permissionId: permissionMap['FULL_ACCESS']
+      }
+    });
+  }
+
+  // ADMIN: READ, CREATE, UPDATE, DELETE on most modules (except ACCOUNTS)
+  const adminModules = modules.filter(m => m.code !== 'ACCOUNTS');
+  const adminPerms = ['READ', 'CREATE', 'UPDATE', 'DELETE'];
+  for (const m of adminModules) {
+    for (const pCode of adminPerms) {
+      await prisma.modulePermission.upsert({
+        where: {
+          roleId_moduleId_permissionId: {
+            roleId: roleMap['ADMIN'],
+            moduleId: moduleMap[m.code],
+            permissionId: permissionMap[pCode]
+          }
+        },
+        update: {},
+        create: {
+          roleId: roleMap['ADMIN'],
+          moduleId: moduleMap[m.code],
+          permissionId: permissionMap[pCode]
+        }
+      });
+    }
+  }
+
+  // CONTENT_MANAGER: READ, CREATE, UPDATE on content related modules
+  const contentModules = ['CONTENT', 'PORTFOLIO', 'PORTFOLIO_CATEGORIES', 'SERVICES', 'STATS', 'TEAM', 'TECHNOLOGIES', 'TECH_CATEGORIES'];
+  for (const mCode of contentModules) {
+    for (const pCode of ['READ', 'CREATE', 'UPDATE']) {
+      if (!moduleMap[mCode] || !permissionMap[pCode]) continue;
+      await prisma.modulePermission.upsert({
+        where: {
+          roleId_moduleId_permissionId: {
+            roleId: roleMap['CONTENT_MANAGER'],
+            moduleId: moduleMap[mCode],
+            permissionId: permissionMap[pCode]
+          }
+        },
+        update: {},
+        create: {
+          roleId: roleMap['CONTENT_MANAGER'],
+          moduleId: moduleMap[mCode],
+          permissionId: permissionMap[pCode]
+        }
+      });
+    }
+  }
+
+  // STAFF: READ on all modules
+  for (const m of modules) {
+    await prisma.modulePermission.upsert({
+      where: {
+        roleId_moduleId_permissionId: {
+          roleId: roleMap['STAFF'],
+          moduleId: moduleMap[m.code],
+          permissionId: permissionMap['READ']
+        }
+      },
+      update: {},
+      create: {
+        roleId: roleMap['STAFF'],
+        moduleId: moduleMap[m.code],
+        permissionId: permissionMap['READ']
+      }
+    });
+  }
+
+  // 5. Link default Managers to Roles
+  const adminManager = await prisma.manager.findUnique({ where: { username: 'admin' } });
+  if (adminManager) {
+    await prisma.managerOnRole.upsert({
+      where: {
+        managerId_roleId: {
+          managerId: adminManager.id,
+          roleId: roleMap['SUPER_ADMIN']
+        }
+      },
+      update: {},
+      create: {
+        managerId: adminManager.id,
+        roleId: roleMap['SUPER_ADMIN']
+      }
+    });
+  }
+
+  const staffManager = await prisma.manager.findUnique({ where: { username: 'staff01' } });
+  if (staffManager) {
+    await prisma.managerOnRole.upsert({
+      where: {
+        managerId_roleId: {
+          managerId: staffManager.id,
+          roleId: roleMap['STAFF']
+        }
+      },
+      update: {},
+      create: {
+        managerId: staffManager.id,
+        roleId: roleMap['STAFF']
+      }
+    });
+  }
+
+  console.log('✅ RBAC System seeded.');
 }
 
 

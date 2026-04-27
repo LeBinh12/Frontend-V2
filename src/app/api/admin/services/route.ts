@@ -23,7 +23,10 @@ export async function GET(request: NextRequest) {
         where: where as any,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { id: 'asc' },
+        orderBy: [
+          { sortOrder: 'asc' },
+          { id: 'asc' }
+        ],
       }),
       prisma.service.count({ where: where as any }),
     ]);
@@ -38,14 +41,35 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { key, icon, titleEn, titleVn, descriptionEn, descriptionVn } = body;
+    const { key, icon, titleEn, titleVn, descriptionEn, descriptionVn, showOnHome, sortOrder } = body;
     if (!key) return NextResponse.json({ error: 'key is required' }, { status: 400 });
+
+    // Check limit for showOnHome (max 4)
+    if (showOnHome === true) {
+      const activeCount = await prisma.service.count({
+        where: { showOnHome: true }
+      });
+      if (activeCount >= 4) {
+        return NextResponse.json({ error: 'LIMIT_REACHED' }, { status: 400 });
+      }
+    }
+
     const item = await prisma.service.create({
-      data: { key, icon: icon ?? '', titleEn: titleEn ?? '', titleVn: titleVn ?? '', descriptionEn: descriptionEn ?? '', descriptionVn: descriptionVn ?? '' },
+      data: { 
+        key, 
+        icon: icon ?? '', 
+        titleEn: titleEn ?? '', 
+        titleVn: titleVn ?? '', 
+        descriptionEn: descriptionEn ?? '', 
+        descriptionVn: descriptionVn ?? '',
+        showOnHome: Boolean(showOnHome),
+        sortOrder: Number(sortOrder) || 0
+      },
     });
     return NextResponse.json(item, { status: 201 });
   } catch (error: any) {
     if (error?.code === 'P2002') return NextResponse.json({ error: 'Key already exists' }, { status: 409 });
+    console.error('POST /api/admin/services error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -10,29 +10,35 @@ import DataTable, { DataTableColumn } from '@/components/admin/DataTable';
 import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal';
 
 import ActionMenu from '@/components/admin/ActionMenu';
+import { useAdminAuth } from '@/context/AdminAuthContext';
+import i18n from '@/i18n';
 
 interface Technology {
   id: number;
   name: string;
-  category: string;
-  icon?: string | null;
+  category: string | null;
+  categoryId: number | null;
+  cat?: TechnologyCategory | null;
   createdAt: string;
 }
 
 interface TechnologyCategory {
   id: number;
+  nameEn: string;
+  nameVn: string;
   name: string;
   sortOrder: number;
 }
 
-const EMPTY: Omit<Technology, 'id' | 'createdAt'> = { name: '', category: '', icon: '' };
-const EMPTY_CAT: Omit<TechnologyCategory, 'id'> = { name: '', sortOrder: 0 };
+const EMPTY: Omit<Technology, 'id' | 'createdAt'> = { name: '', category: '', categoryId: null };
+const EMPTY_CAT: Omit<TechnologyCategory, 'id'> = { nameEn: '', nameVn: '', name: '', sortOrder: 0 };
 
-function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: {
+function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark, canCreate, canUpdate, canDelete }: {
   open: boolean; onClose: () => void; 
   onSave: (d: Omit<TechnologyCategory, 'id'>, id?: number) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
   categories: TechnologyCategory[]; isDark: boolean;
+  canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean;
 }) {
   const { t } = useTranslation();
   const [form, setForm] = useState(EMPTY_CAT);
@@ -57,33 +63,41 @@ function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: 
         </div>
         
         <div style={{ padding: '16px 18px', borderBottom: `1px solid ${border}`, background: isDark ? 'rgba(59,130,246,0.03)' : 'rgba(59,130,246,0.01)' }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.tech.categoryName')}</label>
-              <input style={inp} value={form.name} placeholder="e.g. Frontend" onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'flex-end' }}>
+            <div style={{ flex: 1, minWidth: 150 }}>
+              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.tech.categoryNameEn')}</label>
+              <input style={inp} value={form.nameEn} placeholder="e.g. Frontend" onChange={e => setForm(f => ({ ...f, nameEn: e.target.value }))} />
+            </div>
+            <div style={{ flex: 1, minWidth: 150 }}>
+              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.tech.categoryNameVn')}</label>
+              <input style={inp} value={form.nameVn} placeholder="e.g. Frontend" onChange={e => setForm(f => ({ ...f, nameVn: e.target.value }))} />
             </div>
             <div style={{ width: 80 }}>
               <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.tech.order')}</label>
               <input style={inp} type="number" value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} />
             </div>
-            <button 
-              disabled={!form.name.trim() || saving}
-              onClick={async () => {
-                setSaving(true);
-                await onSave(form, editingId || undefined);
-                setForm(EMPTY_CAT);
-                setEditingId(null);
-                setSaving(false);
-              }}
-              style={{ height: 32, padding: '0 16px', fontSize: 12, fontWeight: 700, borderRadius: 4, cursor: 'pointer', background: '#3b82f6', border: 'none', color: '#fff' }}
-            >
-              {editingId ? t('admin.common.save') : t('admin.common.add')}
-            </button>
-            {editingId && (
-              <button onClick={() => { setEditingId(null); setForm(EMPTY_CAT); }} style={{ height: 32, padding: '0 12px', fontSize: 12, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>
-                <X size={14} />
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: 4 }}>
+              {canCreate && (
+                <button 
+                  disabled={!form.nameEn?.trim() || !form.nameVn?.trim() || saving}
+                  onClick={async () => {
+                    setSaving(true);
+                    await onSave(form, editingId || undefined);
+                    setForm(EMPTY_CAT);
+                    setEditingId(null);
+                    setSaving(false);
+                  }}
+                  style={{ height: 32, padding: '0 16px', fontSize: 12, fontWeight: 700, borderRadius: 4, cursor: 'pointer', background: '#3b82f6', border: 'none', color: '#fff' }}
+                >
+                  {editingId ? t('admin.common.save') : t('admin.common.add')}
+                </button>
+              )}
+              {editingId && (
+                <button onClick={() => { setEditingId(null); setForm(EMPTY_CAT); }} style={{ height: 32, padding: '0 12px', fontSize: 12, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -99,12 +113,17 @@ function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: 
             <tbody>
               {categories.map(cat => (
                 <tr key={cat.id} style={{ borderBottom: `1px solid ${isDark ? '#1e293b33' : '#f1f5f9'}` }}>
-                  <td style={{ padding: '8px 4px', fontSize: 12, color: text }}>{cat.name}</td>
+                  <td style={{ padding: '8px 4px', fontSize: 12, color: text }}>
+                    <div>
+                      <p style={{ fontWeight: 600 }}>{cat.nameEn}</p>
+                      <p style={{ fontSize: 10, opacity: 0.6 }}>{cat.nameVn}</p>
+                    </div>
+                  </td>
                   <td style={{ padding: '8px 4px', fontSize: 12, color: text, textAlign: 'center' }}>{cat.sortOrder}</td>
                   <td style={{ padding: '8px 4px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
-                      <button onClick={() => { setEditingId(cat.id); setForm({ name: cat.name, sortOrder: cat.sortOrder }); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6' }}><Edit2 size={12} /></button>
-                      <button onClick={() => onDelete(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={12} /></button>
+                      {canUpdate && <button onClick={() => { setEditingId(cat.id); setForm({ nameEn: cat.nameEn, nameVn: cat.nameVn, name: cat.name, sortOrder: cat.sortOrder }); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6' }}><Edit2 size={12} /></button>}
+                      {canDelete && <button onClick={() => onDelete(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={12} /></button>}
                     </div>
                   </td>
                 </tr>
@@ -133,7 +152,7 @@ function TechModal({ open, onClose, onSave, item, categories, isDark }: {
   const { t } = useTranslation();
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { setForm(item ? { name: item.name, category: item.category, icon: item.icon ?? '' } : EMPTY); }, [item, open]);
+  useEffect(() => { setForm(item ? { name: item.name, category: item.category ?? '', categoryId: item.categoryId } : EMPTY); }, [item, open]);
   if (!open) return null;
 
   const bg = isDark ? '#0f172a' : '#ffffff', border = isDark ? '#1e293b' : '#e2e8f0';
@@ -159,12 +178,19 @@ function TechModal({ open, onClose, onSave, item, categories, isDark }: {
         <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {F(t('admin.tech.name'), <input style={inp} value={form.name} placeholder="e.g. React, PostgreSQL" onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />)}
           {F(t('admin.tech.category'), 
-            <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+            <select style={inp} value={form.categoryId ?? ''} onChange={e => {
+              const id = parseInt(e.target.value) || null;
+              const catMatch = categories.find(c => c.id === id);
+              setForm(f => ({ ...f, categoryId: id, category: catMatch?.nameEn || '' }));
+            }}>
               <option value="">-- {t('admin.tech.selectCategory')} --</option>
-              {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+              {categories.map(c => (
+                <option key={c.id} value={c.id}>
+                  {i18n.language === 'vi' ? c.nameVn : c.nameEn}
+                </option>
+              ))}
             </select>
           )}
-          {F(t('admin.tech.icon'), <input style={inp} value={form.icon ?? ''} placeholder="⚛ or /icons/react.svg" onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} />)}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '12px 18px', borderTop: `1px solid ${border}` }}>
           <button onClick={onClose} style={{ padding: '7px 16px', fontSize: 12, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>{t('admin.common.cancel')}</button>
@@ -191,6 +217,17 @@ export default function TechnologiesPage() {
   const [editItem, setEditItem] = useState<Technology | null>(null);
   const [deleteItem, setDeleteItem] = useState<Technology | null>(null);
 
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('TECHNOLOGIES', 'CREATE');
+  const canUpdate = canDo('TECHNOLOGIES', 'UPDATE');
+  const canDelete = canDo('TECHNOLOGIES', 'DELETE');
+
+  // Sub-permissions for Categories
+  const canCreateCat = canDo('TECH_CATEGORIES', 'CREATE');
+  const canUpdateCat = canDo('TECH_CATEGORIES', 'UPDATE');
+  const canDeleteCat = canDo('TECH_CATEGORIES', 'DELETE');
+
   // Pagination state
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -198,7 +235,7 @@ export default function TechnologiesPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/tech-categories');
+      const res = await fetch(`/api/admin/tech-categories?_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -212,9 +249,10 @@ export default function TechnologiesPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        q: search
+        q: search,
+        _t: Date.now().toString()
       });
-      const res = await fetch(`/api/admin/technologies?${params.toString()}`);
+      const res = await fetch(`/api/admin/technologies?${params.toString()}`, { cache: 'no-store' });
       const d = await res.json();
       setRows(d.items || []);
       setTotal(d.total || 0);
@@ -241,7 +279,11 @@ export default function TechnologiesPage() {
   };
   const handleEdit = async (f: Omit<Technology, 'id' | 'createdAt'>) => {
     if (!editItem) return;
-    await fetch(`/api/admin/technologies/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) });
+    const res = await fetch(`/api/admin/technologies/${editItem.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f), cache: 'no-store' });
+    const d = await res.json();
+    if (res.ok) {
+      setRows(prev => prev.map(item => item.id === editItem.id ? d : item));
+    }
     await fetchData();
   };
   const handleDelete = async () => { if (!deleteItem) return; await fetch(`/api/admin/technologies/${deleteItem.id}`, { method: 'DELETE' }); await fetchData(); };
@@ -262,40 +304,36 @@ export default function TechnologiesPage() {
   };
 
   const columns: DataTableColumn<Technology>[] = useMemo(() => [
-    {
-      key: 'icon', header: t('admin.tech.icon'), width: 60, align: 'center',
-      render: r => r.icon ? <span style={{ fontSize: r.icon.startsWith('/') ? 12 : 18 }}>{r.icon.startsWith('/') ? '🖼' : r.icon}</span> : <span className="text-slate-400 text-xs">—</span>,
-    },
     { key: 'name', header: t('admin.tech.name'), flexGrow: 1, render: r => <span className="text-xs font-semibold">{r.name}</span> },
     {
-      key: 'category', header: t('admin.tech.category'), width: 150,
-      render: r => <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500">{r.category}</span>,
+      key: 'category', header: t('admin.tech.category'), width: 300,
+      render: r => <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500">{r.cat?.name || r.category || '—'}</span>,
     },
-    { key: 'createdAt', header: t('admin.common.createdAt'), width: 110, render: r => <span className="text-xs text-slate-400">{new Date(r.createdAt).toLocaleDateString('vi-VN')}</span> },
+    { key: 'createdAt', header: t('admin.common.createdAt'), width: 150 , render: r => <span className="text-xs text-slate-400">{new Date(r.createdAt).toLocaleDateString('vi-VN')}</span> },
     {
-      key: 'actions', header: t('admin.common.actions'), width: 80, align: 'right', fixed: 'right',
+      key: 'actions', header: t('admin.common.actions'), width: 110, align: 'right', fixed: 'right',
       render: r => (
         <ActionMenu 
           isDark={isDark}
           items={[
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit', 'Chỉnh sửa'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => { setEditItem(r); setFormOpen(true); } 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t]);
+  ], [isDark, t, rows, canUpdate, canDelete]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -304,12 +342,16 @@ export default function TechnologiesPage() {
         advancedOpen={false} onToggleAdvanced={() => {}} searchPlaceholder={t('admin.tech.search')} controlSize="sm" isDark={isDark}
         searchBarExtras={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button size="sm" appearance="ghost" onClick={() => setCatModalOpen(true)} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-              <Cpu size={14} /> {t('admin.tech.manageCategories')}
-            </Button>
-            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-              <Plus size={14} /> {t('admin.common.addNew')}
-            </Button>
+            {canUpdate && (
+              <Button size="sm" appearance="ghost" onClick={() => setCatModalOpen(true)} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+                <Cpu size={14} /> {t('admin.tech.manageCategories')}
+              </Button>
+            )}
+            {canCreate && (
+              <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+                <Plus size={14} /> {t('admin.common.addNew')}
+              </Button>
+            )}
           </div>
         }
       >
@@ -333,7 +375,17 @@ export default function TechnologiesPage() {
 
       <TechModal open={formOpen} onClose={() => { setFormOpen(false); setEditItem(null); }} onSave={editItem ? handleEdit : handleAdd} item={editItem} categories={categories} isDark={isDark} />
       
-      <CategoryModal open={catModalOpen} onClose={() => setCatModalOpen(false)} onSave={handleSaveCategory} onDelete={handleDeleteCategory} categories={categories} isDark={isDark} />
+      <CategoryModal 
+        open={catModalOpen} 
+        onClose={() => setCatModalOpen(false)} 
+        onSave={handleSaveCategory} 
+        onDelete={handleDeleteCategory} 
+        categories={categories} 
+        isDark={isDark}
+        canCreate={canCreateCat}
+        canUpdate={canUpdateCat}
+        canDelete={canDeleteCat}
+      />
 
       <AdminConfirmDeleteModal
         open={Boolean(deleteItem)}

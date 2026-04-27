@@ -15,20 +15,33 @@ export async function GET(request: NextRequest) {
     });
 
     // 2. Fetch Services
-    const services = await prisma.service.findMany();
+    const services = await prisma.service.findMany({
+      where: { showOnHome: true },
+      orderBy: [
+        { sortOrder: 'asc' },
+        { id: 'asc' }
+      ],
+      take: 4
+    });
     const formattedServices = services.map(s => ({
       key: s.key,
       icon: s.icon,
       title: isEn ? s.titleEn : s.titleVn,
-      description: isEn ? s.descriptionEn : s.descriptionVn
+      description: isEn ? s.descriptionEn : s.descriptionVn,
+      showOnHome: Boolean(s.showOnHome),
+      sortOrder: Number(s.sortOrder) || 0
     }));
 
     // 3. Fetch Portfolio
-    const portfolio = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT id, key, title_en as "titleEn", title_vn as "titleVn", description_en as "descriptionEn", description_vn as "descriptionVn", image, category_key as "categoryKey", technologies, show_on_home as "showOnHome", sort_order as "sortOrder", content_en as "contentEn", content_vn as "contentVn", duration 
-       FROM portfolio_items 
-       ORDER BY sort_order ASC, id ASC`
-    );
+    const portfolio = await prisma.portfolioItem.findMany({
+      include: {
+        category: true
+      },
+      orderBy: [
+        { sortOrder: 'asc' },
+        { id: 'asc' }
+      ]
+    });
     const formattedPortfolio = portfolio.map(p => ({
       key: p.key,
       title: isEn ? p.titleEn : p.titleVn,
@@ -37,6 +50,7 @@ export async function GET(request: NextRequest) {
       sortOrder: Number(p.sortOrder) || 0,
       image: p.image,
       categoryKey: p.categoryKey,
+      categoryName: isEn ? (p.category?.nameEn || p.categoryKey) : (p.category?.nameVn || p.categoryKey),
       technologies: p.technologies,
       contentEn: p.contentEn,
       contentVn: p.contentVn,
@@ -59,12 +73,14 @@ export async function GET(request: NextRequest) {
 
     // 5. Fetch Technologies
     const technologies = await prisma.technology.findMany({
-      orderBy: { category: 'asc' }
+      include: {
+        cat: true
+      },
+      orderBy: { name: 'asc' }
     });
     const formattedTechnologies = technologies.map(t => ({
       name: t.name,
-      category: t.category,
-      icon: t.icon
+      category: isEn ? (t.cat?.nameEn || t.category) : (t.cat?.nameVn || t.category)
     }));
 
     // 6. Fetch Stats

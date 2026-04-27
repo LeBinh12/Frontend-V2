@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma-client"
 }
 
 datasource db {
@@ -28,25 +29,32 @@ model Service {
   descriptionVn String   @map("description_vn")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  showOnHome    Boolean  @default(false) @map("show_on_home")
+  sortOrder     Int      @default(0) @map("sort_order")
 
   @@map("services")
 }
 
 model TechnologyCategory {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  sortOrder Int      @default(0) @map("sort_order")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        Int          @id @default(autoincrement())
+  nameEn    String       @unique @map("name_en")
+  nameVn    String       @unique @map("name_vn")
+  name      String?      
+  key       String?      @unique
+  sortOrder Int          @default(0) @map("sort_order")
+  createdAt DateTime     @default(now()) @map("created_at")
+  items     Technology[]
 
   @@map("technology_categories")
 }
 
 model Technology {
-  id        Int      @id @default(autoincrement())
-  name      String
-  category  String
-  icon      String?
-  createdAt DateTime @default(now()) @map("created_at")
+  id         Int                 @id @default(autoincrement())
+  name       String
+  category   String?
+  categoryId Int?                @map("category_id")
+  cat        TechnologyCategory? @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime            @default(now()) @map("created_at")
 
   @@map("technologies")
 }
@@ -59,7 +67,9 @@ model PortfolioItem {
   descriptionEn String   @map("description_en")
   descriptionVn String   @map("description_vn")
   image         String
-  categoryKey   String   @map("category_key")
+  categoryKey   String?  @map("category_key")
+  categoryId    Int?     @map("category_id")
+  category      PortfolioCategory? @relation(fields: [categoryId], references: [id])
   technologies  String[]
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
@@ -73,10 +83,14 @@ model PortfolioItem {
 }
 
 model PortfolioCategory {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  sortOrder Int      @default(0) @map("sort_order")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        Int             @id @default(autoincrement())
+  nameEn    String          @unique @map("name_en")
+  nameVn    String          @unique @map("name_vn")
+  name      String?         
+  key       String?         @unique
+  sortOrder Int             @default(0) @map("sort_order")
+  createdAt DateTime        @default(now()) @map("created_at")
+  items     PortfolioItem[]
 
   @@map("portfolio_categories")
 }
@@ -127,14 +141,15 @@ model Stat {
 }
 
 model Manager {
-  id        String      @id @default(uuid())
-  username  String      @unique
+  id        String          @id @default(uuid())
+  username  String          @unique
   password  String
-  fullName  String?     @map("full_name")
-  email     String?     @unique
-  role      ManagerRole @default(STAFF)
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
+  fullName  String?         @map("full_name")
+  email     String?         @unique
+  role      ManagerRole     @default(STAFF)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  roles     ManagerOnRole[]
 
   @@map("managers")
 }
@@ -156,4 +171,69 @@ enum ManagerRole {
   ADMIN
   MANAGER
   STAFF
+}
+
+model Role {
+  id                String             @id @default(uuid())
+  name              String             @unique
+  descriptionEn     String?            @map("description_en")
+  descriptionVn     String?            @map("description_vn")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  managers          ManagerOnRole[]
+  modulePermissions ModulePermission[]
+
+  @@map("roles")
+}
+
+model Module {
+  id                String             @id @default(uuid())
+  nameEn            String             @map("name_en")
+  nameVn            String             @map("name_vn")
+  code              String             @unique
+  descriptionEn     String?            @map("description_en")
+  descriptionVn     String?            @map("description_vn")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  modulePermissions ModulePermission[]
+
+  @@map("modules")
+}
+
+model Permission {
+  id                String             @id @default(uuid())
+  nameEn            String             @map("name_en")
+  nameVn            String             @map("name_vn")
+  code              String             @unique
+  descriptionEn     String?            @map("description_en")
+  descriptionVn     String?            @map("description_vn")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  modulePermissions ModulePermission[]
+
+  @@map("permissions")
+}
+
+model ModulePermission {
+  id           String     @id @default(uuid())
+  roleId       String     @map("role_id")
+  moduleId     String     @map("module_id")
+  permissionId String     @map("permission_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  module       Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  @@unique([roleId, moduleId, permissionId])
+  @@map("module_permissions")
+}
+
+model ManagerOnRole {
+  managerId String  @map("manager_id")
+  roleId    String  @map("role_id")
+  manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  role      Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([managerId, roleId])
+  @@map("manager_roles")
 }

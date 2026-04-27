@@ -10,6 +10,7 @@ import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal'
 import { Edit2, Filter, Globe2, KeyRound, Loader2, Plus, Save, Trash2, X } from 'lucide-react';
 import ActionMenu from '@/components/admin/ActionMenu';
 import i18n from '@/i18n';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface ContentItem {
   id: string;
@@ -104,6 +105,11 @@ export default function StaticContentPage() {
   const [editItem, setEditItem] = useState<ContentItem | null>(null);
   const [selectedPrefix, setSelectedPrefix] = useState<string | null>(null);
   const [deleteItem, setDeleteItem] = useState<ContentItem | null>(null);
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('CONTENT', 'CREATE');
+  const canUpdate = canDo('CONTENT', 'UPDATE');
+  const canDelete = canDo('CONTENT', 'DELETE');
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -198,19 +204,19 @@ export default function StaticContentPage() {
         <ActionMenu 
           isDark={isDark}
           items={[
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit', 'Chỉnh sửa'), 
               icon: <Edit2 size={14} />, 
               eventKey: 'edit', 
               onClick: () => handleOpenEdit(row.id) 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(row),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
@@ -237,11 +243,13 @@ export default function StaticContentPage() {
           />
         }
         searchBarExtras={
-          <Button size="sm" appearance="primary" color="blue"
-            onClick={() => { setEditItem(null); setFormOpen(true); }}
-            className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-            <Plus size={14} /> {t('admin.common.addNew')}
-          </Button>
+          canCreate && (
+            <Button size="sm" appearance="primary" color="blue"
+              onClick={() => { setEditItem(null); setFormOpen(true); }}
+              className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+              <Plus size={14} /> {t('admin.common.addNew')}
+            </Button>
+          )
         }
       >
         <DataTable

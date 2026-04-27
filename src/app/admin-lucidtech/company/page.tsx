@@ -5,6 +5,7 @@ import { useAdminTheme } from '../layout';
 import { Save, Loader2, Building2, CheckCircle2, X, ImageIcon } from 'lucide-react';
 import DataManagementLayout from '@/components/admin/DataManagementLayout';
 import { useTranslation } from 'react-i18next';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface CompanyInfo {
   id: number;
@@ -34,6 +35,9 @@ export default function CompanyPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { canDo } = useAdminAuth();
+
+  const canUpdate = canDo('COMPANY', 'UPDATE');
 
   // Refs to each image card so we can trigger uploads on Save
   const officeCardRef = useRef<ImageCardRef>(null);
@@ -42,7 +46,7 @@ export default function CompanyPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await (await fetch('/api/admin/company')).json();
+      const data = await (await fetch(`/api/admin/company?_t=${Date.now()}`, { cache: 'no-store' })).json();
       if (data) setForm({ name: data.name ?? '', tagline: data.tagline ?? '', email: data.email ?? '', phone: data.phone ?? '', addressEn: data.addressEn ?? '', addressVn: data.addressVn ?? '', officeImage: data.officeImage ?? '', teamImage: data.teamImage ?? '' });
     } catch (e) { console.error(e); } finally { setLoading(false); }
   }, []);
@@ -117,14 +121,16 @@ export default function CompanyPage() {
         searchPlaceholder="Settings..."
         hideSearch
         searchBarExtras={
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`flex items-center gap-2 px-6 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-lg active:scale-95 ${saved ? 'bg-green-500 shadow-green-500/20' : 'bg-blue-600 shadow-blue-600/20 hover:bg-blue-700'}`}
-          >
-            {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
-            {saved ? t('admin.company.saveSuccess') : t('admin.common.save')}
-          </button>
+          canUpdate && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`flex items-center gap-2 px-6 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-lg active:scale-95 ${saved ? 'bg-green-500 shadow-green-500/20' : 'bg-blue-600 shadow-blue-600/20 hover:bg-blue-700'}`}
+            >
+              {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
+              {saved ? t('admin.company.saveSuccess') : t('admin.common.save')}
+            </button>
+          )
         }
     >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 900, height: '100%', overflowY: 'auto', margin: '0 auto' }}>
@@ -140,18 +146,18 @@ export default function CompanyPage() {
 
         <Section title={t('admin.company.basicInfo')}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            {F(t('admin.company.name'), <input style={inp} value={form.name} placeholder="Lucid Technology" onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />)}
-            {F(t('admin.company.tagline'), <input style={inp} value={form.tagline ?? ''} placeholder="Building the Future…" onChange={e => setForm(f => ({ ...f, tagline: e.target.value }))} />)}
+            {F(t('admin.company.name'), <input style={inp} value={form.name} readOnly={!canUpdate} placeholder="Lucid Technology" onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />)}
+            {F(t('admin.company.tagline'), <input style={inp} value={form.tagline ?? ''} readOnly={!canUpdate} placeholder="Building the Future…" onChange={e => setForm(f => ({ ...f, tagline: e.target.value }))} />)}
           </div>
         </Section>
 
         <Section title={t('admin.company.contact')}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            {F(t('admin.company.email'), <input style={inp} type="email" value={form.email ?? ''} placeholder="hello@lucidtech.vn" onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />)}
-            {F(t('admin.company.phone'), <input style={inp} value={form.phone ?? ''} placeholder="+84 28 ..." onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />)}
+            {F(t('admin.company.email'), <input style={inp} type="email" readOnly={!canUpdate} value={form.email ?? ''} placeholder="hello@lucidtech.vn" onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />)}
+            {F(t('admin.company.phone'), <input style={inp} readOnly={!canUpdate} value={form.phone ?? ''} placeholder="+84 28 ..." onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />)}
           </div>
-          {F(t('admin.company.addressEn'), <input style={inp} value={form.addressEn ?? ''} placeholder="District 7, Ho Chi Minh City, Vietnam" onChange={e => setForm(f => ({ ...f, addressEn: e.target.value }))} />)}
-          {F(t('admin.company.addressVn'), <input style={inp} value={form.addressVn ?? ''} placeholder="Quận 7, TP. Hồ Chí Minh, Việt Nam" onChange={e => setForm(f => ({ ...f, addressVn: e.target.value }))} />)}
+          {F(t('admin.company.addressEn'), <input style={inp} readOnly={!canUpdate} value={form.addressEn ?? ''} placeholder="District 7, Ho Chi Minh City, Vietnam" onChange={e => setForm(f => ({ ...f, addressEn: e.target.value }))} />)}
+          {F(t('admin.company.addressVn'), <input style={inp} readOnly={!canUpdate} value={form.addressVn ?? ''} placeholder="Quận 7, TP. Hồ Chí Minh, Việt Nam" onChange={e => setForm(f => ({ ...f, addressVn: e.target.value }))} />)}
         </Section>
 
         <Section title={t('admin.company.images')}>
@@ -165,6 +171,7 @@ export default function CompanyPage() {
               isDark={isDark}
               subDir="company"
               t={t}
+              disabled={!canUpdate}
             />
             <InteractiveImageCard 
               ref={teamCardRef}
@@ -174,6 +181,7 @@ export default function CompanyPage() {
               isDark={isDark}
               subDir="company"
               t={t}
+              disabled={!canUpdate}
             />
           </div>
         </Section>
@@ -191,10 +199,11 @@ interface ImageCardProps {
   isDark: boolean;
   subDir: string;
   t: any;
+  disabled?: boolean;
 }
 
 const InteractiveImageCard = forwardRef<ImageCardRef, ImageCardProps>(
-  ({ label, value, onClear, isDark, subDir, t }, ref) => {
+  ({ label, value, onClear, isDark, subDir, t, disabled }, ref) => {
     const [hovered, setHovered] = useState(false);
     const [pendingFile, setPendingFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -253,11 +262,11 @@ const InteractiveImageCard = forwardRef<ImageCardRef, ImageCardProps>(
 
         {/* Card */}
         <div
-          className="relative aspect-video w-full rounded-xl overflow-hidden cursor-pointer group shadow-sm border"
+          className={`relative aspect-video w-full rounded-xl overflow-hidden group shadow-sm border ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           style={{ borderColor: hasPending ? '#3b82f6' : border, transition: 'border-color .2s' }}
-          onMouseEnter={() => setHovered(true)}
+          onMouseEnter={() => !disabled && setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => !disabled && fileInputRef.current?.click()}
         >
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
 
@@ -307,9 +316,11 @@ const InteractiveImageCard = forwardRef<ImageCardRef, ImageCardProps>(
               <div className="w-1 h-1 rounded-full bg-blue-500 shrink-0" />
               <span className="text-[10px] truncate font-mono opacity-50" style={{ color: text }}>{value}</span>
             </div>
-            <button type="button" onClick={() => setConfirmDelete(true)} className="text-[10px] text-red-400 hover:text-red-500 font-medium shrink-0">
-              {t('admin.common.delete', 'Xóa')}
-            </button>
+            {!disabled && (
+              <button type="button" onClick={() => setConfirmDelete(true)} className="text-[10px] text-red-400 hover:text-red-500 font-medium shrink-0">
+                {t('admin.common.delete', 'Xóa')}
+              </button>
+            )}
           </div>
         )}
 

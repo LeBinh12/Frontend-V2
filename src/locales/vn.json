@@ -67,19 +67,19 @@
     "title": "Các",
     "highlight": "Dịch vụ chính",
     "description": "Chúng tôi cung cấp một loạt các dịch vụ toàn diện để giúp bạn xây dựng và mở rộng tầm nhìn kỹ thuật số của mình.",
-    "blockchain": {
+    "smart_gas_station": {
       "title": "Giải pháp Cây xăng Thông minh",
       "description": "Một hệ thống phần mềm quản lý trạm xăng toàn diện được xây dựng trên hơn 30 năm kinh nghiệm thực tế trong ngành. Nó tích hợp quản lý bán hàng, kiểm soát hàng tồn kho, công nợ phải thu, quản lý nhân viên và báo cáo thời gian thực. Giao diện thân thiện với người dùng với tính năng đồng bộ hóa đa chi nhánh và sao lưu dữ liệu đám mây tự động."
     },
-    "ai": {
+    "digital_transformation": {
       "title": "Tư vấn Chuyển đổi số",
       "description": "Cung cấp dịch vụ tư vấn chuyển đổi số toàn diện cho các doanh nghiệp vừa và nhỏ. Chúng tôi phân tích các quy trình hiện có, đề xuất các giải pháp công nghệ phù hợp, đào tạo nhân viên và hỗ trợ triển khai để giúp doanh nghiệp tối ưu hóa chi phí, nâng cao hiệu quả và lợi thế cạnh tranh."
     },
-    "cloud": {
+    "software_development": {
       "title": "Phát triển Phần mềm theo yêu cầu",
       "description": "Thiết kế và phát triển trang web, ứng dụng di động và phần mềm quản lý doanh nghiệp phù hợp với nhu cầu kinh doanh cụ thể. Đội ngũ phát triển giàu kinh nghiệm của chúng tôi am hiểu các quy trình kinh doanh và cung cấp các giải pháp tối ưu bằng công nghệ hiện đại, kèm theo bảo trì và hỗ trợ vận hành lâu dài."
     },
-    "design": {
+    "it_staffing": {
       "title": "Dịch vụ Tuyển dụng & Cung ứng Nhân sự IT",
       "description": "Hỗ trợ doanh nghiệp trong việc tìm kiếm và tuyển dụng nhân tài IT chất lượng cao. Chúng tôi cung cấp dịch vụ cung ứng nhân sự IT cho cả các dự án ngắn hạn và dài hạn, với các chuyên gia giàu kinh nghiệm trong phát triển phần mềm, quản trị hệ thống và bảo mật thông tin."
     }
@@ -105,10 +105,9 @@
     "subtitle": "Một lựa chọn các dự án nơi sự xuất sắc về kỹ thuật kết hợp với tác động kinh doanh. Chúng tôi tự hào về từng dòng mã.",
     "categories": {
       "saas": "Phần mềm dịch vụ (SaaS)",
-      "webDev": "Phát triển Website",
-      "internalSystem": "Hệ thống nội bộ",
+      "webdev": "Phát triển Website",
+      "internalsystem": "Hệ thống nội bộ",
       "virtual": "Ảo hóa / Mô phỏng",
-      "Virtual": "Ảo hóa / Mô phỏng",
       "mobile": "Ứng dụng Di động",
       "ai": "AI & Học máy",
       "ecommerce": "Thương mại Điện tử"
@@ -181,12 +180,13 @@
     "stack": "",
     "subtitle": "Lựa chọn công nghệ của chúng tôi được thúc đẩy bởi hiệu suất, khả năng mở rộng và trải nghiệm nhà phát triển. Chúng tôi luôn đi trước để bạn không phải lo lắng.",
     "categories": {
-      "Frontend": "Frontend",
-      "Backend": "Backend",
-      "Web3": "Web3",
-      "AI & Machine Learning": "AI & Machine Learning",
-      "Cloud & DevOps": "Cloud & DevOps",
-      "Mobile Development": "Mobile Development"
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "database": "Cơ sở dữ liệu",
+      "web3": "Web3",
+      "ai-machine-learning": "AI & Học máy",
+      "cloud-devops": "Cloud & DevOps",
+      "mobile-development": "Ứng dụng Di động"
     }
   },
   "team": {
@@ -218,11 +218,6 @@
     "collaboration": {
       "title": "Sự xuất sắc trong cộng tác",
       "description": "Chúng tôi tin rằng những sản phẩm tốt nhất được xây dựng thông qua giao tiếp cởi mở và niềm đam mê chung đối với công nghệ."
-    },
-    "leo": {
-      "name": "Leo Sterling",
-      "role": "Giám đốc điều hành & Người sáng lập",
-      "bio": "Nhà lãnh đạo có tầm nhìn với hơn 15 năm kinh nghiệm trong ngành công nghệ."
     },
     "sarah": {
       "name": "Sarah Chen",
@@ -284,18 +279,29 @@
   },
   "admin": {
     "menu": {
+      "sections": {
+        "main": "Tổng quan",
+        "content": "Quản lý nội dung",
+        "company": "Công ty",
+        "system": "Hệ thống & Bảo mật"
+      },
       "dashboard": "Bảng điều khiển",
       "content": "Nội dung tĩnh",
       "services": "Dịch vụ",
       "portfolio": "Dự án",
       "team": "Đội ngũ nhân sự",
       "stats": "Số liệu thống kê",
-      "tech": "Công nghệ",
+      "technologies": "Công nghệ",
       "company": "Thông tin công ty",
       "accounts": "Tài khoản Quản trị",
       "contacts": "Liên hệ khách hàng",
+      "roles": "Vai trò (Cấp bậc)",
+      "modules": "Quản lý Nhóm quyền",
+      "permissionsList": "Quản lý Quyền",
+      "permissions": "Ma trận Phân quyền",
       "systemManagement": "QUẢN LÝ HỆ THỐNG",
       "userRole": "Quản lý cấp cao",
+      "userName": "Quản trị hệ thống",
       "viewSite": "Xem trang chủ"
     },
     "header": {
@@ -358,9 +364,9 @@
       "overview": "Tổng quan hệ thống",
       "lastUpdate": "Cập nhật lần cuối",
       "stats": {
-        "visits": "Tổng lượt truy cập",
+        "contacts": "Khách hàng liên hệ",
         "users": "Người dùng hoạt động",
-        "content": "Mục nội dung",
+        "projects": "Dự án hoàn thành",
         "languages": "Ngôn ngữ hỗ trợ"
       },
       "activity": {
@@ -427,6 +433,8 @@
       },
       "manageCategories": "Quản lý danh mục",
       "categoryName": "Tên danh mục",
+      "categoryNameEn": "Tên danh mục (EN)",
+      "categoryNameVn": "Tên danh mục (VN)",
       "noCategories": "Chưa có danh mục nào.",
       "selectCategory": "Chọn danh mục",
       "duration": "Thời gian",
@@ -476,6 +484,8 @@
       "confirmDeleteDesc": "Bạn đang thực hiện xóa một công nghệ khỏi danh sách. Hành động này sẽ gỡ bỏ biểu tượng công nghệ khỏi các dự án liên quan.",
       "manageCategories": "Quản lý danh mục",
       "categoryName": "Tên danh mục",
+      "categoryNameEn": "Tên danh mục (EN)",
+      "categoryNameVn": "Tên danh mục (VN)",
       "order": "Thứ tự",
       "noCategories": "Chưa có danh mục nào.",
       "selectCategory": "Chọn danh mục"
@@ -515,8 +525,6 @@
       "roleStaff": "Nhân viên",
       "search": "Tìm kiếm tài khoản...",
       "empty": "Không tìm thấy tài khoản nào.",
-      "addTitle": "Thêm tài khoản mới",
-      "editTitle": "Chỉnh sửa tài khoản",
       "saveSuccess": "Đã lưu tài khoản thành công!",
       "deleteConfirm": "Bạn có chắc chắn muốn xóa tài khoản này?"
     },
@@ -543,6 +551,71 @@
       "empty": "Không tìm thấy ý kiến liên hệ nào.",
       "confirmDeleteTitle": "Xóa liên hệ",
       "confirmDeleteDesc": "Hành động này sẽ xóa vĩnh viễn thông tin liên hệ của khách hàng khỏi hệ thống."
+    },
+    "roles": {
+      "pageTitle": "Quản lý Vai trò",
+      "addTitle": "Thêm vai trò mới",
+      "editTitle": "Chỉnh sửa vai trò",
+      "name": "Tên vai trò",
+      "namePlaceholder": "VD: SUPER_ADMIN",
+      "description": "Mô tả",
+      "descEn": "Mô tả (Tiếng Anh)",
+      "descVn": "Mô tả (Tiếng Việt)",
+      "search": "Tìm kiếm vai trò...",
+      "empty": "Không tìm thấy vai trò nào.",
+      "confirmDeleteTitle": "Xóa vai trò",
+      "confirmDeleteDesc": "Xóa vai trò sẽ gỡ bỏ tất cả nhân viên khỏi vai trò này. Bạn có chắc chắn?"
+    },
+    "permissions": {
+      "pageTitle": "Ma trận Phân quyền",
+      "saveMatrix": "Lưu ma trận phân quyền",
+      "module": "Module",
+      "action": "Hành động",
+      "saveSuccess": "Cập nhật ma trận phân quyền thành công!",
+      "loadError": "Không thể tải ma trận quyền",
+      "saveError": "Lưu ma trận thất bại",
+      "matrixDesc": "Quản lý quyền hạn của từng vai trò trên các module hệ thống.",
+      "searchPlaceholder": "Tìm kiếm module...",
+      "groupMode": "Chế độ Nhóm",
+      "moduleRole": "Module / Vai trò",
+      "selectAll": "Tích/Bỏ tất cả",
+      "selectAllRole": "Tích tất cả cho {{role}}",
+      "groupToggle": "Tích nhóm:",
+      "selectAllModule": "Tích tất cả cho module {{module}}",
+      "collapsedHint": "{{count}} hành động — nhấn mũi tên để mở rộng",
+      "groupToggleRole": "Tích nhóm cho {{role}}",
+      "selectAllRolesForAction": "Tích cho tất cả vai trò",
+      "unsavedChanges": "Bạn có thay đổi chưa lưu!",
+      "saveNow": "Lưu ngay",
+      "legendAllowed": "Quyền được cấp",
+      "legendDenied": "Chưa có quyền",
+      "legendHint": "Click vào ô để bật/tắt quyền tương ứng"
+    },
+    "modules": {
+      "pageTitle": "Quản lý Nhóm quyền (Module)",
+      "addTitle": "Thêm nhóm quyền mới",
+      "editTitle": "Chỉnh sửa nhóm quyền",
+      "code": "Mã nhóm (Code)",
+      "nameEn": "Tên (Tiếng Anh)",
+      "nameVn": "Tên (Tiếng Việt)",
+      "search": "Tìm kiếm nhóm quyền...",
+      "syncSidebar": "Đồng bộ từ Sidebar",
+      "empty": "Không tìm thấy nhóm quyền nào.",
+      "confirmDeleteTitle": "Xác nhận xóa nhóm quyền",
+      "confirmDeleteDesc": "Xóa nhóm quyền sẽ gỡ bỏ tất cả các quyền liên quan trong ma trận phân quyền."
+    },
+    "permissionsList": {
+      "pageTitle": "Quản lý Quyền (Action)",
+      "addTitle": "Thêm quyền mới",
+      "editTitle": "Chỉnh sửa quyền",
+      "code": "Mã quyền (Code)",
+      "nameEn": "Tên (Tiếng Anh)",
+      "nameVn": "Tên (Tiếng Việt)",
+      "search": "Tìm kiếm quyền...",
+      "addCommon": "Thêm hành động mẫu",
+      "empty": "Không tìm thấy quyền nào.",
+      "confirmDeleteTitle": "Xác nhận xóa quyền",
+      "confirmDeleteDesc": "Xóa quyền sẽ gỡ bỏ quyền này khỏi tất cả các module trong ma trận phân quyền."
     }
   }
 }

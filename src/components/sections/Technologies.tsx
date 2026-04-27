@@ -8,9 +8,13 @@ import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
 import { useContent } from '@/hooks/useContent';
 
+// Normalize category value to translation key (e.g. "Mobile Development" -> "mobile-development")
+const toTranslationKey = (category: string) =>
+  category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
 const Technologies = () => {
-  const { t } = useTranslation();
-  const { content } = useContent();
+  const { t, i18n } = useTranslation();
+  const { content, loading } = useContent();
   const technologiesData = content?.technologies || mockData.technologies;
   const categories = Array.from(new Set(technologiesData.map(t => t.category)));
   const ref = useRef(null);
@@ -41,39 +45,59 @@ const Technologies = () => {
 
         <Grid fluid className="p-0!">
           <Row gutter={30}>
-            {categories.map((category, i) => (
-              <Col key={category} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ amount: 0.2, once: false }}
-                  transition={{ delay: 0.1, duration: 0.6 }} // Unified delay
-                  style={{ 
-                    y: yCards,
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    transformStyle: 'preserve-3d',
-                    willChange: 'opacity, transform'
-                  }}
-                  className="flex-1 bg-bg-card/50 border border-white/5 rounded-2xl p-6 h-full transition-colors hover:border-primary/20"
-                >
-                  <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-primary mb-4 sm:mb-6 uppercase tracking-widest text-xs sm:text-sm">{t(`technologies.categories.${category}`)}</h3>
-                  <TagGroup className="flex flex-wrap gap-3">
-                    {technologiesData
-                      .filter(t => t.category === category)
-                      .map((tech, i) => (
-                        <Tag 
-                          key={i} 
-                          size="lg" 
-                          className="bg-white/5! text-white! border border-white/10! px-4 py-2 rounded-lg font-medium"
-                        >
-                          {tech.name}
-                        </Tag>
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <Col key={`skeleton-${i}`} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
+                  <div className="flex-1 bg-bg-card/50 border border-white/5 rounded-2xl p-6 h-full animate-pulse">
+                    <div className="w-1/2 h-6 bg-white/5 rounded mb-6" />
+                    <div className="flex flex-wrap gap-3">
+                      {Array(5).fill(0).map((_, j) => (
+                        <div key={`tag-${j}`} className="w-20 h-10 bg-white/5 rounded-lg" />
                       ))}
-                  </TagGroup>
-                </motion.div>
-              </Col>
-            ))}
+                    </div>
+                  </div>
+                </Col>
+              ))
+            ) : (
+              categories.map((category, i) => (
+                <Col key={category} xs={24} md={12} lg={8} className="mb-6 sm:mb-8 md:mb-10 flex flex-col">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ amount: 0.2, once: false }}
+                    transition={{ delay: 0.1, duration: 0.6 }} // Unified delay
+                    style={{ 
+                      y: yCards,
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      transformStyle: 'preserve-3d',
+                      willChange: 'opacity, transform'
+                    }}
+                    className="flex-1 bg-bg-card/50 border border-white/5 rounded-2xl p-6 h-full transition-colors hover:border-primary/20"
+                  >
+                    <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-primary mb-4 sm:mb-6 uppercase tracking-widest text-xs sm:text-sm">
+                      {(() => {
+                        const slugKey = `technologies.categories.${toTranslationKey(category)}`;
+                        return i18n.exists(slugKey) ? t(slugKey) : category;
+                      })()}
+                    </h3>
+                    <TagGroup className="flex flex-wrap gap-3">
+                      {technologiesData
+                        .filter(t => t.category === category)
+                        .map((tech, i) => (
+                          <Tag 
+                            key={i} 
+                            size="lg" 
+                            className="bg-white/5! text-white! border border-white/10! px-4 py-2 rounded-lg font-medium"
+                          >
+                            {tech.name}
+                          </Tag>
+                        ))}
+                    </TagGroup>
+                  </motion.div>
+                </Col>
+              ))
+            )}
           </Row>
         </Grid>
 

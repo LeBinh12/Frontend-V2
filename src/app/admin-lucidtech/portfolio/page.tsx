@@ -11,6 +11,7 @@ import DataTable, { DataTableColumn } from '@/components/admin/DataTable';
 import AdminConfirmDeleteModal from '@/components/admin/AdminConfirmDeleteModal';
 import ImageUploader, { ImageUploaderRef } from '@/components/admin/ImageUploader';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 interface PortfolioItem {
   id: number;
@@ -20,7 +21,9 @@ interface PortfolioItem {
   descriptionEn: string;
   descriptionVn: string;
   image: string;
-  categoryKey: string;
+  categoryId: number | null;
+  categoryKey: string | null;
+  category?: PortfolioCategory | null;
   technologies: string[];
   showOnHome: boolean;
   sortOrder: number;
@@ -33,11 +36,13 @@ interface PortfolioItem {
 
 interface PortfolioCategory {
   id: number;
+  nameEn: string;
+  nameVn: string;
   name: string;
   sortOrder: number;
 }
 
-const EMPTY: Omit<PortfolioItem, 'id'> = { key: '', titleEn: '', titleVn: '', descriptionEn: '', descriptionVn: '', image: '', categoryKey: '', technologies: [], showOnHome: false, sortOrder: 0, contentEn: '', contentVn: '', duration: '' };
+const EMPTY: Omit<PortfolioItem, 'id'> = { key: '', titleEn: '', titleVn: '', descriptionEn: '', descriptionVn: '', image: '', categoryId: null, categoryKey: '', technologies: [], showOnHome: false, sortOrder: 0, contentEn: '', contentVn: '', duration: '' };
 
 const Toggle = ({ checked, onChange, label, isDark, loading }: { checked: boolean, onChange: (v: boolean) => void, label?: string, isDark: boolean, loading?: boolean }) => (
   <div className="flex items-center gap-2">
@@ -54,13 +59,14 @@ const Toggle = ({ checked, onChange, label, isDark, loading }: { checked: boolea
     </button>
   </div>
 );
-const EMPTY_CAT: Omit<PortfolioCategory, 'id'> = { name: '', sortOrder: 0 };
+const EMPTY_CAT: Omit<PortfolioCategory, 'id'> = { nameEn: '', nameVn: '', name: '', sortOrder: 0 };
 
-function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: {
+function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark, canCreate, canUpdate, canDelete }: {
   open: boolean; onClose: () => void; 
   onSave: (d: Omit<PortfolioCategory, 'id'>, id?: number) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
   categories: PortfolioCategory[]; isDark: boolean;
+  canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean;
 }) {
   const { t } = useTranslation();
   const [form, setForm] = useState(EMPTY_CAT);
@@ -85,33 +91,41 @@ function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: 
         </div>
         
         <div style={{ padding: '16px 18px', borderBottom: `1px solid ${border}`, background: isDark ? 'rgba(59,130,246,0.03)' : 'rgba(59,130,246,0.01)' }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.portfolio.categoryName')}</label>
-              <input style={inp} value={form.name} placeholder="e.g. Web Development" onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'flex-end' }}>
+            <div style={{ flex: 1, minWidth: 150 }}>
+              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.portfolio.categoryNameEn')}</label>
+              <input style={inp} value={form.nameEn} placeholder="e.g. Web Development" onChange={e => setForm(f => ({ ...f, nameEn: e.target.value }))} />
+            </div>
+            <div style={{ flex: 1, minWidth: 150 }}>
+              <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.portfolio.categoryNameVn')}</label>
+              <input style={inp} value={form.nameVn} placeholder="e.g. Phát triển Web" onChange={e => setForm(f => ({ ...f, nameVn: e.target.value }))} />
             </div>
             <div style={{ width: 80 }}>
               <label style={{ fontSize: 10, fontWeight: 600, color: label, textTransform: 'uppercase', marginBottom: 4, display: 'block' }}>{t('admin.portfolio.order')}</label>
               <input style={inp} type="number" value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))} />
             </div>
-            <button 
-              disabled={!form.name.trim() || saving}
-              onClick={async () => {
-                setSaving(true);
-                await onSave(form, editingId || undefined);
-                setForm(EMPTY_CAT);
-                setEditingId(null);
-                setSaving(false);
-              }}
-              style={{ height: 32, padding: '0 16px', fontSize: 12, fontWeight: 700, borderRadius: 4, cursor: 'pointer', background: '#3b82f6', border: 'none', color: '#fff' }}
-            >
-              {editingId ? t('admin.common.save') : t('admin.common.add')}
-            </button>
-            {editingId && (
-              <button onClick={() => { setEditingId(null); setForm(EMPTY_CAT); }} style={{ height: 32, padding: '0 12px', fontSize: 12, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>
-                <X size={14} />
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: 4 }}>
+              {canCreate && (
+                <button 
+                  disabled={!form.nameEn.trim() || !form.nameVn.trim() || saving}
+                  onClick={async () => {
+                    setSaving(true);
+                    await onSave(form, editingId || undefined);
+                    setForm(EMPTY_CAT);
+                    setEditingId(null);
+                    setSaving(false);
+                  }}
+                  style={{ height: 32, padding: '0 16px', fontSize: 12, fontWeight: 700, borderRadius: 4, cursor: 'pointer', background: '#3b82f6', border: 'none', color: '#fff' }}
+                >
+                  {editingId ? t('admin.common.save') : t('admin.common.add')}
+                </button>
+              )}
+              {editingId && (
+                <button onClick={() => { setEditingId(null); setForm(EMPTY_CAT); }} style={{ height: 32, padding: '0 12px', fontSize: 12, borderRadius: 4, cursor: 'pointer', background: 'transparent', border: `1px solid ${border}`, color: label }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -127,12 +141,17 @@ function CategoryModal({ open, onClose, onSave, onDelete, categories, isDark }: 
             <tbody>
               {categories.map(cat => (
                 <tr key={cat.id} style={{ borderBottom: `1px solid ${isDark ? '#1e293b33' : '#f1f5f9'}` }}>
-                  <td style={{ padding: '8px 4px', fontSize: 12, color: text }}>{cat.name}</td>
+                  <td style={{ padding: '8px 4px', fontSize: 12, color: text }}>
+                    <div>
+                      <p style={{ fontWeight: 600 }}>{cat.nameEn}</p>
+                      <p style={{ fontSize: 10, opacity: 0.6 }}>{cat.nameVn}</p>
+                    </div>
+                  </td>
                   <td style={{ padding: '8px 4px', fontSize: 12, color: text, textAlign: 'center' }}>{cat.sortOrder}</td>
                   <td style={{ padding: '8px 4px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
-                      <button onClick={() => { setEditingId(cat.id); setForm({ name: cat.name, sortOrder: cat.sortOrder }); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6' }}><Edit2 size={12} /></button>
-                      <button onClick={() => onDelete(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={12} /></button>
+                      {canUpdate && <button onClick={() => { setEditingId(cat.id); setForm({ nameEn: cat.nameEn, nameVn: cat.nameVn, name: cat.name, sortOrder: cat.sortOrder }); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6' }}><Edit2 size={12} /></button>}
+                      {canDelete && <button onClick={() => onDelete(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={12} /></button>}
                     </div>
                   </td>
                 </tr>
@@ -171,7 +190,8 @@ function PortfolioModal({ open, onClose, onSave, item, categories, isDark }: {
       descriptionEn: item.descriptionEn, 
       descriptionVn: item.descriptionVn, 
       image: item.image, 
-      categoryKey: item.categoryKey, 
+      categoryId: item.categoryId,
+      categoryKey: item.categoryKey ?? '', 
       technologies: item.technologies,
       showOnHome: Boolean(item.showOnHome),
       sortOrder: Number(item.sortOrder) || 0,
@@ -202,9 +222,13 @@ function PortfolioModal({ open, onClose, onSave, item, categories, isDark }: {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {F(t('admin.portfolio.key'), <input style={inp} value={form.key ?? ''} placeholder="my-project" onChange={e => setForm(f => ({ ...f, key: e.target.value }))} />)}
             {F(t('admin.portfolio.category'), 
-              <select style={inp} value={form.categoryKey} onChange={e => setForm(f => ({ ...f, categoryKey: e.target.value }))}>
+              <select style={inp} value={form.categoryId ?? ''} onChange={e => {
+                const id = parseInt(e.target.value) || null;
+                const cat = categories.find(c => c.id === id);
+                setForm(f => ({ ...f, categoryId: id, categoryKey: cat?.name || '' }));
+              }}>
                 <option value="">-- {t('admin.portfolio.selectCategory')} --</option>
-                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             )}
           </div>
@@ -268,7 +292,7 @@ function PortfolioModal({ open, onClose, onSave, item, categories, isDark }: {
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
              <RichTextEditor 
-                key={`content-en-${item?.id || 'new'}-${item?.updatedAt || Date.now()}`}
+                key={`content-en-${item?.id || 'new'}`}
                 label={t('admin.portfolio.detailTitleEn')} 
                 value={form.contentEn || ''} 
                 onChange={val => setForm(f => ({ ...f, contentEn: val }))} 
@@ -276,7 +300,7 @@ function PortfolioModal({ open, onClose, onSave, item, categories, isDark }: {
                 placeholder={t('admin.content.placeholderEn')}
              />
              <RichTextEditor 
-                key={`content-vn-${item?.id || 'new'}-${item?.updatedAt || Date.now()}`}
+                key={`content-vn-${item?.id || 'new'}`}
                 label={t('admin.portfolio.detailTitleVn')} 
                 value={form.contentVn || ''} 
                 onChange={val => setForm(f => ({ ...f, contentVn: val }))} 
@@ -353,7 +377,7 @@ function PortfolioDetailModal({ open, onClose, item, isDark }: { open: boolean, 
             </div>
             <div>
                <p style={{ fontSize: 10, fontWeight: 700, color: label, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{t('admin.portfolio.category')}</p>
-               <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/10">{item.categoryKey}</span>
+               <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/10">{item.category?.name || item.categoryKey || '—'}</span>
             </div>
             <div>
                <p style={{ fontSize: 10, fontWeight: 700, color: label, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{t('admin.portfolio.duration')}</p>
@@ -398,14 +422,14 @@ function PortfolioDetailModal({ open, onClose, item, isDark }: { open: boolean, 
           {(item.contentEn || item.contentVn) && (
             <div style={{ marginBottom: 32 }}>
                <p style={{ fontSize: 10, fontWeight: 700, color: label, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>{t('admin.portfolio.caseStudyPreview')}</p>
-               <div style={{ padding: 24, borderRadius: 16, border: `1px solid ${border}`, background: sectionBg }}>
+                <div style={{ padding: 24, borderRadius: 16, border: `1px solid ${border}`, background: sectionBg, maxWidth: '100%', overflow: 'hidden' }}>
                   <div className="flex gap-4 mb-6 border-b border-white/5 pb-2">
                      <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{t('admin.portfolio.previewContent')}</span>
                   </div>
                   <div 
                     className={`prose prose-sm max-w-none ${isDark ? 'prose-invert' : ''}`}
                     dangerouslySetInnerHTML={{ __html: (i18n.language === 'en' ? item.contentEn : item.contentVn) || item.contentVn || item.contentEn || '' }}
-                    style={{ fontSize: 13, lineHeight: 1.7 }}
+                    style={{ fontSize: 13, lineHeight: 1.7, overflowX: 'auto', overflowWrap: 'break-word', wordBreak: 'break-word' }}
                   />
                </div>
             </div>
@@ -461,6 +485,16 @@ export default function PortfolioPage() {
   const [fetchingDetailId, setFetchingDetailId] = useState<number | null>(null);
   const [categories, setCategories] = useState<PortfolioCategory[]>([]);
   const [catModalOpen, setCatModalOpen] = useState(false);
+  const { canDo } = useAdminAuth();
+
+  const canCreate = canDo('PORTFOLIO', 'CREATE');
+  const canUpdate = canDo('PORTFOLIO', 'UPDATE');
+  const canDelete = canDo('PORTFOLIO', 'DELETE');
+
+  // Sub-permissions for Categories
+  const canCreateCat = canDo('PORTFOLIO_CATEGORIES', 'CREATE');
+  const canUpdateCat = canDo('PORTFOLIO_CATEGORIES', 'UPDATE');
+  const canDeleteCat = canDo('PORTFOLIO_CATEGORIES', 'DELETE');
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -555,6 +589,9 @@ export default function PortfolioPage() {
       toaster.push(<Notification type="error" header="Limit Reached" closable>{t('admin.portfolio.limitReached')}</Notification>, { placement: 'topEnd' });
       return;
     }
+    if (res.ok) {
+      setRows(prev => prev.map(item => item.id === editItem.id ? d : item));
+    }
     await fetchData(); 
   };
   const handleDelete = async () => { if (!deleteItem) return; await fetch(`/api/admin/portfolio/${deleteItem.id}`, { method: 'DELETE' }); await fetchData(); };
@@ -597,12 +634,12 @@ export default function PortfolioPage() {
 
   const columns: DataTableColumn<PortfolioItem>[] = useMemo(() => [
     { key: 'titleEn', header: t('admin.portfolio.titleEn'), flexGrow: 1, render: r => <div><p className="text-xs font-semibold">{r.titleEn}</p><p className="text-[10px] text-slate-400">{r.titleVn}</p></div> },
-    { key: 'categoryKey', header: t('admin.portfolio.category'), width: 130, render: r => <span className="text-xs font-bold px-3 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/10">{r.categoryKey}</span> },
+    { key: 'category', header: t('admin.portfolio.category'), width: 130, render: r => <span className="text-xs font-bold px-3 py-1 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/10">{r.category?.name || r.categoryKey || '—'}</span> },
     { key: 'technologies', header: t('admin.portfolio.techs'), flexGrow: 1, render: r => <div className="text-xs font-bold   flex flex-wrap gap-1">{r.technologies.slice(0, 4).map(t => <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-500/10 text-slate-400 border border-slate-500/5">{t}</span>)}</div> },
     { key: 'showOnHome', header: t('admin.portfolio.home'), width: 110, render: r => (
       <Toggle 
         checked={r.showOnHome} 
-        onChange={() => handleToggleHome(r)} 
+        onChange={() => canUpdate && handleToggleHome(r)} 
         label={r.showOnHome ? `#${r.sortOrder || 0}` : undefined} 
         isDark={isDark} 
         loading={togglingHomeId === r.id}
@@ -623,25 +660,25 @@ export default function PortfolioPage() {
               disabled: fetchingDetailId === r.id,
               onClick: () => startView(r) 
             },
-            { 
+            ...(canUpdate ? [{ 
               label: t('admin.common.edit'), 
               icon: fetchingId === r.id ? <Loader2 size={14} className="animate-spin" /> : <Edit2 size={14} />, 
               eventKey: 'edit', 
               disabled: fetchingId === r.id,
               onClick: () => startEdit(r) 
-            },
-            { 
+            }] : []),
+            ...(canDelete ? [{ 
               label: t('admin.common.delete', 'Xóa'), 
               icon: <Trash2 size={14} />, 
               eventKey: 'delete', 
               onClick: () => setDeleteItem(r),
               isDanger: true
-            }
+            }] : [])
           ]}
         />
       ),
     },
-  ], [isDark, t]);
+  ], [isDark, t, togglingHomeId, fetchingId, fetchingDetailId, rows]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -650,12 +687,16 @@ export default function PortfolioPage() {
         advancedOpen={false} onToggleAdvanced={() => {}} searchPlaceholder={t('admin.portfolio.search')} controlSize="sm" isDark={isDark}
         searchBarExtras={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button size="sm" appearance="ghost" onClick={() => setCatModalOpen(true)} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-              <FolderTree size={14} /> {t('admin.portfolio.manageCategories')}
-            </Button>
-            <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
-              <Plus size={14} /> {t('admin.common.addNew')}
-            </Button>
+            {canUpdate && (
+              <Button size="sm" appearance="ghost" onClick={() => setCatModalOpen(true)} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+                <FolderTree size={14} /> {t('admin.portfolio.manageCategories')}
+              </Button>
+            )}
+            {canCreate && (
+              <Button size="sm" appearance="primary" color="blue" onClick={() => { setEditItem(null); setFormOpen(true); }} className="!flex !items-center !gap-1.5 !px-3 !py-1 !rounded-sm !text-[10px] !font-bold">
+                <Plus size={14} /> {t('admin.common.addNew')}
+              </Button>
+            )}
           </div>
         }
       >
@@ -681,7 +722,17 @@ export default function PortfolioPage() {
       
       <PortfolioDetailModal open={detailOpen} onClose={() => { setDetailOpen(false); setDetailItem(null); }} item={detailItem} isDark={isDark} />
 
-      <CategoryModal open={catModalOpen} onClose={() => setCatModalOpen(false)} onSave={handleSaveCategory} onDelete={handleDeleteCategory} categories={categories} isDark={isDark} />
+      <CategoryModal 
+        open={catModalOpen} 
+        onClose={() => setCatModalOpen(false)} 
+        onSave={handleSaveCategory} 
+        onDelete={handleDeleteCategory} 
+        categories={categories} 
+        isDark={isDark}
+        canCreate={canCreateCat}
+        canUpdate={canUpdateCat}
+        canDelete={canDeleteCat}
+      />
       
       <AdminConfirmDeleteModal
         open={Boolean(deleteItem)}
