@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "db:init": "prisma db push && prisma db seed"
+    "db:init": "prisma db push && prisma db seed",
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -16,6 +17,7 @@
     "@fullpage/react-fullpage": "^0.1.49",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@rsuite/icons": "^1.4.0",
     "@types/three": "^0.182.0",
     "ag-grid-community": "^35.2.1",
     "ag-grid-react": "^35.2.1",
