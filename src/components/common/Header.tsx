@@ -63,19 +63,19 @@ const Header = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-2 lg:gap-3"
                 >
                   {/* Logo */}
                     <motion.div 
                       whileHover={{ scale: 1.05, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-14 h-14 flex items-center justify-center relative"
+                      className="w-10 h-10 lg:w-14 lg:h-14 flex items-center justify-center relative"
                     >
                       <Image 
                         src="/images/logo-05-none-text-removebg-preview.png" 
                         alt="Logo" 
-                        width={56}
-                        height={56}
+                        width={48}
+                        height={48}
                         className="object-contain filter drop-shadow-[0_0_14px_rgba(255,255,255,0.7)]"
                         priority
                         fetchPriority="high"
@@ -83,14 +83,14 @@ const Header = () => {
                     </motion.div>
 
                   {/* Brand Text */}
-                  <div className="leading-none hidden sm:block">
+                  <div className="leading-none hidden sm:block flex-shrink-0 whitespace-nowrap">
                     {/* Brand Name */}
-                    <div className="font-['Orbitron',sans-serif] font-bold text-2xl tracking-tighter">
+                    <div className="font-['Orbitron',sans-serif] font-bold text-xl lg:text-2xl tracking-tighter">
                       <span className="text-[#4FA3D1] ">LUCID</span>
                       <span className="text-[#F7941D]"> TECHNOLOGY</span>
                     </div>
                     {/* Tagline */}
-                    <div className="font-['Orbitron',sans-serif] font-bold uppercase tracking-[0.2em] text-[#8DC63F] mt-0.5">
+                    <div className="font-['Orbitron',sans-serif] font-bold uppercase tracking-[0.1em] lg:tracking-[0.2em] text-[10px] lg:text-xs text-[#8DC63F] mt-0.5">
                       MAKE DIGITAL TOGETHER
                     </div>
                   </div>

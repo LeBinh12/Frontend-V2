@@ -11,13 +11,27 @@ const Preloader = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Check cache
+    const CACHE_KEY = 'preloader_last_shown';
+    const CACHE_DURATION = 20 * 60 * 1000; // 20 minutes
+    const lastShown = localStorage.getItem(CACHE_KEY);
+    const now = Date.now();
+
+    if (lastShown && now - parseInt(lastShown) < CACHE_DURATION) {
+      setLoading(false);
+      return;
+    }
+
+    // If not cached, show preloader
     setLoading(true);
+    localStorage.setItem(CACHE_KEY, now.toString());
+
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, []); // Remove pathname dependency to prevent loading on every page change
 
   return (
     <AnimatePresence>
