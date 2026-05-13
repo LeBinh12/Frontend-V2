@@ -28,10 +28,10 @@ const Header = () => {
   });
 
   const menuItems = [
-    { label: t('nav.services'), href: '/#services' },
-    { label: t('nav.portfolio'), href: '/#portfolio' },
-    { label: t('nav.team'), href: '/#team' },
     { label: t('nav.about'), href: '/#about' },
+    { label: t('nav.services'), href: '/#services' },
+    { label: t('nav.team'), href: '/#team' },
+    { label: t('nav.portfolio'), href: '/#portfolio' },
   ];
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -102,10 +102,10 @@ const Header = () => {
             
             <div className="hidden md:flex justify-center flex-2">
               <Nav className="flex items-center text-lg">
+                <Nav.Item suppressHydrationWarning as={Link} href="/#about" onClick={(e: any) => handleScroll(e, '/#about')}>{t('nav.about')}</Nav.Item>
                 <Nav.Item suppressHydrationWarning as={Link} href="/#services" onClick={(e: any) => handleScroll(e, '/#services')}>{t('nav.services')}</Nav.Item>
-                <Nav.Item suppressHydrationWarning as={Link} href="/#portfolio" onClick={(e: any) => handleScroll(e, '/#portfolio')}>{t('nav.portfolio')}</Nav.Item>
                 <Nav.Item suppressHydrationWarning as={Link} href="/#team" onClick={(e: any) => handleScroll(e, '/#team')}>{t('nav.team')}</Nav.Item>
-                <Nav.Item suppressHydrationWarning as={Link} href="/#about" onClick={(e: any) => handleScroll(e, '/#about')}>{t('nav.about')}</Nav.Item>               
+                <Nav.Item suppressHydrationWarning as={Link} href="/#portfolio" onClick={(e: any) => handleScroll(e, '/#portfolio')}>{t('nav.portfolio')}</Nav.Item>               
               </Nav>
             </div>
             

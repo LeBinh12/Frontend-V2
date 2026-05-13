@@ -20,7 +20,7 @@ const CaseStudyPage = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
-  const { content } = useContent();
+  const { content, loading } = useContent();
   const [mounted, setMounted] = React.useState(false);
 
   // Use window scroll — more stable than a targeted ref in SSR environments
@@ -33,17 +33,24 @@ const CaseStudyPage = () => {
   }, []);
 
   // Data selection
-  const projectsData = content?.portfolio && content.portfolio.length > 0 ? content.portfolio : mockData.portfolio;
-  const project = projectsData.find(p => (p as any).key === id || (p as any).id === Number(id));
+  // Fallback to mockData only if not loading and content is empty
+  const projectsData = content?.portfolio && content.portfolio.length > 0 
+    ? content.portfolio 
+    : (loading ? [] : mockData.portfolio);
+
+  const project = projectsData.find(p => 
+    String((p as any).id) === id || 
+    (p as any).key === id
+  );
   const resultsList = t('portfolio.detail.results.list', { returnObjects: true }) as string[] || [];
+
+  // Loading or Error States should come after hooks
 
   // Resolve category label — fall back to database name if translation is missing
   const categoryKey = (project as any)?.categoryKey || '';
   const categoryName = (project as any)?.categoryName || categoryKey;
   const categoryLabel = t(`portfolio.categories.${categoryKey.toLowerCase()}`, { defaultValue: categoryName });
 
-  // Loading or Error States should come after hooks
-  if (!mounted) return null;
 
   return (
     <SmoothScroll>
@@ -51,8 +58,13 @@ const CaseStudyPage = () => {
         <Header />
         
         <main className="flex-grow pt-32 pb-24 overflow-hidden">
-          {!project ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
+          {!mounted || (loading && projectsData.length === 0) ? (
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
+              <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+              <p className="text-text-muted animate-pulse">{t('common.loading', 'Loading project...')}</p>
+            </div>
+          ) : !project ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center min-h-[50vh]">
               <h1 className="text-4xl font-display font-bold mb-4">{t('portfolio.detail.notFound.title')}</h1>
               <p className="text-text-muted mb-8">{t('portfolio.detail.notFound.description')}</p>
               <Link href="/portfolio">

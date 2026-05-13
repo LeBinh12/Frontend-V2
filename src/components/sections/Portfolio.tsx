@@ -91,7 +91,7 @@ const Portfolio = () => {
                   viewport={{ amount: 0.1, once: false }}
                   transition={{ duration: 0.5, ease: "easeOut" }} 
                 >
-                  <Link href={`/portfolio/${(project as any).key || (project as any).id}`} className="block">
+                  <Link href={`/portfolio/${(project as any).id || (project as any).id}`} className="block">
                     <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 group">
                       <Image 
                         src={project.image} 
@@ -116,7 +116,7 @@ const Portfolio = () => {
                      <div className="flex items-center justify-between mb-3">
                         <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs uppercase font-bold tracking-wider">{t(`portfolio.categories.${(project as any).categoryKey}`)}</span>
                      </div>
-                    <Link href={`/portfolio/${(project as any).key || (project as any).id}`}>
+                    <Link href={`/portfolio/${(project as any).id}`}>
                       <h3 className="text-lg sm:text-xl md:text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">
                         {(project as any).title}
                         <ArrowUpRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />

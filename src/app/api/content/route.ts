@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
       take: 4
     });
     const formattedServices = services.map(s => ({
+      id: s.id,
       key: s.key,
       icon: s.icon,
       title: isEn ? s.titleEn : s.titleVn,
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest) {
       ]
     });
     const formattedPortfolio = portfolio.map(p => ({
+      id: p.id,
       key: p.key,
       title: isEn ? p.titleEn : p.titleVn,
       description: isEn ? p.descriptionEn : p.descriptionVn,

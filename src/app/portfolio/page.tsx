@@ -109,7 +109,7 @@ const PortfolioPage = () => {
                         transition={{ duration: 0.5, ease: "easeOut" }} // Removed stagger delay on scroll settles
                         className="group cursor-pointer"
                       >
-                        <Link href={`/portfolio/${(project as any).key || (project as any).id}`} className="block">
+                        <Link href={`/portfolio/${(project as any).id}`} className="block">
                           <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-6 bg-bg-card border border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/20 uppercase">
                             <img 
                               src={project.image} 
@@ -132,7 +132,7 @@ const PortfolioPage = () => {
                                {t(`portfolio.categories.${(project as any).categoryKey}`, { defaultValue: (project as any).categoryName })}
                              </span>
                           </div>
-                          <Link href={`/portfolio/${(project as any).key || (project as any).id}`}>
+                          <Link href={`/portfolio/${(project as any).id}`}>
                             <h3 className="text-2xl font-display font-medium mb-3 text-white group-hover:text-primary transition-colors flex items-center gap-2">
                               {(project as any).title}
                               <ArrowUpRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />

@@ -22,8 +22,17 @@ export default function RootClientLayout({
   // Sync server-detected language with client-side i18n
   React.useEffect(() => {
     const savedLang = localStorage.getItem('lang') || localStorage.getItem('i18nextLng');
-    if (!savedLang && detectedLang) {
-      i18n.changeLanguage(detectedLang);
+    
+    if (!savedLang) {
+      // 1. Check timezone (Asia/Ho_Chi_Minh is standard for VN)
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz === 'Asia/Ho_Chi_Minh') {
+        i18n.changeLanguage('vn');
+      } 
+      // 2. Fallback to server-detected language (Vercel x-vercel-ip-country)
+      else if (detectedLang) {
+        i18n.changeLanguage(detectedLang);
+      }
     }
 
     // Fix Back/Forward Cache (BFCache)

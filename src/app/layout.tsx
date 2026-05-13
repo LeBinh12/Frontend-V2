@@ -51,7 +51,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const headersList = await headers();
-  const country = headersList.get('x-vercel-ip-country');
+  const country = headersList.get('x-vercel-ip-country') || headersList.get('cf-ipcountry');
   const detectedLang = country === 'VN' ? 'vn' : 'en';
 
   const fontClasses = `${inter.variable} ${outfit.variable} ${orbitron.variable} ${geistSans.variable} ${geistMono.variable} ${geistSans.className}`;
