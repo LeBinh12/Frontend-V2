@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import Preloader from '@/components/common/Preloader';
 import CustomCursor from '@/components/common/CustomCursor';
 import { useTranslation } from 'react-i18next';
+import NextTopLoader from 'nextjs-toploader';
 
 export default function RootClientLayout({
   children,
@@ -44,6 +45,17 @@ export default function RootClientLayout({
 
   return (
     <CustomProvider theme="dark">
+      <NextTopLoader 
+        color="linear-gradient(to right, #4FA3D1, #8DC63F, #F7941D)"
+        initialPosition={0.08}
+        crawlSpeed={200}
+        height={3}
+        crawl={true}
+        showSpinner={false}
+        easing="ease"
+        speed={200}
+        shadow="0 0 10px #4FA3D1,0 0 5px #8DC63F"
+      />
       <CustomCursor />
       {!isAdminPage && <Preloader />}
       {children}

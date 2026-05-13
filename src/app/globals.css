@@ -216,4 +216,14 @@ html {
   display: block;
 }
 
+/* Page Loading Bar Styling */
+#nprogress .bar {
+  background: linear-gradient(to right, #4FA3D1, #8DC63F, #F7941D) !important;
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #F7941D, 0 0 5px #F7941D !important;
+}
+
 
